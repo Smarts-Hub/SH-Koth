@@ -5,6 +5,11 @@ import revxrsal.zapper.ZapperJavaPlugin;
 
 public class SHKoth extends ZapperJavaPlugin {
 
+    // I don't like to this, might change it later
+    public static SHKoth getInstance() {
+        return ZapperJavaPlugin.getPlugin(SHKoth.class);
+    }
+
     @Override
     public void onEnable() {
         getLogger().info("SHKoth has been enabled!");
