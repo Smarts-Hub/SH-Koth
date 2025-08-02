@@ -30,6 +30,9 @@ dependencies {
     compileOnly ("me.clip:placeholderapi:2.11.6")
     zap("io.github.revxrsal:lamp.common:4.0.0-beta.25")
     zap("io.github.revxrsal:lamp.bukkit:4.0.0-beta.25")
+    zap("com.saicone.rtag:rtag:1.5.11")
+    zap("com.saicone.rtag:rtag-item:1.5.11")
+
     zap("com.h2database:h2:2.2.224")
     implementation(kotlin("stdlib-jdk8"))
 }

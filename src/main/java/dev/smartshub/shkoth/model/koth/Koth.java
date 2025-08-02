@@ -21,7 +21,7 @@ public abstract class Koth {
         protected final Area area;
         protected final Mode mode;
         protected final List<Schedule> schedules;
-        protected final List<Commands> commands;
+        protected final Commands commands;
         protected final List<PhysicalReward> physicalRewards;
 
         // Mutable data (runtime)
@@ -33,7 +33,7 @@ public abstract class Koth {
         protected int remainingTime;
 
         public Koth(String id, String displayName, int duration, int captureTime, Area area,
-                    Mode mode, List<Schedule> schedules, List<Commands> commands,
+                    Mode mode, List<Schedule> schedules, Commands commands,
                     List<PhysicalReward> physicalRewards) {
                 this.id = id;
                 this.displayName = displayName;
@@ -42,7 +42,7 @@ public abstract class Koth {
                 this.area = area;
                 this.mode = mode;
                 this.schedules = List.copyOf(schedules);
-                this.commands = List.copyOf(commands);
+                this.commands = commands;
                 this.physicalRewards = List.copyOf(physicalRewards);
                 this.remainingTime = duration;
         }
@@ -54,7 +54,7 @@ public abstract class Koth {
         public Area getArea() { return area; }
         public Mode getMode() { return mode; }
         public List<Schedule> getSchedules() { return schedules; }
-        public List<Commands> getCommands() { return commands; }
+        public Commands getCommands() { return commands; }
         public List<PhysicalReward> getPhysicalRewards() { return physicalRewards; }
 
         public KothState getState() { return state; }
