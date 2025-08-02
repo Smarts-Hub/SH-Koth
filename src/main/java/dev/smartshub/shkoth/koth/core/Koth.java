@@ -1,11 +1,11 @@
-package dev.smartshub.shkoth.model.koth;
+package dev.smartshub.shkoth.koth.core;
 
 import dev.smartshub.shkoth.model.koth.command.Commands;
 import dev.smartshub.shkoth.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.model.koth.guideline.Mode;
-import dev.smartshub.shkoth.model.koth.location.Area;
-import dev.smartshub.shkoth.model.koth.reward.PhysicalReward;
-import dev.smartshub.shkoth.model.koth.time.Schedule;
+import dev.smartshub.shkoth.model.location.Area;
+import dev.smartshub.shkoth.model.reward.PhysicalReward;
+import dev.smartshub.shkoth.model.time.Schedule;
 import org.bukkit.entity.Player;
 
 import java.util.List;

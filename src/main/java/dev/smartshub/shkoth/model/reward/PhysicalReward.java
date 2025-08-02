@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.model.koth.reward;
+package dev.smartshub.shkoth.model.reward;
 
 import org.bukkit.inventory.ItemStack;
 

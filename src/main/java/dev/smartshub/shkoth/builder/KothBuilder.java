@@ -1,15 +1,15 @@
 package dev.smartshub.shkoth.builder;
 
-import dev.smartshub.shkoth.model.koth.Koth;
+import dev.smartshub.shkoth.koth.core.Koth;
 import dev.smartshub.shkoth.model.koth.command.Commands;
 import dev.smartshub.shkoth.model.koth.guideline.KothType;
 import dev.smartshub.shkoth.model.koth.guideline.Mode;
-import dev.smartshub.shkoth.model.koth.heritage.SoloKoth;
-import dev.smartshub.shkoth.model.koth.heritage.TeamKoth;
-import dev.smartshub.shkoth.model.koth.location.Area;
-import dev.smartshub.shkoth.model.koth.location.Corner;
-import dev.smartshub.shkoth.model.koth.reward.PhysicalReward;
-import dev.smartshub.shkoth.model.koth.time.Schedule;
+import dev.smartshub.shkoth.koth.core.variant.SoloKoth;
+import dev.smartshub.shkoth.koth.core.variant.TeamKoth;
+import dev.smartshub.shkoth.model.location.Area;
+import dev.smartshub.shkoth.model.location.Corner;
+import dev.smartshub.shkoth.model.reward.PhysicalReward;
+import dev.smartshub.shkoth.model.time.Schedule;
 import dev.smartshub.shkoth.storage.file.Configuration;
 import dev.smartshub.shkoth.storage.file.FileManager;
 
@@ -22,7 +22,7 @@ public class KothBuilder {
     private final SchedulesBuilder schedulesBuilder = new SchedulesBuilder();
     private final PhysicalRewardsBuilder physicalRewardsBuilder = new PhysicalRewardsBuilder();
 
-    public Set<Koth> loadKoths() {
+    public Set<Koth> loadKothsFromConfig() {
 
         Set<Koth> koths = new HashSet<>();
 

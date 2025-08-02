@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.model.koth.location;
+package dev.smartshub.shkoth.model.location;
 
 public record Corner(
         int x,

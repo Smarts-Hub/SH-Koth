@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.model.koth.time;
+package dev.smartshub.shkoth.model.time;
 
 public enum Day {
     MONDAY,

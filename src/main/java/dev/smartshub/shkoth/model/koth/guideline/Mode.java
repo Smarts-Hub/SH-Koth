@@ -4,8 +4,6 @@ public record Mode(
         KothType type,
         int teamSize
 ) {
-    public Mode {}
-
     // Always 0 for solo mode
     public static Mode solo() {
         return new Mode(KothType.SOLO, 0);
