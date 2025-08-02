@@ -22,7 +22,6 @@ public class PlayerStatsDAO {
                     "ON DUPLICATE KEY UPDATE solo_wins = VALUES(solo_wins), team_wins = VALUES(team_wins)";
 
 
-
     public CompletableFuture<Optional<PlayerStats>> getPlayerStats(UUID playerId) {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection conn = DatabaseConnection.getConnection();
@@ -47,8 +46,8 @@ public class PlayerStatsDAO {
     }
 
 
-    public CompletableFuture<Boolean> savePlayerStats(PlayerStats stats) {
-        return CompletableFuture.supplyAsync(() -> {
+    public CompletableFuture<Void> savePlayerStats(PlayerStats stats) {
+        return CompletableFuture.runAsync(() -> {
             try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(INSERT_OR_UPDATE)) {
 
@@ -56,11 +55,10 @@ public class PlayerStatsDAO {
                 stmt.setInt(2, stats.soloWins());
                 stmt.setInt(3, stats.teamWins());
 
-                return stmt.executeUpdate() > 0;
+                stmt.executeUpdate();
 
             } catch (SQLException e) {
                 e.printStackTrace();
-                return false;
             }
         });
     }
