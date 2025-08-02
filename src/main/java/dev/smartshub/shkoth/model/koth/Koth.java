@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public abstract class Koth {
-        // Inmutable data (configuration)
+        // Immutable data (configuration)
         protected final String id;
         protected final String displayName;
         protected final int duration;
