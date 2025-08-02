@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.koth.core;
+package dev.smartshub.shkoth.koth;
 
 import dev.smartshub.shkoth.SHKoth;
 import dev.smartshub.shkoth.koth.timer.KothTimer;

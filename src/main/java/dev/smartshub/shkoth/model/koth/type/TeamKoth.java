@@ -1,6 +1,6 @@
-package dev.smartshub.shkoth.koth.core.impl;
+package dev.smartshub.shkoth.model.koth.type;
 
-import dev.smartshub.shkoth.koth.core.Koth;
+import dev.smartshub.shkoth.koth.Koth;
 import dev.smartshub.shkoth.model.koth.command.Commands;
 import dev.smartshub.shkoth.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.model.koth.guideline.Mode;
@@ -11,9 +11,9 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class SoloKoth extends Koth {
+public class TeamKoth extends Koth {
 
-    public SoloKoth(String id, String displayName, int duration, int captureTime, Area area, Mode mode, List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards) {
+    public TeamKoth(String id, String displayName, int duration, int captureTime, Area area, Mode mode, List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards) {
         super(id, displayName, duration, captureTime, area, mode, schedules, commands, physicalRewards);
     }
 

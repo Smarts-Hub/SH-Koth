@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.koth.timer;
 
-import dev.smartshub.shkoth.koth.core.Koth;
+import dev.smartshub.shkoth.koth.Koth;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class KothTimer extends BukkitRunnable {

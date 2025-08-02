@@ -22,4 +22,6 @@ public class SHKoth extends ZapperJavaPlugin {
         getLogger().info("SHKoth has been disabled!");
     }
 
+    //TODO: commands, listeners, koth-timer logic, messages
+
 }

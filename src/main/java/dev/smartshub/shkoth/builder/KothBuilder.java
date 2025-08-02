@@ -1,11 +1,11 @@
 package dev.smartshub.shkoth.builder;
 
-import dev.smartshub.shkoth.koth.core.Koth;
+import dev.smartshub.shkoth.koth.Koth;
 import dev.smartshub.shkoth.model.koth.command.Commands;
 import dev.smartshub.shkoth.model.koth.guideline.KothType;
 import dev.smartshub.shkoth.model.koth.guideline.Mode;
-import dev.smartshub.shkoth.koth.core.impl.SoloKoth;
-import dev.smartshub.shkoth.koth.core.impl.TeamKoth;
+import dev.smartshub.shkoth.model.koth.type.SoloKoth;
+import dev.smartshub.shkoth.model.koth.type.TeamKoth;
 import dev.smartshub.shkoth.model.location.Area;
 import dev.smartshub.shkoth.model.location.Corner;
 import dev.smartshub.shkoth.model.reward.PhysicalReward;
