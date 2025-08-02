@@ -2,7 +2,8 @@ package dev.smartshub.shkoth.model.koth.guideline;
 
 public enum KothState {
     INACTIVE,
-    RUNNING;
+    RUNNING,
+    CAPTURING;
 
     public static KothState fromString(String state) {
         try {
