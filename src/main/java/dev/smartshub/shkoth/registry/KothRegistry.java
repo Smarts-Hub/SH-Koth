@@ -1,17 +1,18 @@
 package dev.smartshub.shkoth.registry;
 
-import dev.smartshub.shkoth.builder.KothBuilder;
 import dev.smartshub.shkoth.koth.Koth;
+import dev.smartshub.shkoth.loader.KothLoader;
 
 import java.util.Set;
 
 public class KothRegistry {
 
+    private final KothLoader kothLoader = new KothLoader();
+
     private final Set<Koth> koths;
 
     public KothRegistry() {
-        KothBuilder kothBuilder = new KothBuilder();
-        this.koths = kothBuilder.loadKothsFromConfig();
+        this.koths = kothLoader.loadKoths();
     }
 
     public void registerKoth(Koth koth) {
@@ -20,6 +21,11 @@ public class KothRegistry {
 
     public void unregisterKoth(Koth koth) {
         koths.remove(koth);
+    }
+
+    public void reloadKoths() {
+        koths.clear();
+        koths.addAll(kothLoader.loadKoths());
     }
 
     public Koth getKoth(String id) {
