@@ -1,4 +1,6 @@
 # The following is a template for a King of the Hill (KoTH) configuration file.
+# The id is a unique identifier for the KoTH. Is the name of the file without the extension.
+# In this case, the file name is "koth-template.yml" and the id "koth-template".
 
 # The world where the KoTH is located
 world: world_name
@@ -53,7 +55,7 @@ commands-perform:
 
 # This must be added by commands in game, taken the item in ur main hand.
 # You can add as many items as u want.
-physically-rewards:
+physical-rewards:
   '1':
     item: "<base64-value>"
     amount: 1
