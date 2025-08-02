@@ -20,13 +20,16 @@ corner-2:
 display-name: "<rainbow>King of the Hill"
 
 # The time in seconds that the KoTH will be active before it resets.
-duration: 300
+max-duration: 300
 
 # Koths can be played in solo or team mode.
 type: "solo"
 # If the KoTH is played in team mode, this defines the maximum number of players per team.
 # If the KoTH is played in solo mode, this value is ignored.
 team-size: 4
+
+# The time in seconds that a player must stay in the KoTH area to capture it.
+capture-time: 20
 
 # List of schedules for this koth.
 # Each schedule defines a day and time when the KoTH will be active.
