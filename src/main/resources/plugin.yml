@@ -1,0 +1,7 @@
+name: SH-Koth
+main: dev.smartshub.shkoth.SHKoth
+version: 1.0.0
+api-version: 1.21
+authors: [hhitt, SmartsHub]
+description: "Simple to use, powerful in action. A smarter KOTH solution. "
+soft-depend: [PlaceholderAPI]
