@@ -1,0 +1,8 @@
+database:
+  # Available drivers: "h2" (local, recommended) and "mysql" (remote).
+  driver: h2
+  host: localhost
+  port: 3006
+  db-name: shkoth
+  username: koth_user
+  password: SECRET_PASSWORD
