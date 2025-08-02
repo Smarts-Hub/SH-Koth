@@ -1,0 +1,59 @@
+# The following is a template for a King of the Hill (KoTH) configuration file.
+
+# The world where the KoTH is located
+world: world_name
+
+# Corner coordinates for the KoTH area
+# These coordinates define the rectangular area of the KoTH.
+corner-1:
+  x:
+  y:
+  z:
+corner-2:
+  x:
+  y:
+  z:
+
+# Display name for the KoTH, used in placeholders.
+display-name: "<rainbow>King of the Hill"
+
+# The time in seconds that the KoTH will be active before it resets.
+duration: 300
+
+# Koths can be played in solo or team mode.
+type: "solo"
+
+# List of schedules for this koth.
+# Each schedule defines a day and time when the KoTH will be active.
+# You can define multiple schedules at same day, but be sure to don't overlap them.
+schedule:
+  '1':
+    day: monday
+    hour: 20:00
+    '2':
+      day: tuesday
+      hour: 20:00
+
+# List of commands to perform at different stages of the KoTH.
+commands-perform:
+  start:
+    - "say The KoTH has started!"
+  end:
+    - "say The KoTH has ended!"
+  to-winners:
+    - "say Congratulations, %player_name%!"
+    - "give %player_name% diamond 5"
+
+# This must be added by commands in game, taken the item in ur main hand.
+# You can add as many items as u want.
+physically-rewards:
+  '1':
+    item: "<base64-value>"
+    amount: 1
+  '2':
+    item: "<base64-value>"
+    amount: 4
+  '3':
+    item: "<base64-value>"
+    amount: 2
+
