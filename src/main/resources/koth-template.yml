@@ -22,6 +22,9 @@ duration: 300
 
 # Koths can be played in solo or team mode.
 type: "solo"
+# If the KoTH is played in team mode, this defines the maximum number of players per team.
+# If the KoTH is played in solo mode, this value is ignored.
+team-size: 4
 
 # List of schedules for this koth.
 # Each schedule defines a day and time when the KoTH will be active.
@@ -36,10 +39,14 @@ schedule:
 
 # List of commands to perform at different stages of the KoTH.
 commands-perform:
+  # These commands will be executed when the KoTH starts (one time).
   start:
     - "say The KoTH has started!"
+  # These commands will be executed when the KoTH ends (one time).
   end:
     - "say The KoTH has ended!"
+  # These commands will be executed when a player wins the KoTH,
+  # these means: one time if this koth is solo, or for each player if this koth is team.
   to-winners:
     - "say Congratulations, %player_name%!"
     - "give %player_name% diamond 5"
