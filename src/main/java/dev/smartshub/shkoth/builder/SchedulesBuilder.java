@@ -24,13 +24,11 @@ public class SchedulesBuilder {
 
         for (String key : section.getKeys(false)) {
             ConfigurationSection entry = section.getConfigurationSection(key);
-            if (entry != null) {
-                String day = entry.getString("day");
-                String hour = entry.getString("hour");
-                if (day != null && hour != null) {
-                    schedules.add(new Schedule(Day.valueOf(day), LocalTime.parse(hour)));
-                }
-            }
+            if (entry == null) continue;
+
+            String day = entry.getString("day");
+            String hour = entry.getString("hour");
+            schedules.add(new Schedule(Day.valueOf(day), LocalTime.parse(hour)));
         }
 
         return schedules;

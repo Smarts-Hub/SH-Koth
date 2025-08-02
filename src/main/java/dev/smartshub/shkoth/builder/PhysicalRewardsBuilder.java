@@ -24,13 +24,14 @@ public class PhysicalRewardsBuilder {
 
         for (String key : rewardsSection.getKeys(false)) {
             ConfigurationSection reward = rewardsSection.getConfigurationSection(key);
-            if (reward != null) {
-                int amount = reward.getInt("amount");
-                String base64 = reward.getString("item");
-                ItemStack[] item = ItemTagStream.INSTANCE.fromBase64(base64);
+            if (reward == null) continue;
 
-                physicalRewards.add(new PhysicalReward(item[0], amount));
-            }
+            int amount = reward.getInt("amount");
+            String base64 = reward.getString("item");
+            ItemStack[] item = ItemTagStream.INSTANCE.fromBase64(base64);
+
+            physicalRewards.add(new PhysicalReward(item[0], amount));
+
         }
 
         return physicalRewards;
