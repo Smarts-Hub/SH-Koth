@@ -1,8 +1,8 @@
 package dev.smartshub.shkoth.model.koth;
 
 import dev.smartshub.shkoth.model.koth.command.Commands;
-import dev.smartshub.shkoth.model.koth.guidelines.KothState;
-import dev.smartshub.shkoth.model.koth.guidelines.Mode;
+import dev.smartshub.shkoth.model.koth.guideline.KothState;
+import dev.smartshub.shkoth.model.koth.guideline.Mode;
 import dev.smartshub.shkoth.model.koth.location.Area;
 import dev.smartshub.shkoth.model.koth.reward.PhysicalReward;
 import dev.smartshub.shkoth.model.koth.time.Schedule;

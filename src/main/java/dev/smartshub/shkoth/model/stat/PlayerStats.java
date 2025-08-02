@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.model.stats;
+package dev.smartshub.shkoth.model.stat;
 
 import java.util.UUID;
 

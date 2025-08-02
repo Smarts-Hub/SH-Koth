@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.storage.database.dao;
 
-import dev.smartshub.shkoth.model.stats.PlayerStats;
+import dev.smartshub.shkoth.model.stat.PlayerStats;
 import dev.smartshub.shkoth.storage.database.connection.DatabaseConnection;
 
 import java.sql.Connection;
