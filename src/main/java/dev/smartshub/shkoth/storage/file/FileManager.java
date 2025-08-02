@@ -4,7 +4,9 @@ import dev.smartshub.shkoth.SHKoth;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class FileManager {
 
@@ -65,6 +67,34 @@ public class FileManager {
             }
         }
     }
+
+    public static Set<Configuration> getAllFromFolder(String folderName) {
+        Set<Configuration> configurationSet = new HashSet<>();
+        File folder = new File(plugin.getDataFolder(), folderName);
+
+        if (!folder.exists() || !folder.isDirectory()) {
+            plugin.getLogger().warning("Folder '" + folderName + "' does not exist or is not a directory.");
+            return configurationSet;
+        }
+
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".yml"));
+        if (files == null) return configurationSet;
+
+        for (File file : files) {
+            String fileName = file.getName();
+            Configuration config = new Configuration(plugin, file, fileName);
+            try {
+                config.load(file);
+                configurationSet.add(config);
+            } catch (Exception e) {
+                plugin.getLogger().severe("Failed to load config: " + fileName);
+                e.printStackTrace();
+            }
+        }
+
+        return configurationSet;
+    }
+
 
 }
 
