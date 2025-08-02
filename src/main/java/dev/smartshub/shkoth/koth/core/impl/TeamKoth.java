@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.koth.core.variant;
+package dev.smartshub.shkoth.koth.core.impl;
 
 import dev.smartshub.shkoth.koth.core.Koth;
 import dev.smartshub.shkoth.model.koth.command.Commands;
