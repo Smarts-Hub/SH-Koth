@@ -3,6 +3,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.17"
     id("io.github.revxrsal.zapper") version "1.0.3"
+    kotlin("jvm")
 }
 
 group = "dev.smartshub"
@@ -30,8 +31,12 @@ dependencies {
     zap("io.github.revxrsal:lamp.common:4.0.0-beta.25")
     zap("io.github.revxrsal:lamp.bukkit:4.0.0-beta.25")
     zap("com.h2database:h2:2.2.224")
+    implementation(kotlin("stdlib-jdk8"))
 }
 
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-parameters")
+}
+kotlin {
+    jvmToolchain(21)
 }
