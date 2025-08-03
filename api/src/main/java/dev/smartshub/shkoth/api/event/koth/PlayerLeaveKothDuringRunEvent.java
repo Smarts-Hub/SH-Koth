@@ -1,33 +1,28 @@
-package dev.smartshub.shkoth.api.event;
+package dev.smartshub.shkoth.api.event.koth;
 
 
 import dev.smartshub.shkoth.api.model.koth.Koth;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerEnterKothDuringRunEvent extends Event implements Cancellable {
+public class PlayerLeaveKothDuringRunEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final Koth koth;
     private final Player player;
-    private boolean cancelled = false;
+    private final boolean wasCapturing;
 
-    public PlayerEnterKothDuringRunEvent(Koth koth, Player player) {
+    public PlayerLeaveKothDuringRunEvent(Koth koth, Player player, boolean wasCapturing) {
         this.koth = koth;
         this.player = player;
+        this.wasCapturing = wasCapturing;
     }
 
     public Koth getKoth() { return koth; }
     public Player getPlayer() { return player; }
-
-    @Override
-    public boolean isCancelled() { return cancelled; }
-
-    @Override
-    public void setCancelled(boolean cancelled) { this.cancelled = cancelled; }
+    public boolean wasCapturing() { return wasCapturing; }
 
     @Override
     public @NotNull HandlerList getHandlers() { return HANDLERS; }

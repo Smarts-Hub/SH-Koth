@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.api.event;
+package dev.smartshub.shkoth.api.event.koth;
 
 import dev.smartshub.shkoth.api.model.koth.Koth;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
