@@ -1,8 +1,8 @@
-package dev.smartshub.shkoth.koth.type;
+package dev.smartshub.shkoth.koth.solo;
 
 
 import dev.smartshub.shkoth.api.event.koth.KothStateChangeEvent;
-import dev.smartshub.shkoth.koth.AbstractKoth;
+import dev.smartshub.shkoth.api.model.koth.AbstractKoth;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.model.location.Area;

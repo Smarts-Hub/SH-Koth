@@ -6,14 +6,12 @@ import dev.smartshub.shkoth.api.model.koth.guideline.KothType;
 import dev.smartshub.shkoth.api.model.location.Area;
 import dev.smartshub.shkoth.api.model.location.Corner;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
-import dev.smartshub.shkoth.api.model.team.Team;
 import dev.smartshub.shkoth.api.model.time.Schedule;
-import dev.smartshub.shkoth.koth.type.SoloKoth;
-import dev.smartshub.shkoth.koth.type.TeamKoth;
+import dev.smartshub.shkoth.koth.solo.SoloKoth;
+import dev.smartshub.shkoth.koth.team.TeamKoth;
 import dev.smartshub.shkoth.storage.file.Configuration;
 
 import java.util.List;
-import java.util.Set;
 
 
 public class KothBuilder {
