@@ -1,9 +1,9 @@
 package dev.smartshub.shkoth.koth.type;
 
+import dev.smartshub.shkoth.api.model.team.Team;
 import dev.smartshub.shkoth.koth.AbstractKoth;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
-import dev.smartshub.shkoth.api.model.koth.guideline.Mode;
 import dev.smartshub.shkoth.api.model.location.Area;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.model.time.Schedule;
@@ -17,8 +17,8 @@ import java.util.UUID;
 
 public class TeamKoth extends AbstractKoth {
 
-    public TeamKoth(String id, String displayName, int duration, int captureTime, Area area, Mode mode, List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards) {
-        super(id, displayName, duration, captureTime, area, mode, schedules, commands, physicalRewards);
+    public TeamKoth(String id, String displayName, int duration, int captureTime, Area area, Team team, List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards) {
+        super(id, displayName, duration, captureTime, area, team, schedules, commands, physicalRewards);
     }
 
     @Override

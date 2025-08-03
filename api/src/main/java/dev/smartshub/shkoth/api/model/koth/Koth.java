@@ -2,9 +2,9 @@ package dev.smartshub.shkoth.api.model.koth;
 
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
-import dev.smartshub.shkoth.api.model.koth.guideline.Mode;
 import dev.smartshub.shkoth.api.model.location.Area;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
+import dev.smartshub.shkoth.api.model.team.Team;
 import dev.smartshub.shkoth.api.model.time.Schedule;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -23,7 +23,7 @@ public interface Koth {
     int getCaptureTime();
 
     @NotNull Area getArea();
-    @NotNull Mode getMode();
+    @NotNull Team getTeam();
     @NotNull List<Schedule> getSchedules();
     @NotNull Commands getCommands();
     @NotNull List<PhysicalReward> getPhysicalRewards();
