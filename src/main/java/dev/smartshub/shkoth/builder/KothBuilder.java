@@ -61,7 +61,11 @@ public class KothBuilder {
         if (kothType.equals(KothType.SOLO)) {
             koth = new SoloKoth(id, displayName, maxDuration, captureTime,area, schedules, commands, physicalRewards);
         } else {
-            koth = new TeamKoth(id, displayName, maxDuration, captureTime, area, teamSize, schedules, commands, physicalRewards);
+            boolean denyEnterWithoutTeam = config.getBoolean("deny-entry-if-not-in-team", false);
+            boolean createTeamIfNotExistsOnEnter = config.getBoolean("create-team-if-not-exists-on-enter", true);
+
+            koth = new TeamKoth(id, displayName, maxDuration, captureTime, denyEnterWithoutTeam, createTeamIfNotExistsOnEnter,
+                    area, teamSize, schedules, commands, physicalRewards);
         }
 
         return koth;

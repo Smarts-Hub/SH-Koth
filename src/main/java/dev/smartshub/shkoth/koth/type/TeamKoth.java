@@ -20,9 +20,15 @@ public class TeamKoth extends AbstractKoth {
 
     private final TeamTracker teamTracker;
 
-    public TeamKoth(String id, String displayName, int duration, int captureTime, Area area, int teamSize, List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards) {
+    private final boolean denyEnterWithoutTeam;
+    private final boolean createTeamIfNotExistsOnEnter;
+
+    public TeamKoth(String id, String displayName, int duration, int captureTime, boolean denyEnterWithoutTeam, boolean createTeamIfNotExistsOnEnter,
+                    Area area, int teamSize, List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards) {
         super(id, displayName, duration, captureTime, area, schedules, commands, physicalRewards);
         teamTracker = new KothTeamTracker(teamSize);
+        this.denyEnterWithoutTeam = denyEnterWithoutTeam;
+        this.createTeamIfNotExistsOnEnter = createTeamIfNotExistsOnEnter;
     }
 
     @Override
