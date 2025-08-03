@@ -36,6 +36,7 @@ public interface Koth {
     
     void start();
     void stop();
+    void tick();
     boolean isRunning();
     
     boolean isInsideArea(@NotNull Player player);
