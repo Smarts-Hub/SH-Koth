@@ -17,7 +17,7 @@ public final class KothAPIProvider {
         instance = api;
     }
     
-    static void unload() {
+    public static void unload() {
         instance = null;
     }
 }

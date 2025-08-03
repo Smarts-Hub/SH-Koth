@@ -77,7 +77,7 @@ public abstract class AbstractKoth implements Koth {
                 return state == KothState.RUNNING;
         }
 
-        public boolean isInsideArea(Player player) {
+        public boolean isInsideArea(@NotNull Player player) {
                 return area.contains(player.getLocation());
         }
 

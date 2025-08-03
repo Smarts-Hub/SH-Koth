@@ -18,8 +18,10 @@ public interface Koth {
     
     @NotNull String getId();
     @NotNull String getDisplayName();
+
     int getDuration();
     int getCaptureTime();
+
     @NotNull Area getArea();
     @NotNull Mode getMode();
     @NotNull List<Schedule> getSchedules();
@@ -28,6 +30,7 @@ public interface Koth {
     
     @NotNull KothState getState();
     @Nullable UUID getCurrentCapturer();
+
     long getCaptureStartTime();
     int getRemainingTime();
     @NotNull Set<UUID> getWinners();
