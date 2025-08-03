@@ -28,6 +28,19 @@ type: "solo"
 # If the KoTH is played in solo mode, this value is ignored.
 team-size: 4
 
+# Should a team be created automatically if a player joins the KoTH area?
+# If set to true, a team will be created and assigned for the player if they are not already in a team.
+# If set to false, the player must be in a team to SCORE the koth.
+# This parameter is only relevant if the KoTH is played in team mode, in solo mode it is ignored.
+create-team-if-not-exists: true
+
+# Should players be denied entry to the KoTH if they are not in a team?
+# If set to true, players who are not in a team will not be able to enter the KoTH area.
+# If set to false, players can enter the KoTH area even if they are not in a team.
+# If "create-team-if-not-exists" is set to true, players will be automatically added to a team allowing them to enter.
+# This parameter is only relevant if the KoTH is played in team mode, in solo mode it is ignored.
+deny-entry-if-not-in-team: false
+
 # The time in seconds that a player must stay in the KoTH area to capture it.
 capture-time: 20
 
