@@ -1,7 +1,6 @@
 package dev.smartshub.shkoth.koth.solo;
 
 
-import dev.smartshub.shkoth.api.event.koth.KothStateChangeEvent;
 import dev.smartshub.shkoth.api.model.koth.AbstractKoth;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
@@ -34,7 +33,6 @@ public class SoloKoth extends AbstractKoth {
         this.currentCapturer = null;
         this.captureStartTime = 0;
 
-        // TODO: send message and run start commands
     }
 
     @Override
@@ -43,8 +41,6 @@ public class SoloKoth extends AbstractKoth {
         this.inside.clear();
         this.currentCapturer = null;
         this.captureStartTime = 0;
-
-        //TODO: send message and run end commands and rewards
 
     }
 
@@ -60,7 +56,6 @@ public class SoloKoth extends AbstractKoth {
         }
 
         handleCapture();
-        // Should send messages eventually??!
     }
 
     private void handleCapture() {
@@ -101,7 +96,6 @@ public class SoloKoth extends AbstractKoth {
 
     private void startCapture(Player player) {
         setCurrentCapturer(player);
-        //TODO: send message/broadcast
     }
 
     private void stopCapture() {
@@ -157,11 +151,6 @@ public class SoloKoth extends AbstractKoth {
         //TODO: give physical rewards to the winner and commands
     }
 
-    @Override
-    protected void fireStateChangeEvent(KothState oldState, KothState newState) {
-        KothStateChangeEvent event = new KothStateChangeEvent(this, oldState, newState);
-        Bukkit.getPluginManager().callEvent(event);
-    }
 
     @Override
     public @NotNull Set<UUID> getWinners() {

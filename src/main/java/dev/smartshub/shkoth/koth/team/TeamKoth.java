@@ -89,9 +89,4 @@ public class TeamKoth extends AbstractKoth {
     public @NotNull List<Player> getWinnerPlayers() {
         return List.of();
     }
-
-    @Override
-    protected void fireStateChangeEvent(KothState oldState, KothState newState) {
-
-    }
 }

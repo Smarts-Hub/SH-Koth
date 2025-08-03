@@ -25,9 +25,9 @@ public class KothEndEvent extends Event {
         CAPTURE_COMPLETED
     }
 
-    public KothEndEvent(Koth koth, Set<UUID> winners, EndReason reason) {
+    public KothEndEvent(Koth koth, EndReason reason) {
         this.koth = koth;
-        this.winners = new HashSet<>(winners);
+        this.winners = new HashSet<>(koth.getWinners());
         this.reason = reason;
     }
 

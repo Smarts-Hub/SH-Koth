@@ -23,6 +23,8 @@ public abstract class AbstractKoth implements Koth {
         protected final Commands commands;
         protected final List<PhysicalReward> physicalRewards;
 
+        private final KothEventDispatcher eventDispatcher;
+
         // Mutable data (runtime)
         protected KothState state = KothState.INACTIVE;
         protected Set<UUID> inside;
@@ -43,6 +45,8 @@ public abstract class AbstractKoth implements Koth {
                 this.commands = commands;
                 this.physicalRewards = List.copyOf(physicalRewards);
                 this.remainingTime = duration;
+
+                this.eventDispatcher = new KothEventDispatcher();
         }
 
         public @NotNull String getId() { return id; }
@@ -77,15 +81,18 @@ public abstract class AbstractKoth implements Koth {
         }
 
         protected void setState(KothState newState) {
+                boolean eventFired = eventDispatcher.fireKothStateChangeEvent(this, state, newState);
+                if(!eventFired) return;
+
                 KothState oldState = this.state;
                 this.state = newState;
-                fireStateChangeEvent(oldState, newState);
         }
 
         protected void setCurrentCapturer(Player player) {
+
+
                 this.currentCapturer = player.getUniqueId();
                 this.captureStartTime = System.currentTimeMillis();
         }
 
-        protected abstract void fireStateChangeEvent(KothState oldState, KothState newState);
 }
