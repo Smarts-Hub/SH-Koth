@@ -1,7 +1,7 @@
 package dev.smartshub.shkoth.builder;
 
 import com.saicone.rtag.item.ItemTagStream;
-import dev.smartshub.shkoth.model.reward.PhysicalReward;
+import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
 import dev.smartshub.shkoth.storage.file.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;

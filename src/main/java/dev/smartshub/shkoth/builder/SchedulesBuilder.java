@@ -1,7 +1,7 @@
 package dev.smartshub.shkoth.builder;
 
-import dev.smartshub.shkoth.model.time.Day;
-import dev.smartshub.shkoth.model.time.Schedule;
+import dev.smartshub.shkoth.api.model.time.Day;
+import dev.smartshub.shkoth.api.model.time.Schedule;
 import dev.smartshub.shkoth.storage.file.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;

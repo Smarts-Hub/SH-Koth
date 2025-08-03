@@ -1,15 +1,15 @@
 package dev.smartshub.shkoth.builder;
 
-import dev.smartshub.shkoth.koth.Koth;
-import dev.smartshub.shkoth.model.koth.command.Commands;
-import dev.smartshub.shkoth.model.koth.guideline.KothType;
-import dev.smartshub.shkoth.model.koth.guideline.Mode;
-import dev.smartshub.shkoth.model.koth.type.SoloKoth;
-import dev.smartshub.shkoth.model.koth.type.TeamKoth;
-import dev.smartshub.shkoth.model.location.Area;
-import dev.smartshub.shkoth.model.location.Corner;
-import dev.smartshub.shkoth.model.reward.PhysicalReward;
-import dev.smartshub.shkoth.model.time.Schedule;
+import dev.smartshub.shkoth.api.model.koth.command.Commands;
+import dev.smartshub.shkoth.api.model.koth.guideline.KothType;
+import dev.smartshub.shkoth.api.model.koth.guideline.Mode;
+import dev.smartshub.shkoth.api.model.location.Area;
+import dev.smartshub.shkoth.api.model.location.Corner;
+import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
+import dev.smartshub.shkoth.api.model.time.Schedule;
+import dev.smartshub.shkoth.koth.AbstractKoth;
+import dev.smartshub.shkoth.koth.type.SoloKoth;
+import dev.smartshub.shkoth.koth.type.TeamKoth;
 import dev.smartshub.shkoth.storage.file.Configuration;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class KothBuilder {
     private final SchedulesBuilder schedulesBuilder = new SchedulesBuilder();
     private final PhysicalRewardsBuilder physicalRewardsBuilder = new PhysicalRewardsBuilder();
 
-    public Koth buildKothFromFile(Configuration config) {
+    public AbstractKoth buildKothFromFile(Configuration config) {
 
         String id = config.getName().replace(".yml", "");
         String displayName = config.getString("display-name");
@@ -57,13 +57,13 @@ public class KothBuilder {
                 config.getStringList("commands-perform.to-winners")
         );
 
-        Koth koth;
+        AbstractKoth abstractKoth;
         if (mode.type() == KothType.SOLO) {
-            koth = new SoloKoth(id, displayName, maxDuration, captureTime,area, mode, schedules, commands, physicalRewards);
+            abstractKoth = new SoloKoth(id, displayName, maxDuration, captureTime,area, mode, schedules, commands, physicalRewards);
         } else {
-            koth = new TeamKoth(id, displayName, maxDuration, captureTime,area, mode, schedules, commands, physicalRewards);
+            abstractKoth = new TeamKoth(id, displayName, maxDuration, captureTime,area, mode, schedules, commands, physicalRewards);
         }
 
-        return koth;
+        return abstractKoth;
     }
 }

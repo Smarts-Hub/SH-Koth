@@ -1,9 +1,11 @@
 package dev.smartshub.shkoth.registry;
 
-import dev.smartshub.shkoth.koth.Koth;
+import dev.smartshub.shkoth.api.core.Koth;
 import dev.smartshub.shkoth.loader.KothLoader;
 
 import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class KothRegistry {
 
@@ -19,8 +21,8 @@ public class KothRegistry {
         koths.add(koth);
     }
 
-    public void unregisterKoth(Koth koth) {
-        koths.remove(koth);
+    public void unregisterKoth(String kothId) {
+        koths.removeIf(koth -> koth.getId().equalsIgnoreCase(kothId));
     }
 
     public void reloadKoths() {
@@ -37,6 +39,37 @@ public class KothRegistry {
 
     public Set<Koth> getAllKoths() {
         return Set.copyOf(koths);
+    }
+
+    public Set<Koth> getRunningKoths() {
+        return koths.stream()
+                .filter(Koth::isRunning)
+                .collect(Collectors.toSet());
+    }
+
+    public Koth getKothByPlayer(UUID playerID) {
+        return koths.stream()
+                .filter(koth -> koth.getPlayersInside().contains(playerID))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean startKoth(String kothId) {
+        Koth koth = getKoth(kothId);
+        if (koth != null && !koth.isRunning()) {
+            koth.start();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean stopKoth(String kothId) {
+        Koth koth = getKoth(kothId);
+        if (koth != null && koth.isRunning()) {
+            koth.stop();
+            return true;
+        }
+        return false;
     }
 
 }
