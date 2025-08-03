@@ -1,5 +1,6 @@
 package dev.smartshub.shkoth.api.core;
 
+import dev.smartshub.shkoth.api.model.koth.Koth;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

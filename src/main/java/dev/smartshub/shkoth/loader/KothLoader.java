@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.loader;
 
-import dev.smartshub.shkoth.api.core.Koth;
+import dev.smartshub.shkoth.api.model.koth.Koth;
 import dev.smartshub.shkoth.builder.KothBuilder;
 import dev.smartshub.shkoth.storage.file.Configuration;
 import dev.smartshub.shkoth.storage.file.FileManager;

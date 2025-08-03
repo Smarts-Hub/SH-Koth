@@ -24,7 +24,6 @@ public class SHKoth extends ZapperJavaPlugin {
     @Override
     public void onDisable() {
         getLogger().info("SHKoth has been disabled!");
-
         KothAPIProvider.unload();
     }
 

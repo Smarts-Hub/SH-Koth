@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.koth;
 
-import dev.smartshub.shkoth.api.core.Koth;
+import dev.smartshub.shkoth.api.model.koth.Koth;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.model.koth.guideline.Mode;

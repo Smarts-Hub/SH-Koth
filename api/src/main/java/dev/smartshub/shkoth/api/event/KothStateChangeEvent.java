@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.api.event;
 
-import dev.smartshub.shkoth.api.core.Koth;
+import dev.smartshub.shkoth.api.model.koth.Koth;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

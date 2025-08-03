@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.api.event;
 
-import dev.smartshub.shkoth.api.core.Koth;
+import dev.smartshub.shkoth.api.model.koth.Koth;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

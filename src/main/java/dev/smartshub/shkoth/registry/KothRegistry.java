@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.registry;
 
-import dev.smartshub.shkoth.api.core.Koth;
+import dev.smartshub.shkoth.api.model.koth.Koth;
 import dev.smartshub.shkoth.loader.KothLoader;
 
 import java.util.Set;
