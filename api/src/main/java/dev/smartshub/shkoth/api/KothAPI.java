@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.api.core;
+package dev.smartshub.shkoth.api;
 
 import dev.smartshub.shkoth.api.model.koth.Koth;
 import org.bukkit.entity.Player;
@@ -26,7 +26,4 @@ public interface KothAPI {
     void registerKoth(@NotNull Koth koth);
     void unregisterKoth(@NotNull String kothId);
 
-    static KothAPI getInstance() {
-        return KothAPIProvider.getInstance();
-    }
 }

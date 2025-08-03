@@ -62,7 +62,7 @@ public class Notify {
 
     public static void broadcast(String path) {
         String fullPath = "broadcast." + path;
-        var config = FileManager.get("lang");
+        var config = FileManager.get("messages");
 
         if (config.isList(fullPath)) {
             List<String> lines = config.getStringList(fullPath);
@@ -84,7 +84,7 @@ public class Notify {
 
     private static String getMsg(String path) {
         String fullPath = "messages." + path;
-        String msg = FileManager.get("lang").getString(fullPath);
+        String msg = FileManager.get("messages").getString(fullPath);
         return msg != null ? msg : "<red>Message not found: " + fullPath;
     }
 }

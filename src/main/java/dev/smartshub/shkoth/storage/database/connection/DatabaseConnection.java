@@ -15,7 +15,7 @@ public class DatabaseConnection {
     private static String PASSWORD;
     private static boolean initialized = false;
 
-    static {
+     {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Class.forName("org.h2.Driver");
@@ -27,21 +27,21 @@ public class DatabaseConnection {
     public static void init() {
         if (initialized) return;
 
-        Configuration config = FileManager.get("config");
+        Configuration config = FileManager.get("database");
         config.saveFile();
 
-        String DRIVER = config.getString("database.driver", "mysql").toLowerCase();
-        String dbName = config.getString("database.db-name");
+        String DRIVER = config.getString("driver", "mysql").toLowerCase();
+        String dbName = config.getString("db-name");
 
         if (dbName == null) {
-            throw new IllegalArgumentException("No 'db-name' at config.yml");
+            throw new IllegalArgumentException("No 'db-name' at database.yml");
         }
 
         if (DRIVER.equals("mysql")) {
-            String host = config.getString("database.host");
-            String port = config.getString("database.port");
-            String username = config.getString("database.username");
-            String password = config.getString("database.password");
+            String host = config.getString("host");
+            String port = config.getString("port");
+            String username = config.getString("username");
+            String password = config.getString("password");
 
             if (host == null || port == null || username == null || password == null) {
                 throw new IllegalArgumentException("MySQL configuration is incomplete!");

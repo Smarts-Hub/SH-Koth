@@ -15,8 +15,8 @@ public class FileManager {
 
     public static void init(SHKoth pluginInstance) {
         plugin = pluginInstance;
-        load("config");
-        load("lang");
+        load("database");
+        load("messages");
         createKothsFolder();
     }
 

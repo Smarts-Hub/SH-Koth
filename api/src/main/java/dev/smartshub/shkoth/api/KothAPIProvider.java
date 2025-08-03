@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.api.core;
+package dev.smartshub.shkoth.api;
 
 public final class KothAPIProvider {
     private static KothAPI instance;
