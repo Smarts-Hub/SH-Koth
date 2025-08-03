@@ -4,8 +4,6 @@ import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.model.location.Area;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
-import dev.smartshub.shkoth.api.model.team.Team;
-import dev.smartshub.shkoth.api.model.team.TeamTracker;
 import dev.smartshub.shkoth.api.model.time.Schedule;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

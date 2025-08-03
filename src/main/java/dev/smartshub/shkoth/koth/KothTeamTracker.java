@@ -5,41 +5,53 @@ import dev.smartshub.shkoth.api.model.team.TeamTracker;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class KothTeamTracker implements TeamTracker {
 
     private final int maxTeamSize;
+    private final Set<Team> teams = new HashSet<>();
 
     public KothTeamTracker(int maxTeamSize) {
+        if (maxTeamSize < 1) {
+            throw new IllegalArgumentException("Max team size must be at least 1");
+        }
         this.maxTeamSize = maxTeamSize;
     }
-
-    // Redundant? Yes, but simplifies and increase logic speed
-    private final Map<UUID, Team> playerToTeam = new ConcurrentHashMap<>();
-    private final Map<UUID, Team> leaderToTeam = new ConcurrentHashMap<>();
+    
 
     @Override
     public Team getTeamFrom(UUID uuid) {
-        return playerToTeam.get(uuid);
+        return teams.stream()
+                .filter(team -> team.contains(uuid))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
     public boolean isTeamMember(UUID uuid) {
-        return playerToTeam.containsKey(uuid);
+        return teams.stream()
+                .anyMatch(team -> team.contains(uuid));
     }
 
     @Override
     public boolean isTeamLeader(UUID uuid) {
-        Team team = playerToTeam.get(uuid);
-        return team != null && team.isLeader(uuid);
+        return teams.stream()
+                .anyMatch(team -> team.isLeader(uuid));
     }
 
     @Override
     public void addMember(UUID uuid, Team team) {
-        Team currentTeam = playerToTeam.get(uuid);
+        Team currentTeam = getTeamFrom(uuid);
+
+        if (team.size() >= maxTeamSize && !team.contains(uuid)) {
+            throw new IllegalStateException("Team has reached maximum size of " + maxTeamSize);
+        }
 
         if (currentTeam != null) {
+            if (currentTeam.equals(team)) {
+                return;
+            }
+
             Team updatedOldTeam = currentTeam.removeMember(uuid);
             if (updatedOldTeam == null) {
                 dissolveTeam(currentTeam.leader());
@@ -48,13 +60,15 @@ public class KothTeamTracker implements TeamTracker {
             }
         }
 
-        Team updatedNewTeam = team.addMember(uuid);
-        updateTeam(updatedNewTeam);
+        if (!team.contains(uuid)) {
+            Team updatedNewTeam = team.addMember(uuid);
+            updateTeam(updatedNewTeam);
+        }
     }
 
     @Override
     public void removeMember(UUID uuid) {
-        Team currentTeam = playerToTeam.get(uuid);
+        Team currentTeam = getTeamFrom(uuid);
         if (currentTeam == null) return;
 
         Team updatedTeam = currentTeam.removeMember(uuid);
@@ -65,16 +79,14 @@ public class KothTeamTracker implements TeamTracker {
         }
     }
 
-    private void updateTeam(Team team) {
-        for (UUID member : team.members()) {
-            playerToTeam.put(member, team);
-        }
-        leaderToTeam.put(team.leader(), team);
+    private void updateTeam(Team updatedTeam) {
+        teams.removeIf(team -> team.leader().equals(updatedTeam.leader()));
+        teams.add(updatedTeam);
     }
 
     @Override
     public void clearTeam(UUID uuid) {
-        Team team = playerToTeam.get(uuid);
+        Team team = getTeamFrom(uuid);
         if (team != null) {
             dissolveTeam(team.leader());
         }
@@ -82,8 +94,7 @@ public class KothTeamTracker implements TeamTracker {
 
     @Override
     public void clearAllTeams() {
-        playerToTeam.clear();
-        leaderToTeam.clear();
+        teams.clear();
     }
 
     @Override
@@ -94,39 +105,43 @@ public class KothTeamTracker implements TeamTracker {
 
     @Override
     public boolean areTeammates(UUID player1, UUID player2) {
+        if (player1.equals(player2)) return true;
+
         Team team1 = getTeamFrom(player1);
-        Team team2 = getTeamFrom(player2);
-        return team1 != null && team1.equals(team2);
+        return team1 != null && team1.contains(player2);
     }
 
     @Override
     public Collection<Team> getAllTeams() {
-        return leaderToTeam.values();
+        return teams;
     }
 
     @Override
     public Optional<Team> getTeamByLeader(UUID leader) {
-        return Optional.ofNullable(leaderToTeam.get(leader));
+        return teams.stream()
+                .filter(team -> team.leader().equals(leader))
+                .findFirst();
     }
 
     @Override
     public Team createTeam(UUID leader) {
-        Team newTeam = Team.of(leader);
-        playerToTeam.put(leader, newTeam);
-        leaderToTeam.put(leader, newTeam);
+        if (getTeamByLeader(leader).isPresent()) {
+            throw new IllegalArgumentException("Player is already a team leader");
+        }
+
+        Team existingTeam = getTeamFrom(leader);
+        if (existingTeam != null) {
+            throw new IllegalArgumentException("Player is already in a team");
+        }
+
+        Team newTeam = Team.withLeader(leader);
+        teams.add(newTeam);
         return newTeam;
     }
 
     @Override
     public void dissolveTeam(UUID leader) {
-        Team team = leaderToTeam.get(leader);
-        if (team == null) return;
-
-        for (UUID member : team.members()) {
-            playerToTeam.remove(member);
-        }
-
-        leaderToTeam.remove(leader);
+        teams.removeIf(team -> team.leader().equals(leader));
     }
 
     @Override
@@ -139,5 +154,9 @@ public class KothTeamTracker implements TeamTracker {
         } else {
             return leaderName + "'s Team (" + team.size() + ")";
         }
+    }
+
+    public void cleanupInvalidTeams() {
+        teams.removeIf(team -> !team.isValid());
     }
 }
