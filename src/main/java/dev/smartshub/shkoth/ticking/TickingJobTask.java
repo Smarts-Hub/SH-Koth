@@ -1,13 +1,12 @@
-package dev.smartshub.shkoth.task;
+package dev.smartshub.shkoth.ticking;
 
-import dev.smartshub.shkoth.handler.CapturingKothHandler;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class TickingJobTask extends BukkitRunnable {
 
-    private final CapturingKothHandler capturedKothsHandler;
+    private final TickingKoth capturedKothsHandler;
 
-    public TickingJobTask(CapturingKothHandler capturedKothsHandler) {
+    public TickingJobTask(TickingKoth capturedKothsHandler) {
         this.capturedKothsHandler = capturedKothsHandler;
     }
 

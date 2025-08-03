@@ -1,13 +1,13 @@
-package dev.smartshub.shkoth.handler;
+package dev.smartshub.shkoth.ticking;
 
 import dev.smartshub.shkoth.api.model.koth.Koth;
 import dev.smartshub.shkoth.registry.KothRegistry;
 
-public class CapturingKothHandler {
+public class TickingKoth {
 
     private final KothRegistry kothRegistry;
 
-    public CapturingKothHandler(KothRegistry kothRegistry) {
+    public TickingKoth(KothRegistry kothRegistry) {
         this.kothRegistry = kothRegistry;
     }
 
