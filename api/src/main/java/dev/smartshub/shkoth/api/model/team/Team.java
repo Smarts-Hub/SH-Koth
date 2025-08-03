@@ -12,6 +12,9 @@ public record Team(
         int size
 ) {
 
+    //TODO: better implementation (ignoring solo) and think about logic for team creation:
+    // U enter to a koth with no team and what happens?
+
     public Team {
         if (leader == null) {
             throw new IllegalArgumentException("Leader cannot be null");
@@ -29,9 +32,6 @@ public record Team(
     }
 
     // Factory methods
-    public static Team solo(UUID player) {
-        return new Team(player, Set.of(player), 1);
-    }
 
     public static Team withLeader(UUID leader) {
         return new Team(leader, Set.of(leader), 1);
@@ -165,10 +165,6 @@ public record Team(
 
     public boolean isValid() {
         return leader != null && members != null && members.contains(leader) && members.size() == size;
-    }
-
-    public boolean isSolo() {
-        return size == 1;
     }
 
     @Override
