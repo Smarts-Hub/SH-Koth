@@ -1,7 +1,5 @@
 package dev.smartshub.shkoth.koth;
 
-import dev.smartshub.shkoth.SHKoth;
-import dev.smartshub.shkoth.koth.timer.KothTimer;
 import dev.smartshub.shkoth.model.koth.command.Commands;
 import dev.smartshub.shkoth.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.model.koth.guideline.Mode;
@@ -25,7 +23,6 @@ public abstract class Koth {
         protected final List<Schedule> schedules;
         protected final Commands commands;
         protected final List<PhysicalReward> physicalRewards;
-        protected final KothTimer timer;
 
         // Mutable data (runtime)
         protected KothState state = KothState.INACTIVE;
@@ -48,9 +45,6 @@ public abstract class Koth {
                 this.commands = commands;
                 this.physicalRewards = List.copyOf(physicalRewards);
                 this.remainingTime = duration;
-
-                timer = new KothTimer(this);
-                timer.runTaskTimer(SHKoth.getInstance(), 0L, 20L);
         }
 
         public String getId() { return id; }

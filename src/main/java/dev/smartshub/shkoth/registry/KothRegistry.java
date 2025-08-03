@@ -35,4 +35,8 @@ public class KothRegistry {
                 .orElse(null);
     }
 
+    public Set<Koth> getAllKoths() {
+        return Set.copyOf(koths);
+    }
+
 }
