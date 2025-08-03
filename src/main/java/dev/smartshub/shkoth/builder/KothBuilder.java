@@ -44,7 +44,7 @@ public class KothBuilder {
 
         KothType kothType = KothType.fromString(config.getString("type", "solo"));
 
-        Team team = new Team(null, Set.of(), config.getInt("team-size"));
+        final int teamSize = config.getInt("team-size");
 
         // Load schedules and rewards code is "dirty", doing it in a separate class to maintain clean code
         List<Schedule> schedules = schedulesBuilder.getSchedulesFrom(config);
@@ -59,9 +59,9 @@ public class KothBuilder {
 
         Koth koth;
         if (kothType.equals(KothType.SOLO)) {
-            koth = new SoloKoth(id, displayName, maxDuration, captureTime,area, team, schedules, commands, physicalRewards);
+            koth = new SoloKoth(id, displayName, maxDuration, captureTime,area, schedules, commands, physicalRewards);
         } else {
-            koth = new TeamKoth(id, displayName, maxDuration, captureTime,area, team, schedules, commands, physicalRewards);
+            koth = new TeamKoth(id, displayName, maxDuration, captureTime, area, teamSize, schedules, commands, physicalRewards);
         }
 
         return koth;

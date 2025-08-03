@@ -1,12 +1,13 @@
 package dev.smartshub.shkoth.koth.type;
 
-import dev.smartshub.shkoth.api.model.team.Team;
+import dev.smartshub.shkoth.api.model.team.TeamTracker;
 import dev.smartshub.shkoth.koth.AbstractKoth;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.model.location.Area;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.model.time.Schedule;
+import dev.smartshub.shkoth.koth.KothTeamTracker;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,8 +18,11 @@ import java.util.UUID;
 
 public class TeamKoth extends AbstractKoth {
 
-    public TeamKoth(String id, String displayName, int duration, int captureTime, Area area, Team team, List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards) {
-        super(id, displayName, duration, captureTime, area, team, schedules, commands, physicalRewards);
+    private final TeamTracker teamTracker;
+
+    public TeamKoth(String id, String displayName, int duration, int captureTime, Area area, int teamSize, List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards) {
+        super(id, displayName, duration, captureTime, area, schedules, commands, physicalRewards);
+        teamTracker = new KothTeamTracker(teamSize);
     }
 
     @Override

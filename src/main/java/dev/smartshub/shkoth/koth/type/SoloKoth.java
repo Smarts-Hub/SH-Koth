@@ -2,7 +2,6 @@ package dev.smartshub.shkoth.koth.type;
 
 
 import dev.smartshub.shkoth.api.event.KothStateChangeEvent;
-import dev.smartshub.shkoth.api.model.team.Team;
 import dev.smartshub.shkoth.koth.AbstractKoth;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
@@ -21,8 +20,9 @@ import java.util.UUID;
 
 public class SoloKoth extends AbstractKoth {
 
-    public SoloKoth(String id, String displayName, int duration, int captureTime, Area area, Team team, List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards) {
-        super(id, displayName, duration, captureTime, area, team, schedules, commands, physicalRewards);
+    public SoloKoth(String id, String displayName, int duration, int captureTime, Area area,
+                    List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards) {
+        super(id, displayName, duration, captureTime, area, schedules, commands, physicalRewards);
     }
 
     @Override

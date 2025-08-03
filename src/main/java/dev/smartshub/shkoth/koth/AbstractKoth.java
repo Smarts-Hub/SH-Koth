@@ -5,7 +5,6 @@ import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.model.location.Area;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
-import dev.smartshub.shkoth.api.model.team.Team;
 import dev.smartshub.shkoth.api.model.time.Schedule;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +20,6 @@ public abstract class AbstractKoth implements Koth {
         protected final int duration;
         protected final int captureTime;
         protected final Area area;
-        protected final Team team;
         protected final List<Schedule> schedules;
         protected final Commands commands;
         protected final List<PhysicalReward> physicalRewards;
@@ -35,14 +33,13 @@ public abstract class AbstractKoth implements Koth {
         protected int remainingTime;
 
         public AbstractKoth(String id, String displayName, int duration, int captureTime, Area area,
-                            Team team, List<Schedule> schedules, Commands commands,
+                            List<Schedule> schedules, Commands commands,
                             List<PhysicalReward> physicalRewards) {
                 this.id = id;
                 this.displayName = displayName;
                 this.duration = duration;
                 this.captureTime = captureTime;
                 this.area = area;
-                this.team = team;
                 this.schedules = List.copyOf(schedules);
                 this.commands = commands;
                 this.physicalRewards = List.copyOf(physicalRewards);
@@ -54,7 +51,6 @@ public abstract class AbstractKoth implements Koth {
         public int getDuration() { return duration; }
         public int getCaptureTime() { return captureTime; }
         public @NotNull Area getArea() { return area; }
-        public @NotNull Team getTeam() { return team; }
         public @NotNull List<Schedule> getSchedules() { return schedules; }
         public @NotNull Commands getCommands() { return commands; }
         public @NotNull List<PhysicalReward> getPhysicalRewards() { return physicalRewards; }
