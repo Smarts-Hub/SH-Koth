@@ -1,7 +1,7 @@
 package dev.smartshub.shkoth.koth.type;
 
 
-import dev.smartshub.shkoth.api.event.KothStateChangeEvent;
+import dev.smartshub.shkoth.api.event.koth.KothStateChangeEvent;
 import dev.smartshub.shkoth.koth.AbstractKoth;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
