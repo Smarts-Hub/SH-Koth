@@ -111,7 +111,7 @@ public class KothTeamTracker implements TeamTracker {
 
     @Override
     public Team createTeam(UUID leader) {
-        Team newTeam = Team.solo(leader);
+        Team newTeam = Team.of(leader);
         playerToTeam.put(leader, newTeam);
         leaderToTeam.put(leader, newTeam);
         return newTeam;
