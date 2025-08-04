@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.api.model.koth.guideline;
+package dev.smartshub.shkoth.api.model.koth.tally;
 
 import dev.smartshub.shkoth.api.model.koth.Koth;
 

@@ -1,8 +1,8 @@
-package dev.smartshub.shkoth.koth.tally;
+package dev.smartshub.shkoth.koth.tally.capture;
 
 import dev.smartshub.shkoth.api.event.koth.PlayerStopKothCaptureEvent;
 import dev.smartshub.shkoth.api.model.koth.Koth;
-import dev.smartshub.shkoth.api.model.koth.guideline.Tally;
+import dev.smartshub.shkoth.api.model.koth.tally.Tally;
 import dev.smartshub.shkoth.api.model.team.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
