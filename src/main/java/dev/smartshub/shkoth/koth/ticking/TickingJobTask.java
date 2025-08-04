@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.ticking;
+package dev.smartshub.shkoth.koth.ticking;
 
 import org.bukkit.scheduler.BukkitRunnable;
 

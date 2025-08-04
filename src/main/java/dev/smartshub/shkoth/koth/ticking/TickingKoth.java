@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.ticking;
+package dev.smartshub.shkoth.koth.ticking;
 
 import dev.smartshub.shkoth.api.model.koth.Koth;
 import dev.smartshub.shkoth.koth.registry.KothRegistry;
