@@ -1,12 +1,12 @@
-package dev.smartshub.shkoth.koth.team;
+package dev.smartshub.shkoth.koth.model;
 
 import dev.smartshub.shkoth.api.model.team.TeamTracker;
 import dev.smartshub.shkoth.api.model.koth.AbstractKoth;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
-import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.model.location.Area;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.model.time.Schedule;
+import dev.smartshub.shkoth.koth.track.KothTeamTracker;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

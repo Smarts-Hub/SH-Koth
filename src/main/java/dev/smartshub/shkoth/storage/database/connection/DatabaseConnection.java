@@ -1,8 +1,8 @@
 package dev.smartshub.shkoth.storage.database.connection;
 
 
-import dev.smartshub.shkoth.storage.file.Configuration;
-import dev.smartshub.shkoth.storage.file.FileManager;
+import dev.smartshub.shkoth.storage.config.Configuration;
+import dev.smartshub.shkoth.storage.config.FileManager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

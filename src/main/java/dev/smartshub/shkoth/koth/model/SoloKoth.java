@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.koth.solo;
+package dev.smartshub.shkoth.koth.model;
 
 
 import dev.smartshub.shkoth.api.model.koth.AbstractKoth;

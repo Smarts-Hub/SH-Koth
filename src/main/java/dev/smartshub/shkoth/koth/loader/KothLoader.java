@@ -1,9 +1,9 @@
-package dev.smartshub.shkoth.loader;
+package dev.smartshub.shkoth.koth.loader;
 
 import dev.smartshub.shkoth.api.model.koth.Koth;
-import dev.smartshub.shkoth.builder.KothBuilder;
-import dev.smartshub.shkoth.storage.file.Configuration;
-import dev.smartshub.shkoth.storage.file.FileManager;
+import dev.smartshub.shkoth.koth.builder.KothBuilder;
+import dev.smartshub.shkoth.storage.config.Configuration;
+import dev.smartshub.shkoth.storage.config.FileManager;
 
 import java.util.HashSet;
 import java.util.Set;

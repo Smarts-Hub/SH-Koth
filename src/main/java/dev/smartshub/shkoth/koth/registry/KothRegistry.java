@@ -1,7 +1,7 @@
-package dev.smartshub.shkoth.registry;
+package dev.smartshub.shkoth.koth.registry;
 
 import dev.smartshub.shkoth.api.model.koth.Koth;
-import dev.smartshub.shkoth.loader.KothLoader;
+import dev.smartshub.shkoth.koth.loader.KothLoader;
 
 import java.util.Set;
 import java.util.UUID;

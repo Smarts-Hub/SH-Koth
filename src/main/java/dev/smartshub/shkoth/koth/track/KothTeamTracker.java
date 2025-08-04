@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.koth.team;
+package dev.smartshub.shkoth.koth.track;
 
 import dev.smartshub.shkoth.api.model.team.Team;
 import dev.smartshub.shkoth.api.model.team.TeamTracker;

@@ -2,7 +2,7 @@ package dev.smartshub.shkoth;
 
 import dev.smartshub.shkoth.api.model.koth.Koth;
 import dev.smartshub.shkoth.api.KothAPI;
-import dev.smartshub.shkoth.registry.KothRegistry;
+import dev.smartshub.shkoth.koth.registry.KothRegistry;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

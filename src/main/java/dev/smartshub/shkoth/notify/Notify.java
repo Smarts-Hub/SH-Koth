@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.notify;
 
-import dev.smartshub.shkoth.storage.file.FileManager;
+import dev.smartshub.shkoth.storage.config.FileManager;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;

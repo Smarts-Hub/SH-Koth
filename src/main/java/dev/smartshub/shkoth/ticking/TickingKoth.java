@@ -1,7 +1,7 @@
 package dev.smartshub.shkoth.ticking;
 
 import dev.smartshub.shkoth.api.model.koth.Koth;
-import dev.smartshub.shkoth.registry.KothRegistry;
+import dev.smartshub.shkoth.koth.registry.KothRegistry;
 
 public class TickingKoth {
 

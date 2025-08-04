@@ -1,8 +1,8 @@
 package dev.smartshub.shkoth;
 
 import dev.smartshub.shkoth.api.KothAPIProvider;
-import dev.smartshub.shkoth.registry.KothRegistry;
-import dev.smartshub.shkoth.storage.file.FileManager;
+import dev.smartshub.shkoth.koth.registry.KothRegistry;
+import dev.smartshub.shkoth.storage.config.FileManager;
 import revxrsal.zapper.ZapperJavaPlugin;
 
 public class SHKoth extends ZapperJavaPlugin {
