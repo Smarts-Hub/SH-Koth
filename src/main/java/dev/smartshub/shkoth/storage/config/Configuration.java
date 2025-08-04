@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.storage.file;
+package dev.smartshub.shkoth.storage.config;
 
 import dev.smartshub.shkoth.SHKoth;
 import org.bukkit.configuration.InvalidConfigurationException;
