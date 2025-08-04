@@ -2,7 +2,6 @@ package dev.smartshub.shkoth.storage.database.connection;
 
 
 import dev.smartshub.shkoth.storage.config.Configuration;
-import dev.smartshub.shkoth.storage.config.FileManager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,7 +26,7 @@ public class DatabaseConnection {
     public static void init() {
         if (initialized) return;
 
-        Configuration config = FileManager.get("database");
+        Configuration config = null;
         config.saveFile();
 
         String DRIVER = config.getString("driver", "mysql").toLowerCase();

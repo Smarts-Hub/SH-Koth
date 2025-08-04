@@ -7,10 +7,12 @@ import dev.smartshub.shkoth.api.model.koth.KothEventDispatcher;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothType;
+import dev.smartshub.shkoth.api.model.koth.tally.Tally;
 import dev.smartshub.shkoth.api.model.location.Area;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.model.team.Team;
 import dev.smartshub.shkoth.api.model.time.Schedule;
+import dev.smartshub.shkoth.api.model.koth.tally.TallyFactory;
 import dev.smartshub.shkoth.koth.track.KothTeamTracker;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -26,6 +28,7 @@ public class Koth extends AbstractKoth {
 
     private final KothEventDispatcher eventDispatcher = new KothEventDispatcher();
     private final KothTeamTracker teamTracker;
+    private final Tally tally;
     private Team currentCapturingTeam;
     private long captureStartTime;
 
@@ -33,7 +36,9 @@ public class Koth extends AbstractKoth {
                 List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards,
                 int maxTeamSize, boolean denyEnterWithoutTeam, boolean createTeamIfNotExistsOnEnter, KothType type) {
         super(id, displayName, duration, captureTime, area, schedules, commands, physicalRewards);
+
         this.teamTracker = new KothTeamTracker(maxTeamSize);
+        this.tally = TallyFactory.create(type, this);
     }
 
     @Override
@@ -75,7 +80,7 @@ public class Koth extends AbstractKoth {
     }
 
     private void handleCapture() {
-        //TODO: tally classes
+        tally.handle();
     }
 
     public void startCapture(Team team) {

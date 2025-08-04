@@ -9,10 +9,6 @@ import java.util.UUID;
 
 public class KothEventDispatcher {
 
-    //TODO: make cancellable events return isCancelled() instead of void
-    // and integrate with (firstly) abstract Koth class and then impl at plugin level
-    // also do it with team events, but TeamKoth should be implemented ;))
-
     public KothStartEvent fireKothStartEvent(Koth koth) {
         KothStartEvent event = new KothStartEvent(koth);
         Bukkit.getPluginManager().callEvent(event);

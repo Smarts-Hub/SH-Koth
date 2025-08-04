@@ -1,7 +1,11 @@
 package dev.smartshub.shkoth;
 
 import dev.smartshub.shkoth.api.KothAPIProvider;
+import dev.smartshub.shkoth.api.model.koth.guideline.KothType;
 import dev.smartshub.shkoth.koth.registry.KothRegistry;
+import dev.smartshub.shkoth.api.model.koth.tally.TallyFactory;
+import dev.smartshub.shkoth.koth.tally.capture.CaptureTally;
+import dev.smartshub.shkoth.koth.tally.score.ScoreTally;
 import dev.smartshub.shkoth.storage.config.service.ConfigService;
 import revxrsal.zapper.ZapperJavaPlugin;
 
@@ -15,6 +19,7 @@ public class SHKoth extends ZapperJavaPlugin {
     @Override
     public void onEnable() {
         getLogger().info("SHKoth has been enabled!");
+        factoryRegister();
         setUpConfig();
         initAPI();
     }
@@ -23,6 +28,12 @@ public class SHKoth extends ZapperJavaPlugin {
     public void onDisable() {
         getLogger().info("SHKoth has been disabled!");
         KothAPIProvider.unload();
+    }
+
+    private void factoryRegister(){
+        TallyFactory.register(KothType.CAPTURE, CaptureTally::new);
+        TallyFactory.register(KothType.SCORE, ScoreTally::new);
+
     }
 
     private void initAPI() {

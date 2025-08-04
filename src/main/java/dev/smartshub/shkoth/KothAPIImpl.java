@@ -20,17 +20,17 @@ public class KothAPIImpl implements KothAPI {
     
     @Override
     public @Nullable Koth getKoth(@NotNull String id) {
-        return kothRegistry.getKoth(id);
+        return kothRegistry.get(id);
     }
     
     @Override
     public @NotNull Collection<Koth> getAllKoths() {
-        return kothRegistry.getAllKoths();
+        return kothRegistry.getAll();
     }
     
     @Override
     public @NotNull Collection<Koth> getRunningKoths() {
-        return kothRegistry.getRunningKoths();
+        return kothRegistry.getRunning();
     }
     
     @Override
@@ -51,11 +51,11 @@ public class KothAPIImpl implements KothAPI {
     
     @Override
     public void registerKoth(@NotNull Koth koth) {
-        kothRegistry.registerKoth(koth);
+        kothRegistry.register(koth);
     }
     
     @Override
     public void unregisterKoth(@NotNull String kothId) {
-        kothRegistry.unregisterKoth(kothId);
+        kothRegistry.unregister(kothId);
     }
 }

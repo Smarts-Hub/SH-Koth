@@ -19,34 +19,34 @@ public class KothRegistry {
     public KothRegistry(ConfigService configService) {
         this.configService = configService;
         this.kothLoader = new KothLoader(configService);
-        this.koths = kothLoader.loadKoths();
+        this.koths = kothLoader.load();
     }
 
-    public void registerKoth(Koth koth) {
+    public void register(Koth koth) {
         koths.add(koth);
     }
 
-    public void unregisterKoth(String kothId) {
+    public void unregister(String kothId) {
         koths.removeIf(koth -> koth.getId().equalsIgnoreCase(kothId));
     }
 
     public void reloadKoths() {
         koths.clear();
-        koths.addAll(kothLoader.loadKoths());
+        koths.addAll(kothLoader.load());
     }
 
-    public Koth getKoth(String id) {
+    public Koth get(String id) {
         return koths.stream()
                 .filter(koth -> koth.getId().equalsIgnoreCase(id))
                 .findFirst()
                 .orElse(null);
     }
 
-    public Set<Koth> getAllKoths() {
+    public Set<Koth> getAll() {
         return Set.copyOf(koths);
     }
 
-    public Set<Koth> getRunningKoths() {
+    public Set<Koth> getRunning() {
         return koths.stream()
                 .filter(Koth::isRunning)
                 .collect(Collectors.toSet());
@@ -60,7 +60,7 @@ public class KothRegistry {
     }
 
     public boolean startKoth(String kothId) {
-        Koth koth = getKoth(kothId);
+        Koth koth = get(kothId);
         if (koth != null && !koth.isRunning()) {
             koth.start();
             return true;
@@ -69,7 +69,7 @@ public class KothRegistry {
     }
 
     public boolean stopKoth(String kothId) {
-        Koth koth = getKoth(kothId);
+        Koth koth = get(kothId);
         if (koth != null && koth.isRunning()) {
             koth.stop(KothEndEvent.EndReason.MANUAL_STOP);
             return true;

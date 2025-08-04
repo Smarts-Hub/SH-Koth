@@ -13,8 +13,14 @@ import java.util.stream.Collectors;
 
 public class CaptureTally implements Tally {
 
+    private final Koth koth;
+
+    public CaptureTally(Koth koth) {
+        this.koth = koth;
+    }
+
     @Override
-    public void handleTally(Koth koth){
+    public void handle(){
         Set<Team> eligibleTeams = koth.getPlayersInside().stream()
                 .map(uuid -> {
                     Player player = Bukkit.getPlayer(uuid);

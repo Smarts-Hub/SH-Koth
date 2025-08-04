@@ -12,7 +12,7 @@ public class TickingKoth {
     }
 
     public void handleTickForCapturedKoths() {
-        for(Koth koth : kothRegistry.getRunningKoths()){
+        for(Koth koth : kothRegistry.getRunning()){
             koth.tick();
         }
     }
