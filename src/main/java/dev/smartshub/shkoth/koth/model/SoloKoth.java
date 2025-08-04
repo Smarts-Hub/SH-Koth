@@ -1,7 +1,9 @@
 package dev.smartshub.shkoth.koth.model;
 
 
+import dev.smartshub.shkoth.api.event.koth.*;
 import dev.smartshub.shkoth.api.model.koth.AbstractKoth;
+import dev.smartshub.shkoth.api.model.koth.KothEventDispatcher;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.model.location.Area;
@@ -19,6 +21,8 @@ import java.util.UUID;
 
 public class SoloKoth extends AbstractKoth {
 
+    private final KothEventDispatcher eventDispatcher = new KothEventDispatcher();
+
     public SoloKoth(String id, String displayName, int duration, int captureTime, Area area,
                     List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards) {
         super(id, displayName, duration, captureTime, area, schedules, commands, physicalRewards);
@@ -26,22 +30,26 @@ public class SoloKoth extends AbstractKoth {
 
     @Override
     public void start() {
+
+        KothStartEvent event = eventDispatcher.fireKothStartEvent(this);
+
+        if(event.isCancelled()) return;
+
         setState(KothState.RUNNING);
         this.remainingTime = duration;
         this.inside.clear();
         this.winners.clear();
         this.currentCapturer = null;
         this.captureStartTime = 0;
-
     }
 
     @Override
-    public void stop() {
+    public void stop(KothEndEvent.EndReason reason) {
+        eventDispatcher.fireKothEndEvent(this, reason);
         setState(KothState.INACTIVE);
         this.inside.clear();
         this.currentCapturer = null;
         this.captureStartTime = 0;
-
     }
 
     @Override
@@ -51,7 +59,7 @@ public class SoloKoth extends AbstractKoth {
         // Decrease time and check if it has ended
         remainingTime--;
         if (remainingTime <= 0) {
-            stop();
+            stop(KothEndEvent.EndReason.TIME_EXPIRED);
             return;
         }
 
@@ -95,17 +103,20 @@ public class SoloKoth extends AbstractKoth {
     }
 
     private void startCapture(Player player) {
+        PlayerStartKothCaptureEvent event = eventDispatcher.firePlayerStartKothCaptureEvent(this, player, currentCapturer);
+        if( event.isCancelled()) return;
+
         setCurrentCapturer(player);
     }
 
-    private void stopCapture() {
+    private void stopCapture(PlayerStopKothCaptureEvent.StopReason reason) {
         Player previousCapturer = Bukkit.getPlayer(currentCapturer);
-        if (previousCapturer != null) {
-            long elapsedTime = (System.currentTimeMillis() - captureStartTime) / 1000;
-        }
+        long elapsedTime = (System.currentTimeMillis() - captureStartTime) / 1000;
+
+        PlayerStopKothCaptureEvent event = eventDispatcher.firePlayerStopKothCaptureEvent(this, previousCapturer, elapsedTime, reason);
+
         this.currentCapturer = null;
         this.captureStartTime = 0;
-        //TODO: send message/broadcast
     }
 
     private void checkCaptureProgress(Player player) {
@@ -124,18 +135,20 @@ public class SoloKoth extends AbstractKoth {
 
     private void completeCapture(Player player) {
         winners.add(player.getUniqueId());
-        //TODO: send message/broadcast about capture completion
-        stop();
+        stop(KothEndEvent.EndReason.CAPTURE_COMPLETED);
     }
 
     @Override
     public void onPlayerEnter(Player player) {
-        //TODO
+        PlayerEnterKothDuringRunEvent event = eventDispatcher.firePlayerEnterKothDuringRunEvent(this, player);
+        if (!event.isCancelled()) return;
+        //TODO: make cancellable with the "border" of the Koth
     }
 
     @Override
     public void onPlayerLeave(Player player) {
-        //TODO
+        PlayerLeaveKothDuringRunEvent event = new PlayerLeaveKothDuringRunEvent(this, player, currentCapturer != null);
+        //TODO: might make it cancellable for "extreme koth" or something similar?
     }
 
     @Override

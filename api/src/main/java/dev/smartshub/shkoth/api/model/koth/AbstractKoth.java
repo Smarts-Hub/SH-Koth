@@ -1,5 +1,8 @@
 package dev.smartshub.shkoth.api.model.koth;
 
+import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
+import dev.smartshub.shkoth.api.event.koth.KothStateChangeEvent;
+import dev.smartshub.shkoth.api.event.koth.PlayerStartKothCaptureEvent;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.model.location.Area;
@@ -65,7 +68,7 @@ public abstract class AbstractKoth implements Koth {
 
         // Abstract methods to be implemented by subclasses
         public abstract void start();
-        public abstract void stop();
+        public abstract void stop(KothEndEvent.EndReason reason);
         public abstract void tick();
         public abstract void onPlayerEnter(Player player);
         public abstract void onPlayerLeave(Player player);
@@ -81,15 +84,15 @@ public abstract class AbstractKoth implements Koth {
         }
 
         protected void setState(KothState newState) {
-                boolean eventFired = eventDispatcher.fireKothStateChangeEvent(this, state, newState);
-                if(!eventFired) return;
+                KothStateChangeEvent event = eventDispatcher.fireKothStateChangeEvent(this, this.state, newState);
+                if(event.isCancelled()) return;
 
-                KothState oldState = this.state;
                 this.state = newState;
         }
 
         protected void setCurrentCapturer(Player player) {
-
+                PlayerStartKothCaptureEvent event = eventDispatcher.firePlayerStartKothCaptureEvent(this, player, currentCapturer);
+                if(event.isCancelled()) return;
 
                 this.currentCapturer = player.getUniqueId();
                 this.captureStartTime = System.currentTimeMillis();

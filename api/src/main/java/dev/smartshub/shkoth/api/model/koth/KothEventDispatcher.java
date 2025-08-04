@@ -5,15 +5,18 @@ import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 public class KothEventDispatcher {
 
     //TODO: make cancellable events return isCancelled() instead of void
     // and integrate with (firstly) abstract Koth class and then impl at plugin level
     // also do it with team events, but TeamKoth should be implemented ;))
 
-    public void fireKothStartEvent(Koth koth) {
+    public KothStartEvent fireKothStartEvent(Koth koth) {
         KothStartEvent event = new KothStartEvent(koth);
         Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 
     public void fireKothEndEvent(Koth koth, KothEndEvent.EndReason reason) {
@@ -21,16 +24,16 @@ public class KothEventDispatcher {
         Bukkit.getPluginManager().callEvent(event);
     }
 
-    public boolean fireKothStateChangeEvent(Koth koth, KothState oldState, KothState newState) {
+    public KothStateChangeEvent fireKothStateChangeEvent(Koth koth, KothState oldState, KothState newState) {
         KothStateChangeEvent event = new KothStateChangeEvent(koth, oldState, newState);
         Bukkit.getPluginManager().callEvent(event);
-
-        return event.isCancelled();
+        return event;
     }
 
-    public void firePlayerEnterKothDuringRunEvent(Koth koth, Player player) {
+    public PlayerEnterKothDuringRunEvent firePlayerEnterKothDuringRunEvent(Koth koth, Player player) {
         PlayerEnterKothDuringRunEvent event = new PlayerEnterKothDuringRunEvent(koth, player);
         Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 
     public void firePlayerLeaveKothDuringRunEvent(Koth koth, Player player, boolean wasCapturing) {
@@ -38,14 +41,16 @@ public class KothEventDispatcher {
         Bukkit.getPluginManager().callEvent(event);
     }
 
-    public void firePlayerStartKothCaptureEvent(Koth koth, Player player, Player previousCapturer) {
+    public PlayerStartKothCaptureEvent firePlayerStartKothCaptureEvent(Koth koth, Player player, UUID previousCapturer) {
         PlayerStartKothCaptureEvent event = new PlayerStartKothCaptureEvent(koth, player, previousCapturer);
         Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 
-    public void firePlayerStopKothCaptureEvent(Koth koth, Player player, long elapsed, PlayerStopKothCaptureEvent.StopReason reason) {
+    public PlayerStopKothCaptureEvent firePlayerStopKothCaptureEvent(Koth koth, Player player, long elapsed, PlayerStopKothCaptureEvent.StopReason reason) {
         PlayerStopKothCaptureEvent event = new PlayerStopKothCaptureEvent(koth, player, elapsed, reason);
         Bukkit.getPluginManager().callEvent(event);
+        return event;
     }
 
 

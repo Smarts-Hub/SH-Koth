@@ -7,15 +7,17 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
+
 public class PlayerStartKothCaptureEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final Koth koth;
     private final Player player;
-    private final Player previousCapturer;
+    private final UUID previousCapturer;
     private boolean cancelled = false;
 
-    public PlayerStartKothCaptureEvent(Koth koth, Player player, Player previousCapturer) {
+    public PlayerStartKothCaptureEvent(Koth koth, Player player, UUID previousCapturer) {
         this.koth = koth;
         this.player = player;
         this.previousCapturer = previousCapturer;
@@ -23,7 +25,7 @@ public class PlayerStartKothCaptureEvent extends Event implements Cancellable {
 
     public Koth getKoth() { return koth; }
     public Player getPlayer() { return player; }
-    public Player getPreviousCapturer() { return previousCapturer; }
+    public UUID getPreviousCapturer() { return previousCapturer; }
     public boolean hadPreviousCapturer() { return previousCapturer != null; }
 
     @Override

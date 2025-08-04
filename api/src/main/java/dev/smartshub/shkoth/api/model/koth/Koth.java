@@ -1,5 +1,6 @@
 package dev.smartshub.shkoth.api.model.koth;
 
+import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.model.location.Area;
@@ -35,7 +36,7 @@ public interface Koth {
     @NotNull Set<UUID> getPlayersInside();
     
     void start();
-    void stop();
+    void stop(KothEndEvent.EndReason reason);
     void tick();
     boolean isRunning();
     
