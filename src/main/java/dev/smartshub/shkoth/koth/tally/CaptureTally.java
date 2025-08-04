@@ -1,4 +1,52 @@
 package dev.smartshub.shkoth.koth.tally;
 
-public class CaptureTally {
+import dev.smartshub.shkoth.api.event.koth.PlayerStopKothCaptureEvent;
+import dev.smartshub.shkoth.api.model.koth.Koth;
+import dev.smartshub.shkoth.api.model.koth.guideline.Tally;
+import dev.smartshub.shkoth.api.model.team.Team;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+public class CaptureTally implements Tally {
+
+    @Override
+    public void handleTally(Koth koth){
+        Set<Team> eligibleTeams = koth.getPlayersInside().stream()
+                .map(uuid -> {
+                    Player player = Bukkit.getPlayer(uuid);
+                    if (player == null || !koth.canPlayerCapture(player)) return null;
+
+                    Team team = koth.getTeamTracker().getTeamFrom(uuid);
+                    if (team == null) {
+                        team = koth.getTeamTracker().createTeam(uuid);
+                    }
+                    return team;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        if (eligibleTeams.isEmpty()) {
+            koth.stopCapture(PlayerStopKothCaptureEvent.StopReason.PLAYER_LEFT_ZONE);
+            return;
+        }
+
+        if (koth.getCurrentCapturingTeam() == null) {
+            Team firstTeam = eligibleTeams.iterator().next();
+            koth.startCapture(firstTeam);
+            return;
+        }
+
+        if (eligibleTeams.contains(koth.getCurrentCapturingTeam())) {
+            koth.checkCaptureProgress(koth.getCurrentCapturingTeam());
+        } else {
+            Team newTeam = eligibleTeams.iterator().next();
+            koth.stopCapture(PlayerStopKothCaptureEvent.StopReason.PLAYER_LEFT_ZONE);
+            koth.startCapture(newTeam);
+        }
+    }
+
 }

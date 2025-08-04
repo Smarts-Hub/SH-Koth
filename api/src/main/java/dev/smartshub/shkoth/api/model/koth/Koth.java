@@ -1,10 +1,13 @@
 package dev.smartshub.shkoth.api.model.koth;
 
 import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
+import dev.smartshub.shkoth.api.event.koth.PlayerStopKothCaptureEvent;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.model.location.Area;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
+import dev.smartshub.shkoth.api.model.team.Team;
+import dev.smartshub.shkoth.api.model.team.TeamTracker;
 import dev.smartshub.shkoth.api.model.time.Schedule;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -37,6 +40,9 @@ public interface Koth {
     
     void start();
     void stop(KothEndEvent.EndReason reason);
+    void stopCapture(PlayerStopKothCaptureEvent.StopReason reason);
+    void startCapture(Team team);
+    void checkCaptureProgress(Team team);
     void tick();
     boolean isRunning();
     
@@ -47,4 +53,7 @@ public interface Koth {
     int getCaptureProgress();
     @NotNull List<Player> getPlayersInsideList();
     @NotNull List<Player> getWinnerPlayers();
+    @NotNull TeamTracker getTeamTracker();
+
+    Team getCurrentCapturingTeam();
 }

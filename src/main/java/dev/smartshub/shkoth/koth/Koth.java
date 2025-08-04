@@ -19,10 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class Koth extends AbstractKoth {
 
@@ -77,41 +75,10 @@ public class Koth extends AbstractKoth {
     }
 
     private void handleCapture() {
-        Set<Team> eligibleTeams = inside.stream()
-                .map(uuid -> {
-                    Player player = Bukkit.getPlayer(uuid);
-                    if (player == null || !canPlayerCapture(player)) return null;
-
-                    Team team = teamTracker.getTeamFrom(uuid);
-                    if (team == null) {
-                        team = teamTracker.createTeam(uuid);
-                    }
-                    return team;
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-
-        if (eligibleTeams.isEmpty()) {
-            stopCapture(PlayerStopKothCaptureEvent.StopReason.PLAYER_LEFT_ZONE);
-            return;
-        }
-
-        if (currentCapturingTeam == null) {
-            Team firstTeam = eligibleTeams.iterator().next();
-            startCapture(firstTeam);
-            return;
-        }
-
-        if (eligibleTeams.contains(currentCapturingTeam)) {
-            checkCaptureProgress(currentCapturingTeam);
-        } else {
-            Team newTeam = eligibleTeams.iterator().next();
-            stopCapture(PlayerStopKothCaptureEvent.StopReason.PLAYER_LEFT_ZONE);
-            startCapture(newTeam);
-        }
+        //TODO: tally classes
     }
 
-    private void startCapture(Team team) {
+    public void startCapture(Team team) {
         Player representativePlayer = team.getLeaderPlayer();
         if (representativePlayer == null) return;
 
@@ -122,7 +89,7 @@ public class Koth extends AbstractKoth {
         this.captureStartTime = System.currentTimeMillis();
     }
 
-    private void stopCapture(PlayerStopKothCaptureEvent.StopReason reason) {
+    public void stopCapture(PlayerStopKothCaptureEvent.StopReason reason) {
         if (currentCapturingTeam == null) return;
 
         Player previousCapturer = Bukkit.getPlayer(currentCapturingTeam.leader());
@@ -134,7 +101,7 @@ public class Koth extends AbstractKoth {
         this.captureStartTime = 0;
     }
 
-    private void checkCaptureProgress(Team team) {
+    public void checkCaptureProgress(Team team) {
         long elapsedTime = (System.currentTimeMillis() - captureStartTime) / 1000;
 
         if (elapsedTime >= captureTime) {
@@ -175,7 +142,7 @@ public class Koth extends AbstractKoth {
         //TODO: give physical rewards to the winner and commands
     }
 
-    public KothTeamTracker getTeamTracker() {
+    public @NotNull KothTeamTracker getTeamTracker() {
         return teamTracker;
     }
 
@@ -214,4 +181,5 @@ public class Koth extends AbstractKoth {
     public @NotNull List<Player> getWinnerPlayers() {
         return List.of();
     }
+
 }
