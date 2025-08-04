@@ -1,8 +1,8 @@
-package dev.smartshub.shkoth.koth.builder;
+package dev.smartshub.shkoth.koth.builder.mapper;
 
 import com.saicone.rtag.item.ItemTagStream;
+import dev.smartshub.shkoth.api.model.config.ConfigContainer;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
-import dev.smartshub.shkoth.storage.config.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -10,9 +10,9 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhysicalRewardsBuilder {
+public class PhysicalRewardsMapper {
 
-    public List<PhysicalReward> getPhysicalRewardsFrom(Configuration config) {
+    public List<PhysicalReward> getPhysicalRewardsFrom(ConfigContainer config) {
         List<PhysicalReward> physicalRewards = new ArrayList<>();
 
         ConfigurationSection rewardsSection = config.getConfigurationSection("physical-rewards");

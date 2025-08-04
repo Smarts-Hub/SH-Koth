@@ -1,8 +1,8 @@
-package dev.smartshub.shkoth.koth.builder;
+package dev.smartshub.shkoth.koth.builder.mapper;
 
+import dev.smartshub.shkoth.api.model.config.ConfigContainer;
 import dev.smartshub.shkoth.api.model.time.Day;
 import dev.smartshub.shkoth.api.model.time.Schedule;
-import dev.smartshub.shkoth.storage.config.Configuration;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -10,9 +10,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SchedulesBuilder {
+public class SchedulesMapper {
 
-    public List<Schedule> getSchedulesFrom(Configuration config){
+    public List<Schedule> getSchedulesFrom(ConfigContainer config){
         List<Schedule> schedules = new ArrayList<>();
 
         ConfigurationSection section = config.getConfigurationSection("schedule");
@@ -26,8 +26,8 @@ public class SchedulesBuilder {
             ConfigurationSection entry = section.getConfigurationSection(key);
             if (entry == null) continue;
 
-            String day = entry.getString("day");
-            String hour = entry.getString("hour");
+            String day = entry.getString("day", "MONDAY");
+            String hour = entry.getString("hour", "19:00");
             schedules.add(new Schedule(Day.valueOf(day), LocalTime.parse(hour)));
         }
 

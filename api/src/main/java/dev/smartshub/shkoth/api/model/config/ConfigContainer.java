@@ -1,5 +1,7 @@
 package dev.smartshub.shkoth.api.model.config;
 
+import org.bukkit.configuration.ConfigurationSection;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -20,6 +22,7 @@ public interface ConfigContainer {
     long getLong(String path, long defaultValue);
     List<String> getStringList(String path, List<String> defaultValue);
 
+    ConfigurationSection getConfigurationSection(String path);
     boolean hasPath(String path);
     Set<String> getKeys(String path);
     String getName();

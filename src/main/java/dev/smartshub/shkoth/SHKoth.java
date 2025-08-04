@@ -15,11 +15,8 @@ public class SHKoth extends ZapperJavaPlugin {
     @Override
     public void onEnable() {
         getLogger().info("SHKoth has been enabled!");
-
-        initAPI();
-
         setUpConfig();
-
+        initAPI();
     }
 
     @Override
@@ -29,7 +26,7 @@ public class SHKoth extends ZapperJavaPlugin {
     }
 
     private void initAPI() {
-        kothRegistry = new KothRegistry();
+        kothRegistry = new KothRegistry(configService);
         kothAPI = new KothAPIImpl(kothRegistry);
         KothAPIProvider.setInstance(kothAPI);
     }

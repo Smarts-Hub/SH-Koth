@@ -17,7 +17,6 @@ public class KothTeamTracker implements TeamTracker {
         }
         this.maxTeamSize = maxTeamSize;
     }
-    
 
     @Override
     public Team getTeamFrom(UUID uuid) {

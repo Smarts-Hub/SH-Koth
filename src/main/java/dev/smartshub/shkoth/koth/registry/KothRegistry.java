@@ -1,7 +1,9 @@
 package dev.smartshub.shkoth.koth.registry;
 
+import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
 import dev.smartshub.shkoth.api.model.koth.Koth;
 import dev.smartshub.shkoth.koth.loader.KothLoader;
+import dev.smartshub.shkoth.storage.config.service.ConfigService;
 
 import java.util.Set;
 import java.util.UUID;
@@ -9,11 +11,14 @@ import java.util.stream.Collectors;
 
 public class KothRegistry {
 
-    private final KothLoader kothLoader = new KothLoader();
+    private final ConfigService configService;
+    private final KothLoader kothLoader;
 
     private final Set<Koth> koths;
 
-    public KothRegistry() {
+    public KothRegistry(ConfigService configService) {
+        this.configService = configService;
+        this.kothLoader = new KothLoader(configService);
         this.koths = kothLoader.loadKoths();
     }
 
@@ -66,7 +71,7 @@ public class KothRegistry {
     public boolean stopKoth(String kothId) {
         Koth koth = getKoth(kothId);
         if (koth != null && koth.isRunning()) {
-            koth.stop();
+            koth.stop(KothEndEvent.EndReason.MANUAL_STOP);
             return true;
         }
         return false;

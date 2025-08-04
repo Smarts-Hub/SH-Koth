@@ -3,6 +3,7 @@ package dev.smartshub.shkoth.storage.config;
 import dev.smartshub.shkoth.api.model.config.ConfigContainer;
 import dev.smartshub.shkoth.api.model.config.ConfigException;
 import dev.smartshub.shkoth.api.model.config.ConfigType;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.List;
 import java.util.Optional;
@@ -82,7 +83,12 @@ public class ConfigContainerImpl implements ConfigContainer {
         List<String> value = config.getStringList(path);
         return value != null && !value.isEmpty() ? value : defaultValue;
     }
-    
+
+    @Override
+    public ConfigurationSection getConfigurationSection(String path) {
+        return config.getConfigurationSection(path);
+    }
+
     @Override
     public boolean hasPath(String path) {
         return config.contains(path);

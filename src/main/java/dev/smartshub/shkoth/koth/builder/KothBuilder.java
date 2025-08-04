@@ -1,71 +1,66 @@
 package dev.smartshub.shkoth.koth.builder;
 
-import dev.smartshub.shkoth.api.model.koth.Koth;
+import dev.smartshub.shkoth.api.model.config.ConfigContainer;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothType;
 import dev.smartshub.shkoth.api.model.location.Area;
 import dev.smartshub.shkoth.api.model.location.Corner;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.model.time.Schedule;
-import dev.smartshub.shkoth.koth.model.SoloKoth;
-import dev.smartshub.shkoth.koth.model.TeamKoth;
-import dev.smartshub.shkoth.storage.config.Configuration;
+import dev.smartshub.shkoth.koth.Koth;
+import dev.smartshub.shkoth.koth.builder.mapper.PhysicalRewardsMapper;
+import dev.smartshub.shkoth.koth.builder.mapper.SchedulesMapper;
 
 import java.util.List;
 
 
 public class KothBuilder {
 
-    private final SchedulesBuilder schedulesBuilder = new SchedulesBuilder();
-    private final PhysicalRewardsBuilder physicalRewardsBuilder = new PhysicalRewardsBuilder();
+    private final SchedulesMapper schedulesMapper = new SchedulesMapper();
+    private final PhysicalRewardsMapper physicalRewardsMapper = new PhysicalRewardsMapper();
 
-    public Koth buildKothFromFile(Configuration config) {
+    public dev.smartshub.shkoth.api.model.koth.Koth buildKothFromFile(ConfigContainer config) {
 
         String id = config.getName().replace(".yml", "");
-        String displayName = config.getString("display-name");
-        int maxDuration = config.getInt("max-duration");
-        int captureTime = config.getInt("capture-time");
+        String displayName = config.getString("display-name", id);
+        int maxDuration = config.getInt("max-duration", 600);
+        int captureTime = config.getInt("capture-time", 30);
 
         Area area = new Area(
-                config.getString("world"),
+                config.getString("world", "world"),
                 new Corner(
-                        config.getInt("corner-1.x"),
-                        config.getInt("corner-1.y"),
-                        config.getInt("corner-1.z")
+                        config.getInt("corner-1.x", -16),
+                        config.getInt("corner-1.y", 64),
+                        config.getInt("corner-1.z", -16)
                 ),
                 new Corner(
-                        config.getInt("corner-2.x"),
-                        config.getInt("corner-2.y"),
-                        config.getInt("corner-2.z")
+                        config.getInt("corner-2.x", 16),
+                        config.getInt("corner-2.y", 80),
+                        config.getInt("corner-2.z", 16)
                 )
         );
 
-        KothType kothType = KothType.fromString(config.getString("type", "solo"));
+        KothType kothType = KothType.fromString(config.getString("type", "capture"));
 
-        final int teamSize = config.getInt("team-size");
+        final int teamSize = config.getInt("team-size", 1);
 
         // Load schedules and rewards code is "dirty", doing it in a separate class to maintain clean code
-        List<Schedule> schedules = schedulesBuilder.getSchedulesFrom(config);
-        List<PhysicalReward> physicalRewards = physicalRewardsBuilder.getPhysicalRewardsFrom(config);
+        List<Schedule> schedules = schedulesMapper.getSchedulesFrom(config);
+        List<PhysicalReward> physicalRewards = physicalRewardsMapper.getPhysicalRewardsFrom(config);
 
 
         Commands commands = new Commands(
-                config.getStringList("commands-perform.start"),
-                config.getStringList("commands-perform.end"),
-                config.getStringList("commands-perform.to-winners")
+                config.getStringList("commands-perform.start", List.of()),
+                config.getStringList("commands-perform.end", List.of()),
+                config.getStringList("commands-perform.to-winners", List.of())
         );
 
-        Koth koth;
-        if (kothType.equals(KothType.SOLO)) {
-            koth = new SoloKoth(id, displayName, maxDuration, captureTime,area, schedules, commands, physicalRewards);
-        } else {
-            boolean denyEnterWithoutTeam = config.getBoolean("deny-entry-if-not-in-team", false);
-            boolean createTeamIfNotExistsOnEnter = config.getBoolean("create-team-if-not-exists-on-enter", true);
 
-            koth = new TeamKoth(id, displayName, maxDuration, captureTime, denyEnterWithoutTeam, createTeamIfNotExistsOnEnter,
-                    area, teamSize, schedules, commands, physicalRewards);
-        }
+        boolean denyEnterWithoutTeam = config.getBoolean("deny-entry-if-not-in-team", false);
+        boolean createTeamIfNotExistsOnEnter = config.getBoolean("create-team-if-not-exists-on-enter", true);
 
-        return koth;
+
+        return new Koth(id, displayName, maxDuration, captureTime,area, schedules, commands,
+                physicalRewards, teamSize, denyEnterWithoutTeam, createTeamIfNotExistsOnEnter, kothType);
     }
 }

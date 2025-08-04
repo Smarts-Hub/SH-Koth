@@ -22,11 +22,12 @@ display-name: "<rainbow>King of the Hill"
 # The time in seconds that the KoTH will be active before it resets.
 max-duration: 300
 
-# Koths can be played in solo or team mode.
-type: "solo"
-# If the KoTH is played in team mode, this defines the maximum number of players per team.
-# If the KoTH is played in solo mode, this value is ignored.
-team-size: 4
+# Koths can be played in 'capture' or 'score'.
+type: "capture"
+
+# The size defines the number of team members that can score in the KoTH.
+# 1 is for solo mode, where each player scores individually.
+team-size: 1
 
 # Should a team be created automatically if a player joins the KoTH area?
 # If set to true, a team will be created and assigned for the player if they are not already in a team.
