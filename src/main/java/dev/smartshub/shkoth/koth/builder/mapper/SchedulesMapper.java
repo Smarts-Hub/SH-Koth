@@ -1,5 +1,6 @@
 package dev.smartshub.shkoth.koth.builder.mapper;
 
+import dev.smartshub.shkoth.api.model.builder.mapper.Mapper;
 import dev.smartshub.shkoth.api.model.config.ConfigContainer;
 import dev.smartshub.shkoth.api.model.time.Day;
 import dev.smartshub.shkoth.api.model.time.Schedule;
@@ -10,9 +11,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SchedulesMapper {
+public class SchedulesMapper implements Mapper<List<Schedule>, ConfigContainer> {
 
-    public List<Schedule> getSchedulesFrom(ConfigContainer config){
+    @Override
+    public List<Schedule> map(ConfigContainer config){
         List<Schedule> schedules = new ArrayList<>();
 
         ConfigurationSection section = config.getConfigurationSection("schedule");

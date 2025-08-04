@@ -1,25 +1,27 @@
 package dev.smartshub.shkoth.koth.builder;
 
+import dev.smartshub.shkoth.api.model.builder.Builder;
 import dev.smartshub.shkoth.api.model.config.ConfigContainer;
+import dev.smartshub.shkoth.api.model.koth.Koth;
 import dev.smartshub.shkoth.api.model.koth.command.Commands;
 import dev.smartshub.shkoth.api.model.koth.guideline.KothType;
 import dev.smartshub.shkoth.api.model.location.Area;
 import dev.smartshub.shkoth.api.model.location.Corner;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.model.time.Schedule;
-import dev.smartshub.shkoth.koth.Koth;
 import dev.smartshub.shkoth.koth.builder.mapper.PhysicalRewardsMapper;
 import dev.smartshub.shkoth.koth.builder.mapper.SchedulesMapper;
 
 import java.util.List;
 
 
-public class KothBuilder {
+public class KothBuilder implements Builder<Koth, ConfigContainer> {
 
     private final SchedulesMapper schedulesMapper = new SchedulesMapper();
     private final PhysicalRewardsMapper physicalRewardsMapper = new PhysicalRewardsMapper();
 
-    public dev.smartshub.shkoth.api.model.koth.Koth buildKothFromFile(ConfigContainer config) {
+    @Override
+    public Koth build(ConfigContainer config) {
 
         String id = config.getName().replace(".yml", "");
         String displayName = config.getString("display-name", id);
@@ -45,8 +47,8 @@ public class KothBuilder {
         final int teamSize = config.getInt("team-size", 1);
 
         // Load schedules and rewards code is "dirty", doing it in a separate class to maintain clean code
-        List<Schedule> schedules = schedulesMapper.getSchedulesFrom(config);
-        List<PhysicalReward> physicalRewards = physicalRewardsMapper.getPhysicalRewardsFrom(config);
+        List<Schedule> schedules = schedulesMapper.map(config);
+        List<PhysicalReward> physicalRewards = physicalRewardsMapper.map(config);
 
 
         Commands commands = new Commands(
@@ -60,7 +62,7 @@ public class KothBuilder {
         boolean createTeamIfNotExistsOnEnter = config.getBoolean("create-team-if-not-exists-on-enter", true);
 
 
-        return new Koth(id, displayName, maxDuration, captureTime,area, schedules, commands,
+        return new dev.smartshub.shkoth.koth.Koth(id, displayName, maxDuration, captureTime,area, schedules, commands,
                 physicalRewards, teamSize, denyEnterWithoutTeam, createTeamIfNotExistsOnEnter, kothType);
     }
 }
