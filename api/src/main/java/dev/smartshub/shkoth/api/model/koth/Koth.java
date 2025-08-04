@@ -51,8 +51,6 @@ public interface Koth {
     
     @Nullable Player getCurrentCapturerPlayer();
     int getCaptureProgress();
-    @NotNull List<Player> getPlayersInsideList();
-    @NotNull List<Player> getWinnerPlayers();
     @NotNull TeamTracker getTeamTracker();
 
     Team getCurrentCapturingTeam();

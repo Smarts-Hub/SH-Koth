@@ -1,6 +1,5 @@
 package dev.smartshub.shkoth.koth;
 
-
 import dev.smartshub.shkoth.api.event.koth.*;
 import dev.smartshub.shkoth.api.model.koth.AbstractKoth;
 import dev.smartshub.shkoth.api.model.koth.KothEventDispatcher;
@@ -157,12 +156,12 @@ public class Koth extends AbstractKoth {
 
     @Override
     public @NotNull Set<UUID> getWinners() {
-        return Set.of();
+        return winners;
     }
 
     @Override
     public @NotNull Set<UUID> getPlayersInside() {
-        return Set.of();
+        return inside;
     }
 
     @Override
@@ -175,16 +174,6 @@ public class Koth extends AbstractKoth {
         if (currentCapturingTeam == null || captureStartTime == 0) return 0;
         long elapsedTime = (System.currentTimeMillis() - captureStartTime) / 1000;
         return (int) Math.min(100, (elapsedTime * 100) / captureTime);
-    }
-
-    @Override
-    public @NotNull List<Player> getPlayersInsideList() {
-        return List.of();
-    }
-
-    @Override
-    public @NotNull List<Player> getWinnerPlayers() {
-        return List.of();
     }
 
 }
