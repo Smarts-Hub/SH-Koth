@@ -13,6 +13,7 @@ import dev.smartshub.shkoth.api.model.team.Team;
 import dev.smartshub.shkoth.api.model.time.Schedule;
 import dev.smartshub.shkoth.api.model.koth.tally.TallyFactory;
 import dev.smartshub.shkoth.koth.track.KothTeamTracker;
+import dev.smartshub.shkoth.service.koth.KothRewardService;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -26,6 +27,7 @@ import java.util.UUID;
 public class Koth extends AbstractKoth {
 
     private final KothEventDispatcher eventDispatcher = new KothEventDispatcher();
+    private final KothRewardService rewardService = new KothRewardService(this);
     private final KothTeamTracker teamTracker;
     private final Tally tally;
     private Team currentCapturingTeam;
@@ -122,6 +124,7 @@ public class Koth extends AbstractKoth {
     private void completeCapture(Team team) {
         winners.addAll(team.members());
         stop(KothEndEvent.EndReason.CAPTURE_COMPLETED);
+        giveRewards();
     }
 
     @Override
@@ -133,9 +136,33 @@ public class Koth extends AbstractKoth {
 
     @Override
     public void playerLeave(Player player) {
-        boolean wasCapturing = currentCapturingTeam != null && currentCapturingTeam.contains(player.getUniqueId());
-        eventDispatcher.firePlayerLeaveKothDuringRunEvent(this, player, wasCapturing);
-        //TODO: make cancellable with the "border" of the Koth
+        UUID playerId = player.getUniqueId();
+        boolean wasInside = inside.remove(playerId);
+
+        if (wasInside) {
+            boolean wasCapturing = currentCapturingTeam != null && currentCapturingTeam.contains(playerId);
+            eventDispatcher.firePlayerLeaveKothDuringRunEvent(this, player, wasCapturing);
+
+            //TODO: make cancellable with the "border" of the Koth
+
+            if (wasCapturing) {
+                stopCapture(PlayerStopKothCaptureEvent.StopReason.PLAYER_LEFT_ZONE);
+            }
+
+        }
+    }
+
+    public void removePlayerDirectly(UUID playerId) {
+        boolean wasInside = inside.remove(playerId);
+
+        if (wasInside) {
+            if (currentCapturingTeam != null && currentCapturingTeam.contains(playerId)) {
+                stopCapture(PlayerStopKothCaptureEvent.StopReason.PLAYER_DISCONNECTED);
+            }
+
+            teamTracker.removeMember(playerId);
+        }
+
     }
 
     @Override
@@ -144,7 +171,7 @@ public class Koth extends AbstractKoth {
     }
 
     private void giveRewards() {
-        //TODO: give physical rewards to the winner and commands
+        rewardService.grantRewards();
     }
 
     public @NotNull KothTeamTracker getTeamTracker() {

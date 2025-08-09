@@ -47,6 +47,7 @@ public interface Koth {
     boolean isRunning();
     void playerEnter(Player player);
     void playerLeave(Player player);
+    void removePlayerDirectly(UUID playerUUID);
     
     boolean isInsideArea(@NotNull Player player);
     boolean canPlayerCapture(@NotNull Player player);
