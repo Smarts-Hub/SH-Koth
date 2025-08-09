@@ -8,13 +8,13 @@ world: world_name
 # Corner coordinates for the KoTH area
 # These coordinates define the rectangular area of the KoTH.
 corner-1:
-  x:
-  y:
-  z:
+  x: 16
+  y: 80
+  z: 16
 corner-2:
-  x:
-  y:
-  z:
+  x: -16
+  y: 64
+  z: -16
 
 # Display name for the KoTH, used in placeholders.
 display-name: "<rainbow>King of the Hill"
@@ -55,9 +55,9 @@ schedule:
   '1':
     day: monday
     hour: 20:00
-    '2':
-      day: tuesday
-      hour: 20:00
+  '2':
+    day: tuesday
+    hour: 20:00
 
 # List of commands to perform at different stages of the KoTH.
 commands-perform:
