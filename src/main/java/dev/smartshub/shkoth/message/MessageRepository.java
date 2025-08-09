@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.notify;
+package dev.smartshub.shkoth.message;
 
 import dev.smartshub.shkoth.api.model.config.ConfigContainer;
 import dev.smartshub.shkoth.api.model.config.ConfigType;

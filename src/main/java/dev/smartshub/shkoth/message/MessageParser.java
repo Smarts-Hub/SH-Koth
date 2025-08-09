@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.notify;
+package dev.smartshub.shkoth.message;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
