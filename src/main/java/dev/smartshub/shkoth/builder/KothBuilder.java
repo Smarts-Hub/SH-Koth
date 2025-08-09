@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.koth.builder;
+package dev.smartshub.shkoth.builder;
 
 import dev.smartshub.shkoth.api.model.builder.Builder;
 import dev.smartshub.shkoth.api.model.config.ConfigContainer;
@@ -9,8 +9,8 @@ import dev.smartshub.shkoth.api.model.location.Area;
 import dev.smartshub.shkoth.api.model.location.Corner;
 import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.model.time.Schedule;
-import dev.smartshub.shkoth.koth.builder.mapper.PhysicalRewardsMapper;
-import dev.smartshub.shkoth.koth.builder.mapper.SchedulesMapper;
+import dev.smartshub.shkoth.builder.mapper.PhysicalRewardsMapper;
+import dev.smartshub.shkoth.builder.mapper.SchedulesMapper;
 
 import java.util.List;
 

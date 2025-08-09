@@ -1,6 +1,5 @@
 package dev.smartshub.shkoth.api.model.location;
 
-
 import org.bukkit.Location;
 
 public record Area(

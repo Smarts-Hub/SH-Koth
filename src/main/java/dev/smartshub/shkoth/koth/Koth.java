@@ -120,21 +120,22 @@ public class Koth extends AbstractKoth {
     }
 
     private void completeCapture(Team team) {
-        team.members().forEach(winners::add);
+        winners.addAll(team.members());
         stop(KothEndEvent.EndReason.CAPTURE_COMPLETED);
     }
 
     @Override
-    public void onPlayerEnter(Player player) {
+    public void playerEnter(Player player) {
         PlayerEnterKothDuringRunEvent event = eventDispatcher.firePlayerEnterKothDuringRunEvent(this, player);
         if (!event.isCancelled()) return;
         //TODO: make cancellable with the "border" of the Koth
     }
 
     @Override
-    public void onPlayerLeave(Player player) {
+    public void playerLeave(Player player) {
         boolean wasCapturing = currentCapturingTeam != null && currentCapturingTeam.contains(player.getUniqueId());
         eventDispatcher.firePlayerLeaveKothDuringRunEvent(this, player, wasCapturing);
+        //TODO: make cancellable with the "border" of the Koth
     }
 
     @Override

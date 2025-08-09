@@ -19,8 +19,14 @@ corner-2:
 # Display name for the KoTH, used in placeholders.
 display-name: "<rainbow>King of the Hill"
 
+# Should a boss-bar be displayed for this KoTH?
+boss-bar: true
+
 # The time in seconds that the KoTH will be active before it resets.
 max-duration: 300
+
+# The time in seconds that a player must stay in the KoTH area to capture it.
+capture-time: 20
 
 # Koths can be played in 'capture' or 'score'.
 type: "capture"
@@ -41,9 +47,6 @@ create-team-if-not-exists: true
 # If "create-team-if-not-exists" is set to true, players will be automatically added to a team allowing them to enter.
 # This parameter is only relevant if the KoTH is played in team mode, in solo mode it is ignored.
 deny-entry-if-not-in-team: false
-
-# The time in seconds that a player must stay in the KoTH area to capture it.
-capture-time: 20
 
 # List of schedules for this koth.
 # Each schedule defines a day and time when the KoTH will be active.

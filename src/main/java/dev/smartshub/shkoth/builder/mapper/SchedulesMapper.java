@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.koth.builder.mapper;
+package dev.smartshub.shkoth.builder.mapper;
 
 import dev.smartshub.shkoth.api.model.builder.mapper.Mapper;
 import dev.smartshub.shkoth.api.model.config.ConfigContainer;

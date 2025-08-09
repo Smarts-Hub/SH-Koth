@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.storage.config.loader;
+package dev.smartshub.shkoth.loader.config;
 
 import dev.smartshub.shkoth.SHKoth;
 import dev.smartshub.shkoth.api.model.config.ConfigContainer;

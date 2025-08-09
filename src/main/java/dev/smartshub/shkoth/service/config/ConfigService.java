@@ -1,10 +1,10 @@
-package dev.smartshub.shkoth.storage.config.service;
+package dev.smartshub.shkoth.service.config;
 
 import dev.smartshub.shkoth.SHKoth;
 import dev.smartshub.shkoth.api.model.config.ConfigContainer;
 import dev.smartshub.shkoth.api.model.config.ConfigException;
 import dev.smartshub.shkoth.api.model.config.ConfigType;
-import dev.smartshub.shkoth.storage.config.loader.ConfigLoader;
+import dev.smartshub.shkoth.loader.config.ConfigLoader;
 
 import java.util.EnumMap;
 import java.util.Map;

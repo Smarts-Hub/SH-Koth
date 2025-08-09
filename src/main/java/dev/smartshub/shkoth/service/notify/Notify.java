@@ -1,17 +1,7 @@
-package dev.smartshub.shkoth.notify;
-
-import me.clip.placeholderapi.PlaceholderAPI;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.title.Title;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
-import java.util.ArrayList;
-import java.util.List;
+package dev.smartshub.shkoth.service.notify;
 
 public class Notify {
+    //TODO: what a refactor
 
 //    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
 //

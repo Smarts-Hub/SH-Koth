@@ -71,8 +71,8 @@ public abstract class AbstractKoth implements Koth {
         public abstract void start();
         public abstract void stop(KothEndEvent.EndReason reason);
         public abstract void tick();
-        public abstract void onPlayerEnter(Player player);
-        public abstract void onPlayerLeave(Player player);
+        public abstract void playerEnter(Player player);
+        public abstract void playerLeave(Player player);
         public abstract boolean canPlayerCapture(@NotNull Player player);
         public abstract Team getCurrentCapturingTeam();
 

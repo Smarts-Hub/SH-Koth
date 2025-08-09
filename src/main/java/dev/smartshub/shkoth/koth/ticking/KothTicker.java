@@ -1,13 +1,13 @@
 package dev.smartshub.shkoth.koth.ticking;
 
 import dev.smartshub.shkoth.api.model.koth.Koth;
-import dev.smartshub.shkoth.koth.registry.KothRegistry;
+import dev.smartshub.shkoth.registry.KothRegistry;
 
-public class TickingKoth {
+public class KothTicker {
 
     private final KothRegistry kothRegistry;
 
-    public TickingKoth(KothRegistry kothRegistry) {
+    public KothTicker(KothRegistry kothRegistry) {
         this.kothRegistry = kothRegistry;
     }
 

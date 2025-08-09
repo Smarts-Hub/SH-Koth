@@ -45,6 +45,8 @@ public interface Koth {
     void checkCaptureProgress(Team team);
     void tick();
     boolean isRunning();
+    void playerEnter(Player player);
+    void playerLeave(Player player);
     
     boolean isInsideArea(@NotNull Player player);
     boolean canPlayerCapture(@NotNull Player player);
