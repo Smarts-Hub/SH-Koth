@@ -56,6 +56,12 @@ public class KothRegistry {
                 .collect(Collectors.toSet());
     }
 
+    public Set<Koth> getScheduled() {
+        return koths.stream()
+                .filter(koth -> !koth.isRunning())
+                .collect(Collectors.toSet());
+    }
+
     public Koth getKothByPlayer(UUID playerID) {
         return koths.stream()
                 .filter(koth -> koth.getPlayersInside().contains(playerID))
