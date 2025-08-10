@@ -3,7 +3,6 @@ plugins {
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.17"
     id("io.github.revxrsal.zapper") version "1.0.3"
-    kotlin("jvm")
 }
 
 group = "dev.smartshub"
@@ -40,7 +39,4 @@ dependencies {
 
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-parameters")
-}
-kotlin {
-    jvmToolchain(21)
 }
