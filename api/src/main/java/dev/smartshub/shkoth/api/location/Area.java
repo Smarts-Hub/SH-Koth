@@ -34,4 +34,17 @@ public record Area(
                 locY >= minY && locY <= maxY &&
                 locZ >= minZ && locZ <= maxZ;
     }
+
+    public Location getCenter() {
+        int centerX = (corner1.x() + corner2.x()) / 2;
+        int centerY = (corner1.y() + corner2.y()) / 2;
+        int centerZ = (corner1.z() + corner2.z()) / 2;
+
+        return new Location(
+                org.bukkit.Bukkit.getWorld(worldName),
+                centerX,
+                centerY,
+                centerZ
+        );
+    }
 }
