@@ -11,8 +11,10 @@ import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.annotation.Suggest;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
+import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 @Command("koth")
+@CommandPermission("shkoth.command.admin")
 public class KothCommand {
 
     private final KothRegistry kothRegistry;
@@ -75,5 +77,6 @@ public class KothCommand {
     @Subcommand("reload koths")
     public void reload(BukkitCommandActor actor) {
         kothRegistry.reloadKoths();
+        notifyService.sendChat((CommandSender) actor.sender(), "koth.reload");
     }
 }
