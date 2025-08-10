@@ -33,7 +33,6 @@ public class SHKoth extends ZapperJavaPlugin {
     private void factoryRegister(){
         TallyFactory.register(KothType.CAPTURE, CaptureTally::new);
         TallyFactory.register(KothType.SCORE, ScoreTally::new);
-
     }
 
     private void initAPI() {
@@ -46,5 +45,5 @@ public class SHKoth extends ZapperJavaPlugin {
         configService = new ConfigService(this);
     }
 
-    //TODO: commands, listeners, koth-timer logic, messages
+    //TODO: commands, messages.yml, linking here, Placeholders, hooks
 }
