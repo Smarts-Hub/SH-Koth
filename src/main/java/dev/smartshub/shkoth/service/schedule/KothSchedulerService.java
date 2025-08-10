@@ -34,7 +34,7 @@ public class KothSchedulerService {
 
         for (Koth koth : koths) {
             List<Schedule> schedules = koth.getSchedules();
-            if (schedules != null && !schedules.isEmpty()) {
+            if (!schedules.isEmpty()) {
                 Duration duration = Duration.ofSeconds(koth.getDuration());
                 addKothSchedule(koth.getId(), schedules, duration);
             }
