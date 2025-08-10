@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.service.koth;
 
-import dev.smartshub.shkoth.api.model.koth.Koth;
+import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.registry.KothRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.World;

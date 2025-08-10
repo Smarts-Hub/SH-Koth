@@ -1,8 +1,8 @@
 package dev.smartshub.shkoth.loader.koth;
 
-import dev.smartshub.shkoth.api.model.config.ConfigContainer;
-import dev.smartshub.shkoth.api.model.koth.Koth;
-import dev.smartshub.shkoth.api.model.loader.Loader;
+import dev.smartshub.shkoth.api.config.ConfigContainer;
+import dev.smartshub.shkoth.api.koth.Koth;
+import dev.smartshub.shkoth.api.loader.Loader;
 import dev.smartshub.shkoth.builder.KothBuilder;
 import dev.smartshub.shkoth.service.config.ConfigService;
 

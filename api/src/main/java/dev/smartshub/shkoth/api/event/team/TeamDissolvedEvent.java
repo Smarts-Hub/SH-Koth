@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.api.event.team;
 
-import dev.smartshub.shkoth.api.model.team.Team;
+import dev.smartshub.shkoth.api.team.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

@@ -1,7 +1,7 @@
 package dev.smartshub.shkoth.message;
 
-import dev.smartshub.shkoth.api.model.config.ConfigContainer;
-import dev.smartshub.shkoth.api.model.config.ConfigType;
+import dev.smartshub.shkoth.api.config.ConfigContainer;
+import dev.smartshub.shkoth.api.config.ConfigType;
 import dev.smartshub.shkoth.service.config.ConfigService;
 
 import java.util.List;

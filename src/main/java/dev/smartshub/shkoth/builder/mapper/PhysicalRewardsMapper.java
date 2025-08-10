@@ -1,9 +1,9 @@
 package dev.smartshub.shkoth.builder.mapper;
 
 import com.saicone.rtag.item.ItemTagStream;
-import dev.smartshub.shkoth.api.model.builder.mapper.Mapper;
-import dev.smartshub.shkoth.api.model.config.ConfigContainer;
-import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
+import dev.smartshub.shkoth.api.builder.mapper.Mapper;
+import dev.smartshub.shkoth.api.config.ConfigContainer;
+import dev.smartshub.shkoth.api.reward.PhysicalReward;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;

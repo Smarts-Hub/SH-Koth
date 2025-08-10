@@ -1,14 +1,14 @@
 package dev.smartshub.shkoth.builder;
 
-import dev.smartshub.shkoth.api.model.builder.Builder;
-import dev.smartshub.shkoth.api.model.config.ConfigContainer;
-import dev.smartshub.shkoth.api.model.koth.Koth;
-import dev.smartshub.shkoth.api.model.koth.command.Commands;
-import dev.smartshub.shkoth.api.model.koth.guideline.KothType;
-import dev.smartshub.shkoth.api.model.location.Area;
-import dev.smartshub.shkoth.api.model.location.Corner;
-import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
-import dev.smartshub.shkoth.api.model.time.Schedule;
+import dev.smartshub.shkoth.api.builder.Builder;
+import dev.smartshub.shkoth.api.config.ConfigContainer;
+import dev.smartshub.shkoth.api.koth.Koth;
+import dev.smartshub.shkoth.api.koth.command.Commands;
+import dev.smartshub.shkoth.api.koth.guideline.KothType;
+import dev.smartshub.shkoth.api.location.Area;
+import dev.smartshub.shkoth.api.location.Corner;
+import dev.smartshub.shkoth.api.reward.PhysicalReward;
+import dev.smartshub.shkoth.api.schedule.Schedule;
 import dev.smartshub.shkoth.builder.mapper.PhysicalRewardsMapper;
 import dev.smartshub.shkoth.builder.mapper.SchedulesMapper;
 

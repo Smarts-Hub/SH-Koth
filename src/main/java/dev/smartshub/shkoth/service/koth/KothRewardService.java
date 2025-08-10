@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.service.koth;
 
-import dev.smartshub.shkoth.api.model.koth.Koth;
+import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.service.reward.GrantRewardsService;
 import dev.smartshub.shkoth.service.reward.PerformRewardCommandsService;
 

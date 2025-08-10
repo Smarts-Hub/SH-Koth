@@ -1,8 +1,8 @@
 package dev.smartshub.shkoth.storage.config;
 
-import dev.smartshub.shkoth.api.model.config.ConfigContainer;
-import dev.smartshub.shkoth.api.model.config.ConfigException;
-import dev.smartshub.shkoth.api.model.config.ConfigType;
+import dev.smartshub.shkoth.api.config.ConfigContainer;
+import dev.smartshub.shkoth.api.config.ConfigException;
+import dev.smartshub.shkoth.api.config.ConfigType;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.List;

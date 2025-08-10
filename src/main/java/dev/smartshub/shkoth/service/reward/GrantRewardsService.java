@@ -1,7 +1,7 @@
 package dev.smartshub.shkoth.service.reward;
 
-import dev.smartshub.shkoth.api.model.koth.Koth;
-import dev.smartshub.shkoth.api.model.reward.PhysicalReward;
+import dev.smartshub.shkoth.api.koth.Koth;
+import dev.smartshub.shkoth.api.reward.PhysicalReward;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

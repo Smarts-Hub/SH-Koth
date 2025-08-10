@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.api.event.koth;
 
-import dev.smartshub.shkoth.api.model.koth.Koth;
+import dev.smartshub.shkoth.api.koth.Koth;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

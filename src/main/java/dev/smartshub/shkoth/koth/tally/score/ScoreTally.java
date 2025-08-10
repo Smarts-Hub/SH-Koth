@@ -1,8 +1,8 @@
 package dev.smartshub.shkoth.koth.tally.score;
 
-import dev.smartshub.shkoth.api.model.koth.Koth;
-import dev.smartshub.shkoth.api.model.koth.tally.Tally;
-import dev.smartshub.shkoth.api.model.team.Team;
+import dev.smartshub.shkoth.api.koth.Koth;
+import dev.smartshub.shkoth.api.koth.tally.Tally;
+import dev.smartshub.shkoth.api.team.Team;
 
 import java.util.Map;
 import java.util.Objects;

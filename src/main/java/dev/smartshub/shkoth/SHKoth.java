@@ -1,9 +1,9 @@
 package dev.smartshub.shkoth;
 
 import dev.smartshub.shkoth.api.KothAPIProvider;
-import dev.smartshub.shkoth.api.model.koth.guideline.KothType;
+import dev.smartshub.shkoth.api.koth.guideline.KothType;
 import dev.smartshub.shkoth.registry.KothRegistry;
-import dev.smartshub.shkoth.api.model.koth.tally.TallyFactory;
+import dev.smartshub.shkoth.api.koth.tally.TallyFactory;
 import dev.smartshub.shkoth.koth.tally.capture.CaptureTally;
 import dev.smartshub.shkoth.koth.tally.score.ScoreTally;
 import dev.smartshub.shkoth.service.config.ConfigService;

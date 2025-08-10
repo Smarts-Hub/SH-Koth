@@ -1,7 +1,7 @@
 package dev.smartshub.shkoth.koth.track;
 
-import dev.smartshub.shkoth.api.model.team.Team;
-import dev.smartshub.shkoth.api.model.team.TeamTracker;
+import dev.smartshub.shkoth.api.team.Team;
+import dev.smartshub.shkoth.api.team.TeamTracker;
 import org.bukkit.entity.Player;
 
 import java.util.*;

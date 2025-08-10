@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.koth.ticking;
 
-import dev.smartshub.shkoth.api.model.koth.Koth;
+import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.registry.KothRegistry;
 
 public class KothTicker {
