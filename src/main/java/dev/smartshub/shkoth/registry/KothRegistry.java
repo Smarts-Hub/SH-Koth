@@ -15,7 +15,7 @@ public class KothRegistry {
 
     private final ConfigService configService;
     private final KothLoader kothLoader;
-    private final KothSchedulerService scheduler = new KothSchedulerService();
+    private final KothSchedulerService scheduler = new KothSchedulerService(this);
 
     private final Set<Koth> koths;
 

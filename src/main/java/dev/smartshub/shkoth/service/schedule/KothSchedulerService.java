@@ -3,6 +3,7 @@ package dev.smartshub.shkoth.service.schedule;
 import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.schedule.Schedule;
 import dev.smartshub.shkoth.api.schedule.ScheduleStatus;
+import dev.smartshub.shkoth.registry.KothRegistry;
 
 import java.time.Duration;
 import java.time.LocalTime;
@@ -16,14 +17,16 @@ public class KothSchedulerService {
 
     private final Map<String, SchedulerManagementService> scheduleManagers;
     private final TimeService timeService;
+    private final KothRegistry kothRegistry;
 
-    public KothSchedulerService(TimeService timeService) {
+    public KothSchedulerService(TimeService timeService, KothRegistry kothRegistry) {
         this.timeService = timeService;
+        this.kothRegistry = kothRegistry;
         this.scheduleManagers = new ConcurrentHashMap<>();
     }
 
-    public KothSchedulerService() {
-        this(new TimeService());
+    public KothSchedulerService(KothRegistry kothRegistry) {
+        this(new TimeService(), kothRegistry);
     }
 
     public void initializeFromKoths(Set<Koth> koths) {
@@ -31,7 +34,7 @@ public class KothSchedulerService {
 
         for (Koth koth : koths) {
             List<Schedule> schedules = koth.getSchedules();
-            if (!schedules.isEmpty()) {
+            if (schedules != null && !schedules.isEmpty()) {
                 Duration duration = Duration.ofSeconds(koth.getDuration());
                 addKothSchedule(koth.getId(), schedules, duration);
             }
@@ -104,12 +107,25 @@ public class KothSchedulerService {
                 .collect(Collectors.toSet());
     }
 
-    public Map<String, ScheduleStatus> processAllSchedules() {
-        return scheduleManagers.entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        entry -> entry.getValue().checkStatusChange()
-                ));
+    public void processAllSchedulesAndExecute() {
+        for (Map.Entry<String, SchedulerManagementService> entry : scheduleManagers.entrySet()) {
+            String kothId = entry.getKey();
+            ScheduleStatus status = entry.getValue().checkStatusChange();
+
+            switch (status) {
+                case STARTED -> handleKothStart(kothId);
+                case ENDED -> handleKothEnd(kothId);
+                case NO_CHANGE -> {}
+            }
+        }
+    }
+
+    private void handleKothStart(String kothId) {
+        kothRegistry.startKoth(kothId);
+    }
+
+    private void handleKothEnd(String kothId) {
+        kothRegistry.stopKoth(kothId);
     }
 
     public boolean hasSchedule(String kothId) {

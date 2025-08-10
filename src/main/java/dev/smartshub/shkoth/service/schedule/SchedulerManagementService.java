@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+
 public class SchedulerManagementService {
 
     private final String kothId;
@@ -95,12 +96,14 @@ public class SchedulerManagementService {
         DayOfWeek currentDay = now.getDayOfWeek();
         LocalTime currentTime = now.toLocalTime();
 
+        // The schedule for today
         for (Schedule schedule : schedules) {
             if (schedule.day().equals(currentDay) && currentTime.isBefore(schedule.time())) {
                 return schedule;
             }
         }
 
+        // Schedules for the next 7 days
         for (int i = 1; i <= 7; i++) {
             DayOfWeek targetDay = currentDay.plus(i);
             for (Schedule schedule : schedules) {
@@ -161,4 +164,5 @@ public class SchedulerManagementService {
         return duration;
     }
 }
+
 
