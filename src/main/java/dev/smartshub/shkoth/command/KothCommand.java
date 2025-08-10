@@ -2,6 +2,7 @@ package dev.smartshub.shkoth.command;
 
 import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
 import dev.smartshub.shkoth.api.koth.Koth;
+import dev.smartshub.shkoth.koth.reward.PhysicalRewardAdder;
 import dev.smartshub.shkoth.registry.KothRegistry;
 import dev.smartshub.shkoth.service.config.ConfigService;
 import dev.smartshub.shkoth.service.notify.NotifyService;
@@ -17,6 +18,7 @@ public class KothCommand {
     private final KothRegistry kothRegistry;
     private final NotifyService notifyService;
     private final ConfigService configService;
+    private final PhysicalRewardAdder physicalRewardAdder = new PhysicalRewardAdder();
 
     public KothCommand(KothRegistry kothRegistry, NotifyService notifyService, ConfigService configService) {
         this.kothRegistry = kothRegistry;
@@ -47,12 +49,15 @@ public class KothCommand {
 
     @Subcommand("add-physical-reward <kothId> <amount>")
     public void addPhysicalReward(BukkitCommandActor actor, @Suggest({"kothIdExample"}) String kothId, @Suggest({"1", "2", "3", "4"}) int amount) {
-        //TODO
+        // Not so clean but works for now (will be refactored later)
+        Koth koth = kothRegistry.get(kothId);
+        physicalRewardAdder.addRewards(configService, koth, actor.asPlayer().getItemInHand(), amount);
+        notifyService.sendChat(actor.asPlayer(), "koth.add-physical-reward");
     }
 
     @Subcommand("tp <kothId>")
     public void teleportToKoth(BukkitCommandActor actor, @Suggest({"kothIdExample"}) String kothId) {
-        // Not so clean but works for now
+        // Not so clean but works for now (will be refactored later) x2
         if(!actor.isPlayer()) return;
         actor.asPlayer().teleport(kothRegistry.get(kothId).getArea().getCenter());
         notifyService.sendChat(actor.asPlayer(), "koth.teleport");
@@ -60,7 +65,7 @@ public class KothCommand {
 
     @Subcommand("list")
     public void list(BukkitCommandActor actor) {
-        // Not so clean but works for now (too)
+        // Not so clean but works for now (will be refactored later) (too) x3
         kothRegistry.getAll().forEach(koth -> {
             String message = String.format("Koth ID: %s, Status: %s", koth.getId(), koth.isRunning() ? "Running" : "Not Running");
             notifyService.sendChat((CommandSender) actor.sender(), message);
