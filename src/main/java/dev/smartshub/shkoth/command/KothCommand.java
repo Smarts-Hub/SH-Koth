@@ -1,7 +1,9 @@
 package dev.smartshub.shkoth.command;
 
 import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
+import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.registry.KothRegistry;
+import dev.smartshub.shkoth.service.config.ConfigService;
 import dev.smartshub.shkoth.service.notify.NotifyService;
 import me.lucko.spark.paper.common.command.sender.CommandSender;
 import revxrsal.commands.annotation.Command;
@@ -14,10 +16,12 @@ public class KothCommand {
 
     private final KothRegistry kothRegistry;
     private final NotifyService notifyService;
+    private final ConfigService configService;
 
-    public KothCommand(KothRegistry kothRegistry, NotifyService notifyService) {
+    public KothCommand(KothRegistry kothRegistry, NotifyService notifyService, ConfigService configService) {
         this.kothRegistry = kothRegistry;
         this.notifyService = notifyService;
+        this.configService = configService;
     }
 
     @Subcommand("force-start <kothId>")
@@ -48,16 +52,23 @@ public class KothCommand {
 
     @Subcommand("tp <kothId>")
     public void teleportToKoth(BukkitCommandActor actor, @Suggest({"kothIdExample"}) String kothId) {
-        //TODO
+        // Not so clean but works for now
+        if(!actor.isPlayer()) return;
+        actor.asPlayer().teleport(kothRegistry.get(kothId).getArea().getCenter());
+        notifyService.sendChat(actor.asPlayer(), "koth.teleport");
     }
 
     @Subcommand("list")
     public void list(BukkitCommandActor actor) {
-        //TODO
+        // Not so clean but works for now (too)
+        kothRegistry.getAll().forEach(koth -> {
+            String message = String.format("Koth ID: %s, Status: %s", koth.getId(), koth.isRunning() ? "Running" : "Not Running");
+            notifyService.sendChat((CommandSender) actor.sender(), message);
+        });
     }
 
-    @Subcommand("reload")
+    @Subcommand("reload koths")
     public void reload(BukkitCommandActor actor) {
-        //TODO
+        kothRegistry.reloadKoths();
     }
 }

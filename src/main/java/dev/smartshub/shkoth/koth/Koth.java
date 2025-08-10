@@ -12,11 +12,14 @@ import dev.smartshub.shkoth.api.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.team.Team;
 import dev.smartshub.shkoth.api.schedule.Schedule;
 import dev.smartshub.shkoth.api.koth.tally.TallyFactory;
+import dev.smartshub.shkoth.koth.reward.PhysicalRewardAdder;
 import dev.smartshub.shkoth.koth.track.KothTeamTracker;
+import dev.smartshub.shkoth.service.config.ConfigService;
 import dev.smartshub.shkoth.service.koth.KothRewardService;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +31,7 @@ public class Koth extends AbstractKoth {
 
     private final KothEventDispatcher eventDispatcher = new KothEventDispatcher();
     private final KothRewardService rewardService = new KothRewardService(this);
+    private final PhysicalRewardAdder physicalRewardAdder = new PhysicalRewardAdder();
     private final KothTeamTracker teamTracker;
     private final Tally tally;
     private Team currentCapturingTeam;
@@ -163,6 +167,10 @@ public class Koth extends AbstractKoth {
             teamTracker.removeMember(playerId);
         }
 
+    }
+
+    public void addPhysicalReward(ConfigService configService, ItemStack item, int amount) {
+        physicalRewardAdder.addRewards(configService, this, item, amount);
     }
 
     @Override
