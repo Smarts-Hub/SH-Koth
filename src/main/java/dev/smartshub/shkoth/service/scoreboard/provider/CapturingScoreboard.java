@@ -1,0 +1,26 @@
+package dev.smartshub.shkoth.service.scoreboard.provider;
+
+import dev.smartshub.shkoth.api.config.ConfigContainer;
+import dev.smartshub.shkoth.api.config.ConfigType;
+import dev.smartshub.shkoth.api.koth.Koth;
+import dev.smartshub.shkoth.service.config.ConfigService;
+
+import java.util.List;
+
+public final class CapturingScoreboard implements ScoreboardProvider {
+    private final ConfigContainer container;
+
+    public CapturingScoreboard(ConfigService service, Koth koth) {
+        this.container = service.provide(koth.getId() + ".yml", ConfigType.KOTH_DEFINITION);
+    }
+
+    @Override
+    public List<String> getLines() {
+        return container.getStringList("scoreboards.capturing.lines", List.of());
+    }
+
+    @Override
+    public String getTitle() {
+        return container.getString("scoreboards.capturing.title", "");
+    }
+}
