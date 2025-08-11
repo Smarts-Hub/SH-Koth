@@ -3,6 +3,7 @@ package dev.smartshub.shkoth.command;
 import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
 import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.koth.reward.PhysicalRewardAdder;
+import dev.smartshub.shkoth.koth.reward.PhysicalRewardAdderFactory;
 import dev.smartshub.shkoth.registry.KothRegistry;
 import dev.smartshub.shkoth.service.config.ConfigService;
 import dev.smartshub.shkoth.service.notify.NotifyService;
@@ -20,12 +21,13 @@ public class KothCommand {
     private final KothRegistry kothRegistry;
     private final NotifyService notifyService;
     private final ConfigService configService;
-    private final PhysicalRewardAdder physicalRewardAdder = new PhysicalRewardAdder();
+    private final PhysicalRewardAdder physicalRewardAdder;
 
     public KothCommand(KothRegistry kothRegistry, NotifyService notifyService, ConfigService configService) {
         this.kothRegistry = kothRegistry;
         this.notifyService = notifyService;
         this.configService = configService;
+        this.physicalRewardAdder = PhysicalRewardAdderFactory.create(configService);
     }
 
     @Subcommand("force-start <kothId>")
@@ -53,7 +55,7 @@ public class KothCommand {
     public void addPhysicalReward(BukkitCommandActor actor, @Suggest({"kothIdExample"}) String kothId, @Suggest({"1", "2", "3", "4"}) int amount) {
         // Not so clean but works for now (will be refactored later)
         Koth koth = kothRegistry.get(kothId);
-        physicalRewardAdder.addRewards(configService, koth, actor.asPlayer().getItemInHand(), amount);
+        physicalRewardAdder.addRewards(koth, actor.asPlayer().getItemInHand(), amount);
         notifyService.sendChat(actor.asPlayer(), "koth.add-physical-reward");
     }
 
