@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.command;
+package dev.smartshub.shkoth.command.koth;
 
 import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
 import dev.smartshub.shkoth.api.koth.Koth;
