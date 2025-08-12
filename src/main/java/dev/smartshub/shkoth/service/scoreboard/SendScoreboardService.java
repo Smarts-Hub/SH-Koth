@@ -5,7 +5,7 @@ import dev.smartshub.shkoth.message.MessageParser;
 import dev.smartshub.shkoth.service.config.ConfigService;
 import dev.smartshub.shkoth.service.scoreboard.provider.CapturingScoreboard;
 import dev.smartshub.shkoth.service.scoreboard.provider.RunningScoreboard;
-import dev.smartshub.shkoth.service.scoreboard.provider.ScoreboardProvider;
+import dev.smartshub.shkoth.api.scoreboard.ScoreboardProvider;
 import fr.mrmicky.fastboard.adventure.FastBoard;
 import org.bukkit.entity.Player;
 

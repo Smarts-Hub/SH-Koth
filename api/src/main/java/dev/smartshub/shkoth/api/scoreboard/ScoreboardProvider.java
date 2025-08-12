@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.service.scoreboard.provider;
+package dev.smartshub.shkoth.api.scoreboard;
 
 import java.util.List;
 
