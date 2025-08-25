@@ -18,11 +18,11 @@ public final class RunningScoreboard implements ScoreboardProvider {
 
     @Override
     public List<String> getLines() {
-        return container.getStringList("scoreboards.running.lines", List.of());
+        return container.getStringList("scoreboard.running.lines", List.of());
     }
 
     @Override
     public String getTitle() {
-        return container.getString("scoreboards.running.title", "");
+        return container.getString("scoreboard.running.title", "");
     }
 }

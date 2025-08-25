@@ -114,11 +114,6 @@ public class Koth extends AbstractKoth {
             completeCapture(team);
             return;
         }
-        // TODO: instead 5 secs, make it configurable
-        if (elapsedTime % 5 == 0 && elapsedTime > 0) {
-            long remaining = captureTime - elapsedTime;
-            //TODO: message
-        }
     }
 
     private void completeCapture(Team team) {

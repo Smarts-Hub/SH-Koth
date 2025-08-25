@@ -17,11 +17,11 @@ public final class CapturingScoreboard implements ScoreboardProvider {
 
     @Override
     public List<String> getLines() {
-        return container.getStringList("scoreboards.capturing.lines", List.of());
+        return container.getStringList("scoreboard.capturing.lines", List.of());
     }
 
     @Override
     public String getTitle() {
-        return container.getString("scoreboards.capturing.title", "");
+        return container.getString("scoreboard.capturing.title", "");
     }
 }
