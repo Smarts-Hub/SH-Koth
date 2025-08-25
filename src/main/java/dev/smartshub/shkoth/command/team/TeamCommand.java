@@ -1,5 +1,7 @@
 package dev.smartshub.shkoth.command.team;
 
+import dev.smartshub.shkoth.service.team.TeamChatService;
+import dev.smartshub.shkoth.service.team.TeamService;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
@@ -7,8 +9,16 @@ import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 @Command("team")
 public class TeamCommand {
 
+    private final TeamService teamService;
+    private final TeamChatService teamChatService;
+
+    public TeamCommand(TeamService teamService, TeamChatService teamChatService) {
+        this.teamService = teamService;
+        this.teamChatService = teamChatService;
+    }
+
     @Subcommand("create")
-    public void create() {
+    public void create(BukkitCommandActor actor) {
 
     }
 
@@ -18,12 +28,12 @@ public class TeamCommand {
     }
 
     @Subcommand("leave")
-    public void leave() {
+    public void leave(BukkitCommandActor actor) {
 
     }
 
     @Subcommand("disband")
-    public void disband() {
+    public void disband(BukkitCommandActor actor) {
 
     }
 
@@ -66,5 +76,4 @@ public class TeamCommand {
     public void list(BukkitCommandActor actor) {
 
     }
-
 }

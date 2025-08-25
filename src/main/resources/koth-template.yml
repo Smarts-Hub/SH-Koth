@@ -31,9 +31,11 @@ capture-time: 20
 # Koths can be played in 'capture' or 'score'.
 type: "capture"
 
-# The size defines the number of team members that can score in the KoTH.
-# 1 is for solo mode, where each player scores individually.
-team-size: 1
+# Should the KoTH be played in solo mode or team mode?
+# If set to true, the KoTH will be played in solo mode, where individual players compete against each other.
+# If set to false, the KoTH will be played in team mode.
+# In team mode, players must be in a team to score points and win the KoTH
+solo-koth: false
 
 # Should a team be created automatically if a player joins the KoTH area?
 # If set to true, a team will be created and assigned for the player if they are not already in a team.
@@ -86,3 +88,19 @@ physical-rewards:
     item: "<base64-value>"
     amount: 2
 
+# Configuration for the scoreboards.
+scoreboard:
+  running:
+    title: "<gold><bold>King of the Hill"
+    lines:
+      - " "
+      - "<yellow>Time Left: <gold><time_left>"
+      - " "
+  capturing:
+    title: "<gold><bold>King of the Hill"
+    lines:
+      - " "
+      - "<yellow>Time Left: <gold><time_left>"
+      - "<yellow>Capturing: <gold><capturing_name>"
+      - "<yellow>Capture Progress: <gold><capture_progress>%"
+      - " "

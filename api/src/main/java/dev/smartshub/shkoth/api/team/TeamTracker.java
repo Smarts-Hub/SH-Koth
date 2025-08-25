@@ -24,5 +24,7 @@ public interface TeamTracker {
     void clearTeam(UUID uuid);
     void clearAllTeams();
 
+    Team updateLeader(UUID oldLeader, UUID newLeader);
+
    String getTeamDisplayName(Team team);
 }

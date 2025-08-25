@@ -44,7 +44,7 @@ public class KothBuilder implements Builder<Koth, ConfigContainer> {
 
         KothType kothType = KothType.fromString(config.getString("type", "capture"));
 
-        final int teamSize = config.getInt("team-size", 1);
+        final boolean isSolo = config.getBoolean("solo-mode", true);
 
         // Load schedules and rewards code is "dirty", doing it in a separate class to maintain clean code
         List<Schedule> schedules = schedulesMapper.map(config);
@@ -63,6 +63,6 @@ public class KothBuilder implements Builder<Koth, ConfigContainer> {
 
 
         return new dev.smartshub.shkoth.koth.Koth(id, displayName, maxDuration, captureTime,area, schedules, commands,
-                physicalRewards, teamSize, denyEnterWithoutTeam, createTeamIfNotExistsOnEnter, kothType);
+                physicalRewards, isSolo, denyEnterWithoutTeam, createTeamIfNotExistsOnEnter, kothType);
     }
 }
