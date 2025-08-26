@@ -45,5 +45,5 @@ public class SHKoth extends ZapperJavaPlugin {
         configService = new ConfigService(this);
     }
 
-    //TODO: commands, messages.yml, linking here, Placeholders, hooks
+    //TODO: messages.yml, linking here, Placeholders, push-args, hooks
 }
