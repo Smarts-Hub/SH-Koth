@@ -14,6 +14,7 @@ public class GlobalTeamTracker implements TeamTracker {
 
     private GlobalTeamTracker() {}
 
+    // Im not proud of this static singleton implementation, but its fine for now
     public static GlobalTeamTracker getInstance() {
         if (instance == null) {
             synchronized (GlobalTeamTracker.class) {
@@ -154,7 +155,6 @@ public class GlobalTeamTracker implements TeamTracker {
     public void cleanupInvalidTeams() {
         teams.removeIf(team -> !team.isValid());
     }
-
 
     public int getActiveTeamsCount() {
         return teams.size();
