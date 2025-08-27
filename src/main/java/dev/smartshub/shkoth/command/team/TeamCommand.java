@@ -1,6 +1,8 @@
 package dev.smartshub.shkoth.command.team;
 
-import dev.smartshub.shkoth.service.team.TeamService;
+import dev.smartshub.shkoth.service.team.TeamInformationService;
+import dev.smartshub.shkoth.service.team.TeamInvitationService;
+import dev.smartshub.shkoth.service.team.TeamUpdatingService;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
@@ -8,70 +10,76 @@ import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 @Command("team")
 public class TeamCommand {
 
-    private final TeamService teamService;
+    private final TeamUpdatingService teamUpdatingService;
+    private final TeamInformationService teamInformationService;
+    private final TeamInvitationService teamInvitationService;
 
-    public TeamCommand(TeamService teamService) {
-        this.teamService = teamService;
+    public TeamCommand(TeamUpdatingService teamUpdatingService,
+                       TeamInformationService teamInformationService,
+                       TeamInvitationService teamInvitationService) {
+        this.teamUpdatingService = teamUpdatingService;
+        this.teamInformationService = teamInformationService;
+        this.teamInvitationService = teamInvitationService;
     }
 
     @Subcommand("create")
     public void create(BukkitCommandActor actor) {
         if(!actor.isPlayer()) return;
-        teamService.createTeam(actor.asPlayer());
+        teamUpdatingService.createTeam(actor.asPlayer());
     }
 
     @Subcommand("leave")
     public void leave(BukkitCommandActor actor) {
         if(!actor.isPlayer()) return;
-        teamService.leaveTeam(actor.asPlayer());
+        teamUpdatingService.leaveTeam(actor.asPlayer());
     }
 
     @Subcommand("disband")
     public void disband(BukkitCommandActor actor) {
         if(!actor.isPlayer()) return;
-        teamService.disbandTeam(actor.asPlayer());
+        teamUpdatingService.disbandTeam(actor.asPlayer());
     }
 
     @Subcommand("invite <player>")
     public void invite(BukkitCommandActor actor, String player) {
         if(!actor.isPlayer()) return;
-        teamService.invite(actor.asPlayer(), player);
+        teamInvitationService.invite(actor.asPlayer(), player);
     }
 
     @Subcommand("kick <player>")
     public void kick(BukkitCommandActor actor, String player) {
         if(!actor.isPlayer()) return;
-        teamService.kickMember(actor.asPlayer(), player);
+        teamUpdatingService.kickMember(actor.asPlayer(), player);
     }
 
     @Subcommand("set-leader <player>")
     public void setLeader(BukkitCommandActor actor, String player) {
         if(!actor.isPlayer()) return;
-        teamService.setLeader(actor.asPlayer(), player);
+        teamUpdatingService.setLeader(actor.asPlayer(), player);
     }
 
     @Subcommand("invite accept")
     public void acceptInvite(BukkitCommandActor actor) {
         if(!actor.isPlayer()) return;
-        teamService.acceptInvite(actor.asPlayer());
+        teamInvitationService.acceptInvite(actor.asPlayer());
     }
 
     @Subcommand("invite decline")
     public void declineInvite(BukkitCommandActor actor) {
         if(!actor.isPlayer()) return;
-        teamService.declineInvite(actor.asPlayer());
+        teamInvitationService.declineInvite(actor.asPlayer());
     }
 
     @Subcommand("chat <message>")
     public void chat(BukkitCommandActor actor, String message) {
         if(!actor.isPlayer()) return;
-        teamService.sendTeamMessage(actor.asPlayer(), message);
+        teamInformationService.sendTeamMessage(actor.asPlayer(), message);
     }
 
     @Subcommand("info")
     public void info(BukkitCommandActor actor) {
         if(!actor.isPlayer()) return;
-        teamService.sendTeamInfo(actor.asPlayer());
+        teamInformationService.sendTeamInfo(actor.asPlayer());
     }
 
 }
