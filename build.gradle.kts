@@ -26,6 +26,11 @@ repositories {
         url = uri("https://repo.roinujnosde.me/releases/")
     }
 
+    maven {
+        name = "glaremasters repo"
+        url = uri("https://repo.glaremasters.me/repository/towny/")
+    }
+
     exclusiveContent {
         forRepository {
             maven("https://dependency.download/releases")
@@ -54,6 +59,7 @@ dependencies {
     compileOnly("com.github.booksaw:BetterTeams:4.13.4")
     compileOnly("com.github.cryptomorin:kingdoms:1.17.18.1-BETA")
     compileOnly("dev.kitteh:factions:4.0.0")
+    compileOnly("com.palmergames.bukkit.towny:towny:0.101.2.0")
 }
 
 
