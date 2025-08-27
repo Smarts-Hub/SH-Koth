@@ -45,6 +45,8 @@ public interface Koth {
     void checkCaptureProgress(Team team);
     void tick();
     boolean isRunning();
+    boolean isSolo();
+    boolean isTeam();
     void playerEnter(Player player);
     void playerLeave(Player player);
     void removePlayerDirectly(UUID playerUUID);

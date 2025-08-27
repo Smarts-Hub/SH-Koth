@@ -209,10 +209,12 @@ public class Koth extends AbstractKoth {
         rewardService.grantRewards();
     }
 
+    @Override
     public boolean isSolo() {
         return isSolo;
     }
 
+    @Override
     public boolean isTeam() {
         return !isSolo;
     }
