@@ -11,19 +11,18 @@ import java.util.*;
 
 public class UClansHook implements TeamHook {
 
-    private UClans uClansPlugin;
     private ClanAPIManager clanAPI;
     private PlayerAPIManager playerAPI;
+    private boolean isAvailable = false;
 
     public UClansHook(){
-        if (Bukkit.getPluginManager().isPluginEnabled("UltimateClans")) {
-            uClansPlugin = (UClans) Bukkit.getPluginManager().getPlugin("UltimateClans");
-        }
+        if (!Bukkit.getPluginManager().isPluginEnabled("UltimateClans")) return;
 
+        UClans uClansPlugin = (UClans) Bukkit.getPluginManager().getPlugin("UltimateClans");
         clanAPI = uClansPlugin.getClanAPI();
         playerAPI = uClansPlugin.getPlayerAPI();
+        isAvailable = true;
     }
-
 
     @Override
     public String getPluginName() {
@@ -32,7 +31,7 @@ public class UClansHook implements TeamHook {
 
     @Override
     public boolean isAvailable() {
-        return Bukkit.getPluginManager().isPluginEnabled("UltimateClans");
+        return isAvailable;
     }
 
     @Override
