@@ -25,6 +25,16 @@ repositories {
         name = "roinujnosde-repo"
         url = uri("https://repo.roinujnosde.me/releases/")
     }
+
+    exclusiveContent {
+        forRepository {
+            maven("https://dependency.download/releases")
+        }
+
+        filter {
+            includeGroup("dev.kitteh")
+        }
+    }
 }
 
 dependencies {
@@ -43,6 +53,7 @@ dependencies {
     compileOnly("net.sacredlabyrinth.phaed.simpleclans:SimpleClans:2.19.2")
     compileOnly("com.github.booksaw:BetterTeams:4.13.4")
     compileOnly("com.github.cryptomorin:kingdoms:1.17.18.1-BETA")
+    compileOnly("dev.kitteh:factions:4.0.0")
 }
 
 
