@@ -2,34 +2,34 @@ package dev.smartshub.shkoth.koth.tally.score;
 
 import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.koth.tally.Tally;
-import dev.smartshub.shkoth.api.team.KothTeam;
+import dev.smartshub.shkoth.api.team.TeamWrapper;
+import dev.smartshub.shkoth.team.UnifiedTeamTracker;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class ScoreTally implements Tally {
-
     private final Koth koth;
-    private final Map<KothTeam, Integer> scores;
+    private final Map<TeamWrapper, Integer> scores;
 
     public ScoreTally(Koth koth) {
         this.koth = koth;
-        this.scores = koth.getTeamTracker().getAllTeams().stream()
-                .collect(Collectors.toMap(
-                        team -> team,
-                        team -> 0
-                ));
+        this.scores = new HashMap<>();
     }
 
     @Override
     public void handle() {
+        UnifiedTeamTracker tracker = (UnifiedTeamTracker) koth.getTeamTracker();
+
         koth.getPlayersInside().stream()
-                .map(uuid -> koth.getTeamTracker().getTeamFrom(uuid))
+                .map(uuid -> tracker.getOrCreateTeamWrapper(uuid, koth.isSolo()))
                 .filter(Objects::nonNull)
                 .distinct()
                 .forEach(team -> scores.merge(team, 1, Integer::sum));
     }
 
+    public Map<TeamWrapper, Integer> getScores() {
+        return new HashMap<>(scores);
+    }
 }
-

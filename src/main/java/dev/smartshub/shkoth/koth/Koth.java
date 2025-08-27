@@ -10,11 +10,12 @@ import dev.smartshub.shkoth.api.koth.tally.Tally;
 import dev.smartshub.shkoth.api.location.Area;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.team.KothTeam;
+import dev.smartshub.shkoth.api.team.TeamWrapper;
 import dev.smartshub.shkoth.api.team.track.TeamTracker;
 import dev.smartshub.shkoth.api.schedule.Schedule;
 import dev.smartshub.shkoth.api.koth.tally.TallyFactory;
-import dev.smartshub.shkoth.team.HookedTeamTracker;
 import dev.smartshub.shkoth.service.koth.KothRewardService;
+import dev.smartshub.shkoth.team.UnifiedTeamTracker;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -43,7 +44,7 @@ public class Koth extends AbstractKoth {
                 boolean isSolo, boolean denyEnterWithoutTeam, boolean createTeamIfNotExistsOnEnter, KothType type) {
         super(id, displayName, duration, captureTime, area, schedules, commands, physicalRewards);
 
-        this.teamTracker = HookedTeamTracker.getInstance();
+        this.teamTracker = UnifiedTeamTracker.getInstance();
         this.tally = TallyFactory.create(type, this);
         this.isSolo = isSolo;
         this.denyEnterWithoutTeam = denyEnterWithoutTeam;
@@ -180,11 +181,19 @@ public class Koth extends AbstractKoth {
 
     private void handlePlayerEntry(Player player) {
         UUID playerId = player.getUniqueId();
-        KothTeam playerTeam = teamTracker.getTeamMembers(playerId);
+        UnifiedTeamTracker tracker = (UnifiedTeamTracker) teamTracker;
+
+        TeamWrapper playerTeam = tracker.getTeamWrapper(playerId);
 
         if (denyEnterWithoutTeam && playerTeam == null) {
             if (createTeamIfNotExistsOnEnter) {
-                playerTeam = TeamUpdatingService.getInstance().createTeamFor(playerId);
+                int maxMembers = isSolo ? 1 : Integer.MAX_VALUE;
+                playerTeam = tracker.createInternalTeam(playerId, maxMembers);
+
+                if (playerTeam == null) {
+                    player.sendMessage("§cNo se pudo crear un equipo automáticamente!");
+                    return;
+                }
             } else {
                 player.sendMessage("§cNecesitas estar en un equipo para entrar a este KOTH!");
                 return;
@@ -202,6 +211,7 @@ public class Koth extends AbstractKoth {
 
         inside.add(playerId);
     }
+
 
     private void giveRewards() {
         rewardService.grantRewards();
