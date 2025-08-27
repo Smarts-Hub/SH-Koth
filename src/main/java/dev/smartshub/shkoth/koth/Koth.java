@@ -9,11 +9,11 @@ import dev.smartshub.shkoth.api.koth.guideline.KothType;
 import dev.smartshub.shkoth.api.koth.tally.Tally;
 import dev.smartshub.shkoth.api.location.Area;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
-import dev.smartshub.shkoth.api.team.Team;
-import dev.smartshub.shkoth.api.team.TeamTracker;
+import dev.smartshub.shkoth.api.team.KothTeam;
+import dev.smartshub.shkoth.api.team.track.TeamTracker;
 import dev.smartshub.shkoth.api.schedule.Schedule;
 import dev.smartshub.shkoth.api.koth.tally.TallyFactory;
-import dev.smartshub.shkoth.team.tracker.GlobalTeamTracker;
+import dev.smartshub.shkoth.team.track.InternalTeamTracker;
 import dev.smartshub.shkoth.service.koth.KothRewardService;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -29,13 +29,13 @@ public class Koth extends AbstractKoth {
 
     private final KothEventDispatcher eventDispatcher = new KothEventDispatcher();
     private final KothRewardService rewardService = new KothRewardService(this);
-    private final GlobalTeamTracker teamTracker;
+    private final InternalTeamTracker teamTracker;
     private final Tally tally;
     private final boolean isSolo;
     private final boolean denyEnterWithoutTeam;
     private final boolean createTeamIfNotExistsOnEnter;
 
-    private Team currentCapturingTeam;
+    private KothTeam currentCapturingTeam;
     private long captureStartTime;
 
     public Koth(String id, String displayName, int duration, int captureTime, Area area,
@@ -43,7 +43,7 @@ public class Koth extends AbstractKoth {
                 boolean isSolo, boolean denyEnterWithoutTeam, boolean createTeamIfNotExistsOnEnter, KothType type) {
         super(id, displayName, duration, captureTime, area, schedules, commands, physicalRewards);
 
-        this.teamTracker = GlobalTeamTracker.getInstance();
+        this.teamTracker = InternalTeamTracker.getInstance();
         this.tally = TallyFactory.create(type, this);
         this.isSolo = isSolo;
         this.denyEnterWithoutTeam = denyEnterWithoutTeam;
@@ -91,13 +91,13 @@ public class Koth extends AbstractKoth {
         tally.handle();
     }
 
-    public void startCapture(Team team) {
+    public void startCapture(KothTeam team) {
         if (!canTeamCapture(team)) return;
 
         Player representativePlayer = team.getLeaderPlayer();
         if (representativePlayer == null) return;
 
-        PlayerStartKothCaptureEvent event = eventDispatcher.firePlayerStartKothCaptureEvent(this, representativePlayer, currentCapturingTeam != null ? currentCapturingTeam.leader() : null);
+        PlayerStartKothCaptureEvent event = eventDispatcher.firePlayerStartKothCaptureEvent(this, representativePlayer, currentCapturingTeam != null ? currentCapturingTeam.getLeader() : null);
         if(event.isCancelled()) return;
 
         this.currentCapturingTeam = team;
@@ -107,7 +107,7 @@ public class Koth extends AbstractKoth {
     public void stopCapture(PlayerStopKothCaptureEvent.StopReason reason) {
         if (currentCapturingTeam == null) return;
 
-        Player previousCapturer = Bukkit.getPlayer(currentCapturingTeam.leader());
+        Player previousCapturer = Bukkit.getPlayer(currentCapturingTeam.getLeader());
         long elapsedTime = (System.currentTimeMillis() - captureStartTime) / 1000;
 
         eventDispatcher.firePlayerStopKothCaptureEvent(this, previousCapturer, elapsedTime, reason);
@@ -116,7 +116,7 @@ public class Koth extends AbstractKoth {
         this.captureStartTime = 0;
     }
 
-    public void checkCaptureProgress(Team team) {
+    public void checkCaptureProgress(KothTeam team) {
         long elapsedTime = (System.currentTimeMillis() - captureStartTime) / 1000;
 
         if (elapsedTime >= captureTime) {
@@ -125,8 +125,8 @@ public class Koth extends AbstractKoth {
         }
     }
 
-    private void completeCapture(Team team) {
-        winners.addAll(team.members());
+    private void completeCapture(KothTeam team) {
+        winners.addAll(team.getMembers());
         stop(KothEndEvent.EndReason.CAPTURE_COMPLETED);
         giveRewards();
     }
@@ -169,10 +169,10 @@ public class Koth extends AbstractKoth {
         return !player.isDead() && player.getGameMode() == GameMode.SURVIVAL && !winners.contains(player.getUniqueId());
     }
 
-    public boolean canTeamCapture(Team team) {
+    public boolean canTeamCapture(KothTeam team) {
         if (team == null) return false;
 
-        if (isSolo && team.members().size() > 1) {
+        if (isSolo && team.getMembers().size() > 1) {
             return false;
         }
 
@@ -182,7 +182,7 @@ public class Koth extends AbstractKoth {
 
     private void handlePlayerEntry(Player player) {
         UUID playerId = player.getUniqueId();
-        Team playerTeam = teamTracker.getTeamFrom(playerId);
+        KothTeam playerTeam = teamTracker.getTeamFrom(playerId);
 
         if (denyEnterWithoutTeam && playerTeam == null) {
             if (createTeamIfNotExistsOnEnter) {
@@ -231,7 +231,7 @@ public class Koth extends AbstractKoth {
         return teamTracker;
     }
 
-    public Team getCurrentCapturingTeam() {
+    public KothTeam getCurrentCapturingTeam() {
         return currentCapturingTeam;
     }
 

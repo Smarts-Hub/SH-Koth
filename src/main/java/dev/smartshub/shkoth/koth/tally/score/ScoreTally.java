@@ -2,7 +2,7 @@ package dev.smartshub.shkoth.koth.tally.score;
 
 import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.koth.tally.Tally;
-import dev.smartshub.shkoth.api.team.Team;
+import dev.smartshub.shkoth.api.team.KothTeam;
 
 import java.util.Map;
 import java.util.Objects;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public class ScoreTally implements Tally {
 
     private final Koth koth;
-    private final Map<Team, Integer> scores;
+    private final Map<KothTeam, Integer> scores;
 
     public ScoreTally(Koth koth) {
         this.koth = koth;

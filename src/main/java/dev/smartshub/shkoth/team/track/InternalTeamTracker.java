@@ -1,25 +1,25 @@
-package dev.smartshub.shkoth.team.tracker;
+package dev.smartshub.shkoth.team.track;
 
+import dev.smartshub.shkoth.api.team.KothTeam;
 import dev.smartshub.shkoth.api.team.Team;
-import dev.smartshub.shkoth.api.team.TeamTracker;
-import org.bukkit.entity.Player;
+import dev.smartshub.shkoth.api.team.track.TeamTracker;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GlobalTeamTracker implements TeamTracker<Team> {
+public class InternalTeamTracker implements TeamTracker {
 
-    private static GlobalTeamTracker instance;
+    private static InternalTeamTracker instance;
     private final Set<Team> teams = ConcurrentHashMap.newKeySet();
 
-    private GlobalTeamTracker() {}
+    private InternalTeamTracker() {}
 
     // Im not proud of this static singleton implementation, but its fine for now
-    public static GlobalTeamTracker getInstance() {
+    public static InternalTeamTracker getInstance() {
         if (instance == null) {
-            synchronized (GlobalTeamTracker.class) {
+            synchronized (InternalTeamTracker.class) {
                 if (instance == null) {
-                    instance = new GlobalTeamTracker();
+                    instance = new InternalTeamTracker();
                 }
             }
         }
@@ -27,7 +27,7 @@ public class GlobalTeamTracker implements TeamTracker<Team> {
     }
 
     @Override
-    public Team getTeamFrom(UUID uuid) {
+    public KothTeam getTeamFrom(UUID uuid) {
         return teams.stream()
                 .filter(team -> team.contains(uuid))
                 .findFirst()
@@ -45,7 +45,7 @@ public class GlobalTeamTracker implements TeamTracker<Team> {
     }
 
     public void addMember(UUID uuid, Team team) {
-        Team currentTeam = getTeamFrom(uuid);
+        Team currentTeam = (Team) getTeamFrom(uuid);
         if (currentTeam != null) {
             if (currentTeam.equals(team)) return;
             Team updatedOldTeam = currentTeam.removeMember(uuid);
@@ -62,7 +62,7 @@ public class GlobalTeamTracker implements TeamTracker<Team> {
     }
 
     public void removeMember(UUID uuid) {
-        Team currentTeam = getTeamFrom(uuid);
+        Team currentTeam = (Team) getTeamFrom(uuid);
         if (currentTeam == null) return;
         Team updatedTeam = currentTeam.removeMember(uuid);
         if (updatedTeam == null) {
@@ -73,22 +73,22 @@ public class GlobalTeamTracker implements TeamTracker<Team> {
     }
 
     public void updateLeader(UUID oldLeader, UUID newLeader) {
-        Team current = getTeamByLeader(oldLeader).orElseThrow(() -> new IllegalArgumentException("Team not found"));
+        Team current = (Team) getTeamByLeader(oldLeader).orElseThrow(() -> new IllegalArgumentException("Team not found"));
         if (oldLeader.equals(newLeader)) return;
         if (!current.contains(newLeader)) throw new IllegalArgumentException("New leader must be a team member");
         Team updated = current.changeLeader(newLeader);
-        teams.removeIf(t -> t.leader().equals(oldLeader));
+        teams.removeIf(t -> t.getLeader().equals(oldLeader));
         teams.add(updated);
     }
 
     private void updateTeam(Team updatedTeam) {
-        teams.removeIf(team -> team.leader().equals(updatedTeam.leader()));
+        teams.removeIf(team -> team.getLeader().equals(updatedTeam.getLeader()));
         teams.add(updatedTeam);
     }
 
     public void clearTeam(UUID uuid) {
-        Team team = getTeamFrom(uuid);
-        if (team != null) dissolveTeam(team.leader());
+        Team team = (Team) getTeamFrom(uuid);
+        if (team != null) dissolveTeam(team.getLeader());
     }
 
     public void clearAllTeams() {
@@ -97,33 +97,41 @@ public class GlobalTeamTracker implements TeamTracker<Team> {
 
     @Override
     public Set<UUID> getTeamMembers(UUID anyTeamMember) {
-        Team team = getTeamFrom(anyTeamMember);
-        return team != null ? new HashSet<>(team.members()) : Set.of();
+        KothTeam team = getTeamFrom(anyTeamMember);
+        return team != null ? new HashSet<>(team.getMembers()) : Set.of();
     }
 
     @Override
     public boolean areTeammates(UUID player1, UUID player2) {
         if (player1.equals(player2)) return true;
-        Team team1 = getTeamFrom(player1);
+        KothTeam team1 = getTeamFrom(player1);
         return team1 != null && team1.contains(player2);
     }
 
     @Override
-    public Collection<Team> getAllTeams() {
+    public String getTeamDisplayName(KothTeam team) {
+        return team.getDisplayName();
+    }
+
+    @Override
+    public Collection<KothTeam> getAllTeams() {
         return new HashSet<>(teams);
     }
 
     @Override
-    public Optional<Team> getTeamByLeader(UUID leader) {
-        return teams.stream().filter(team -> team.leader().equals(leader)).findFirst();
+    public Optional<KothTeam> getTeamByLeader(UUID leader) {
+        return teams.stream()
+                .filter(team -> team.getLeader().equals(leader))
+                .map(team -> (KothTeam) team)
+                .findFirst();
     }
 
     @Override
-    public Team createTeam(UUID leader) {
+    public KothTeam createTeam(UUID leader) {
         if (getTeamByLeader(leader).isPresent()) {
             throw new IllegalArgumentException("Player is already a team leader");
         }
-        Team existingTeam = getTeamFrom(leader);
+        KothTeam existingTeam = getTeamFrom(leader);
         if (existingTeam != null) {
             throw new IllegalArgumentException("Player is already in a team");
         }
@@ -133,16 +141,7 @@ public class GlobalTeamTracker implements TeamTracker<Team> {
     }
 
     public void dissolveTeam(UUID leader) {
-        teams.removeIf(team -> team.leader().equals(leader));
-    }
-
-    @Override
-    public String getTeamDisplayName(Team team) {
-        Player leader = team.getLeaderPlayer();
-        String leaderName = leader != null ? leader.getName() : "Unknown";
-        return team.members().size() == 1
-                ? leaderName
-                : leaderName + "'s Team (" + team.members().size() + ")";
+        teams.removeIf(team -> team.getLeader().equals(leader));
     }
 
     public void cleanupInvalidTeams() {

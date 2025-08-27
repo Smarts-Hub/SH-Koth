@@ -6,8 +6,8 @@ import dev.smartshub.shkoth.api.koth.command.Commands;
 import dev.smartshub.shkoth.api.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.location.Area;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
-import dev.smartshub.shkoth.api.team.Team;
-import dev.smartshub.shkoth.api.team.TeamTracker;
+import dev.smartshub.shkoth.api.team.KothTeam;
+import dev.smartshub.shkoth.api.team.track.TeamTracker;
 import dev.smartshub.shkoth.api.schedule.Schedule;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -41,8 +41,8 @@ public interface Koth {
     void start();
     void stop(KothEndEvent.EndReason reason);
     void stopCapture(PlayerStopKothCaptureEvent.StopReason reason);
-    void startCapture(Team team);
-    void checkCaptureProgress(Team team);
+    void startCapture(KothTeam team);
+    void checkCaptureProgress(KothTeam team);
     void tick();
     boolean isRunning();
     boolean isSolo();
@@ -58,5 +58,5 @@ public interface Koth {
     int getCaptureProgress();
     @NotNull TeamTracker getTeamTracker();
 
-    Team getCurrentCapturingTeam();
+    KothTeam getCurrentCapturingTeam();
 }

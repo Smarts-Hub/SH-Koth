@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public record Team(
         UUID leader,
         Set<UUID> members
-) {
+) implements KothTeam {
     public Team {
         if (leader == null) throw new IllegalArgumentException("Leader cannot be null");
         if (members == null) members = Set.of(leader);
@@ -19,6 +19,28 @@ public record Team(
             members = Set.copyOf(newMembers);
         }
         members = Set.copyOf(members);
+    }
+
+    @Override
+    public UUID getLeader() {
+        return leader;
+    }
+
+    @Override
+    public Set<UUID> getMembers() {
+        return members;
+    }
+
+    @Override
+    public boolean contains(UUID playerId) {
+        return members.contains(playerId);
+    }
+
+    @Override
+    public String getDisplayName() {
+        Player leaderPlayer = getLeaderPlayer();
+        String leaderName = leaderPlayer != null ? leaderPlayer.getName() : "Unknown";
+        return members.size() == 1 ? leaderName : leaderName + "'s Team (" + members.size() + ")";
     }
 
     public static Team withLeader(UUID leader) {
@@ -78,10 +100,6 @@ public record Team(
         boolean changed = updatedMembers.removeAll(membersToRemove);
         if (!changed) return this;
         return new Team(leader, updatedMembers);
-    }
-
-    public boolean contains(UUID player) {
-        return members.contains(player);
     }
 
     public boolean isLeader(UUID player) {

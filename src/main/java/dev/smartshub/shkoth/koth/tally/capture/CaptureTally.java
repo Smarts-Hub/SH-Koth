@@ -3,7 +3,7 @@ package dev.smartshub.shkoth.koth.tally.capture;
 import dev.smartshub.shkoth.api.event.koth.PlayerStopKothCaptureEvent;
 import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.koth.tally.Tally;
-import dev.smartshub.shkoth.api.team.Team;
+import dev.smartshub.shkoth.api.team.KothTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -21,12 +21,12 @@ public class CaptureTally implements Tally {
 
     @Override
     public void handle(){
-        Set<Team> eligibleTeams = koth.getPlayersInside().stream()
+        Set<KothTeam> eligibleTeams = koth.getPlayersInside().stream()
                 .map(uuid -> {
                     Player player = Bukkit.getPlayer(uuid);
                     if (player == null || !koth.canPlayerCapture(player)) return null;
 
-                    Team team = koth.getTeamTracker().getTeamFrom(uuid);
+                    KothTeam team = koth.getTeamTracker().getTeamFrom(uuid);
                     if (team == null) {
                         team = koth.getTeamTracker().createTeam(uuid);
                     }
@@ -41,7 +41,7 @@ public class CaptureTally implements Tally {
         }
 
         if (koth.getCurrentCapturingTeam() == null) {
-            Team firstTeam = eligibleTeams.iterator().next();
+            KothTeam firstTeam = eligibleTeams.iterator().next();
             koth.startCapture(firstTeam);
             return;
         }
@@ -49,7 +49,7 @@ public class CaptureTally implements Tally {
         if (eligibleTeams.contains(koth.getCurrentCapturingTeam())) {
             koth.checkCaptureProgress(koth.getCurrentCapturingTeam());
         } else {
-            Team newTeam = eligibleTeams.iterator().next();
+            KothTeam newTeam = eligibleTeams.iterator().next();
             koth.stopCapture(PlayerStopKothCaptureEvent.StopReason.PLAYER_LEFT_ZONE);
             koth.startCapture(newTeam);
         }

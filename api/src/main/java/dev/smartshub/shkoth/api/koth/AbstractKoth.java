@@ -7,8 +7,8 @@ import dev.smartshub.shkoth.api.koth.command.Commands;
 import dev.smartshub.shkoth.api.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.location.Area;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
-import dev.smartshub.shkoth.api.team.Team;
 import dev.smartshub.shkoth.api.schedule.Schedule;
+import dev.smartshub.shkoth.api.team.KothTeam;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,7 +79,7 @@ public abstract class AbstractKoth implements Koth {
 
         public abstract boolean isTeam();
 
-        public abstract Team getCurrentCapturingTeam();
+        public abstract KothTeam getCurrentCapturingTeam();
 
         // Common utility methods
         public boolean isRunning() {

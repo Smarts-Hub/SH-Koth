@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.api.event.team;
 
-import dev.smartshub.shkoth.api.team.Team;
+import dev.smartshub.shkoth.api.team.KothTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -13,18 +13,18 @@ import java.util.UUID;
 public class TeamChangeLeaderEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private final Team team;
+    private final KothTeam team;
     private final UUID oldLeader;
     private final UUID newLeader;
     private boolean cancelled = false;
 
-    public TeamChangeLeaderEvent(Team team, UUID oldLeader, UUID newLeader) {
+    public TeamChangeLeaderEvent(KothTeam team, UUID oldLeader, UUID newLeader) {
         this.team = team;
         this.oldLeader = oldLeader;
         this.newLeader = newLeader;
     }
 
-    public Team getTeam() { return team; }
+    public KothTeam getTeam() { return team; }
     public UUID getOldLeader() { return oldLeader; }
     public UUID getNewLeader() { return newLeader; }
 

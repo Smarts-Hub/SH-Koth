@@ -1,6 +1,6 @@
 package dev.smartshub.shkoth.api.event.team;
 
-import dev.smartshub.shkoth.api.team.Team;
+import dev.smartshub.shkoth.api.team.KothTeam;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -12,8 +12,8 @@ import java.util.UUID;
 public class TeamMemberRemovedEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
-    private final Team oldTeam;
-    private final Team newTeam;
+    private final KothTeam oldTeam;
+    private final KothTeam newTeam;
     private final UUID removedMember;
     private final UUID remover;
     private final RemovalReason reason;
@@ -26,7 +26,7 @@ public class TeamMemberRemovedEvent extends Event {
         TEAM_DISSOLVED
     }
 
-    public TeamMemberRemovedEvent(Team oldTeam, Team newTeam, UUID removedMember,
+    public TeamMemberRemovedEvent(KothTeam oldTeam, KothTeam newTeam, UUID removedMember,
                                   UUID remover, RemovalReason reason) {
         this.oldTeam = oldTeam;
         this.newTeam = newTeam;
@@ -35,8 +35,8 @@ public class TeamMemberRemovedEvent extends Event {
         this.reason = reason;
     }
 
-    public Team getOldTeam() { return oldTeam; }
-    public Team getNewTeam() { return newTeam; }
+    public KothTeam getOldTeam() { return oldTeam; }
+    public KothTeam getNewTeam() { return newTeam; }
     public UUID getRemovedMember() { return removedMember; }
     public UUID getRemover() { return remover; }
     public RemovalReason getReason() { return reason; }
@@ -54,8 +54,8 @@ public class TeamMemberRemovedEvent extends Event {
     public boolean causedDissolution() { return newTeam == null; }
     public boolean wasLeader() { return oldTeam.isLeader(removedMember); }
 
-    public int getOldTeamSize() { return oldTeam.size(); }
-    public int getNewTeamSize() { return newTeam != null ? newTeam.size() : 0; }
+    public int getOldTeamSize() { return oldTeam.getMembers().size(); }
+    public int getNewTeamSize() { return newTeam != null ? newTeam.getMembers().size() : 0; }
 
     @Override
     public @NotNull HandlerList getHandlers() { return HANDLERS; }
