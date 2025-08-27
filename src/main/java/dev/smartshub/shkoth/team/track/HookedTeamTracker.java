@@ -51,27 +51,15 @@ public class HookedTeamTracker implements TeamTracker {
     }
 
     @Override
-    public KothTeam getTeamFrom(UUID uuid) {
-        TeamHook activeHook = getActiveHook();
-        return activeHook != null ? activeHook.getTeamFrom(uuid) : null;
-    }
-
-    @Override
     public Set<UUID> getTeamMembers(UUID anyTeamMember) {
         TeamHook activeHook = getActiveHook();
         return activeHook != null ? activeHook.getTeamMembers(anyTeamMember) : Set.of();
     }
 
     @Override
-    public Collection<KothTeam> getAllTeams() {
-        TeamHook activeHook = getActiveHook();
-        return activeHook != null ? activeHook.getAllTeams() : Collections.emptyList();
-    }
-
-    @Override
     public Optional<KothTeam> getTeamByLeader(UUID leader) {
         TeamHook activeHook = getActiveHook();
-        return activeHook != null ? activeHook.getTeamByLeader(leader) : Optional.empty();
+        return activeHook != null ? activeHook.getTeamLeader(leader) : Optional.empty();
     }
 
     @Override

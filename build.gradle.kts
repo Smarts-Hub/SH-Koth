@@ -20,6 +20,11 @@ repositories {
     maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
 
     maven { url = uri("https://jitpack.io") }
+
+    maven {
+        name = "roinujnosde-repo"
+        url = uri("https://repo.roinujnosde.me/releases/")
+    }
 }
 
 dependencies {
@@ -31,9 +36,11 @@ dependencies {
     zap("fr.mrmicky:fastboard:2.1.5")
     zap("com.saicone.rtag:rtag:1.5.11")
     zap("com.saicone.rtag:rtag-item:1.5.11")
-
     zap("com.h2database:h2:2.2.224")
     implementation(kotlin("stdlib-jdk8"))
+
+    implementation("com.github.UlrichBR:UClans-API:8.4.0")
+    implementation("net.sacredlabyrinth.phaed.simpleclans:SimpleClans:2.19.2")
 }
 
 

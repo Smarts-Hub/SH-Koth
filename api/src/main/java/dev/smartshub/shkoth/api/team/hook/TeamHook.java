@@ -1,9 +1,5 @@
 package dev.smartshub.shkoth.api.team.hook;
 
-import dev.smartshub.shkoth.api.team.KothTeam;
-
-import java.util.Collection;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -12,10 +8,10 @@ public interface TeamHook {
     boolean isAvailable();
     int getPriority();
 
-    KothTeam getTeamFrom(UUID playerId);
     Set<UUID> getTeamMembers(UUID anyTeamMember);
-    Collection<KothTeam> getAllTeams();
-    Optional<KothTeam> getTeamByLeader(UUID leader);
+    UUID getTeamLeader(UUID anyTeamMember);
+
+    String getTeamDisplayName(UUID anyTeamMember);
 
     boolean isTeamMember(UUID uuid);
     boolean isTeamLeader(UUID uuid);
