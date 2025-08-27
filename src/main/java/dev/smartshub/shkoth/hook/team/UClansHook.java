@@ -1,0 +1,88 @@
+package dev.smartshub.shkoth.hook.team;
+
+import dev.smartshub.shkoth.api.team.hook.TeamHook;
+import me.ulrich.clans.api.ClanAPIManager;
+import me.ulrich.clans.api.PlayerAPIManager;
+import me.ulrich.clans.data.ClanData;
+import me.ulrich.clans.interfaces.UClans;
+import org.bukkit.Bukkit;
+
+import java.util.*;
+
+public class UClansHook implements TeamHook {
+
+    private UClans uClansPlugin;
+    private ClanAPIManager clanAPI;
+    private PlayerAPIManager playerAPI;
+
+    public UClansHook(){
+        if (Bukkit.getPluginManager().isPluginEnabled("UltimateClans")) {
+            uClansPlugin = (UClans) Bukkit.getPluginManager().getPlugin("UltimateClans");
+        }
+
+        clanAPI = uClansPlugin.getClanAPI();
+        playerAPI = uClansPlugin.getPlayerAPI();
+    }
+
+
+    @Override
+    public String getPluginName() {
+        return "UltimateClans";
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return Bukkit.getPluginManager().isPluginEnabled("UltimateClans");
+    }
+
+    @Override
+    public int getPriority() {
+        return 10;
+    }
+
+    @Override
+    public Set<UUID> getTeamMembers(UUID anyTeamMember) {
+        Set<UUID> members = new HashSet<>();
+        playerAPI.getPlayerClan(anyTeamMember).ifPresent(clanData -> {
+            members.addAll(clanData.getMembers());
+        });
+        return members;
+    }
+
+    @Override
+    public UUID getTeamLeader(UUID anyTeamMember) {
+        Optional<ClanData> clanOpt = playerAPI.getPlayerClan(anyTeamMember);
+        if (clanOpt.isEmpty()) return null;
+        ClanData clan = clanOpt.get();
+        return clan.getLeader();
+    }
+
+    @Override
+    public String getTeamDisplayName(UUID anyTeamMember) {
+        Optional<ClanData> clanOpt = playerAPI.getPlayerClan(anyTeamMember);
+        if(clanOpt.isPresent()) {
+            return clanOpt.get().getTag();
+        }
+        return "";
+    }
+
+    @Override
+    public boolean isTeamMember(UUID uuid) {
+        Optional<ClanData> clanOpt = playerAPI.getPlayerClan(uuid);
+        return clanOpt.isPresent();
+    }
+
+    @Override
+    public boolean isTeamLeader(UUID uuid) {
+        Optional<ClanData> clanOpt = playerAPI.getPlayerClan(uuid);
+        return clanOpt.map(clanData -> clanData.getLeader().equals(uuid)).orElse(false);
+    }
+
+    @Override
+    public boolean areTeammates(UUID player1, UUID player2) {
+        Optional<ClanData> clanOpt1 = playerAPI.getPlayerClan(player1);
+        Optional<ClanData> clanOpt2 = playerAPI.getPlayerClan(player2);
+        if (clanOpt1.isEmpty() || clanOpt2.isEmpty()) return false;
+        return clanOpt1.get().getId().equals(clanOpt2.get().getId());
+    }
+}
