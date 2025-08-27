@@ -180,11 +180,11 @@ public class Koth extends AbstractKoth {
 
     private void handlePlayerEntry(Player player) {
         UUID playerId = player.getUniqueId();
-        KothTeam playerTeam = teamTracker.getTeamFrom(playerId);
+        KothTeam playerTeam = teamTracker.getTeamMembers(playerId);
 
         if (denyEnterWithoutTeam && playerTeam == null) {
             if (createTeamIfNotExistsOnEnter) {
-                playerTeam = teamTracker.createTeam(playerId);
+                playerTeam = TeamUpdatingService.getInstance().createTeamFor(playerId);
             } else {
                 player.sendMessage("§cNecesitas estar en un equipo para entrar a este KOTH!");
                 return;

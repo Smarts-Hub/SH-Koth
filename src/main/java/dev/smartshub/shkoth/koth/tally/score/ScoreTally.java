@@ -32,3 +32,4 @@ public class ScoreTally implements Tally {
     }
 
 }
+

@@ -14,3 +14,4 @@ public interface TeamTracker {
     String getTeamDisplayName(UUID uuid);
     String getActiveProvider();
 }
+
