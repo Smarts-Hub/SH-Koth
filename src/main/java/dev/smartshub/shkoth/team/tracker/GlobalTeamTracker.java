@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GlobalTeamTracker implements TeamTracker {
+public class GlobalTeamTracker implements TeamTracker<Team> {
 
     private static GlobalTeamTracker instance;
     private final Set<Team> teams = ConcurrentHashMap.newKeySet();
@@ -44,7 +44,6 @@ public class GlobalTeamTracker implements TeamTracker {
         return teams.stream().anyMatch(team -> team.isLeader(uuid));
     }
 
-    @Override
     public void addMember(UUID uuid, Team team) {
         Team currentTeam = getTeamFrom(uuid);
         if (currentTeam != null) {
@@ -62,7 +61,6 @@ public class GlobalTeamTracker implements TeamTracker {
         }
     }
 
-    @Override
     public void removeMember(UUID uuid) {
         Team currentTeam = getTeamFrom(uuid);
         if (currentTeam == null) return;
@@ -74,15 +72,13 @@ public class GlobalTeamTracker implements TeamTracker {
         }
     }
 
-    @Override
-    public Team updateLeader(UUID oldLeader, UUID newLeader) {
+    public void updateLeader(UUID oldLeader, UUID newLeader) {
         Team current = getTeamByLeader(oldLeader).orElseThrow(() -> new IllegalArgumentException("Team not found"));
-        if (oldLeader.equals(newLeader)) return current;
+        if (oldLeader.equals(newLeader)) return;
         if (!current.contains(newLeader)) throw new IllegalArgumentException("New leader must be a team member");
         Team updated = current.changeLeader(newLeader);
         teams.removeIf(t -> t.leader().equals(oldLeader));
         teams.add(updated);
-        return updated;
     }
 
     private void updateTeam(Team updatedTeam) {
@@ -90,13 +86,11 @@ public class GlobalTeamTracker implements TeamTracker {
         teams.add(updatedTeam);
     }
 
-    @Override
     public void clearTeam(UUID uuid) {
         Team team = getTeamFrom(uuid);
         if (team != null) dissolveTeam(team.leader());
     }
 
-    @Override
     public void clearAllTeams() {
         teams.clear();
     }
@@ -138,7 +132,6 @@ public class GlobalTeamTracker implements TeamTracker {
         return newTeam;
     }
 
-    @Override
     public void dissolveTeam(UUID leader) {
         teams.removeIf(team -> team.leader().equals(leader));
     }
