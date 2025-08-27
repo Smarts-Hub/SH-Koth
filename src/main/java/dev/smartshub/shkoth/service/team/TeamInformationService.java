@@ -3,7 +3,7 @@ package dev.smartshub.shkoth.service.team;
 import dev.smartshub.shkoth.api.team.KothTeam;
 import dev.smartshub.shkoth.api.team.track.TeamTracker;
 import dev.smartshub.shkoth.service.notify.NotifyService;
-import dev.smartshub.shkoth.team.track.HookedTeamTracker;
+import dev.smartshub.shkoth.team.HookedTeamTracker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

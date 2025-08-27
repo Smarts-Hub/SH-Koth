@@ -13,7 +13,7 @@ import dev.smartshub.shkoth.api.team.KothTeam;
 import dev.smartshub.shkoth.api.team.track.TeamTracker;
 import dev.smartshub.shkoth.api.schedule.Schedule;
 import dev.smartshub.shkoth.api.koth.tally.TallyFactory;
-import dev.smartshub.shkoth.team.track.InternalTeamTracker;
+import dev.smartshub.shkoth.team.HookedTeamTracker;
 import dev.smartshub.shkoth.service.koth.KothRewardService;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -29,7 +29,7 @@ public class Koth extends AbstractKoth {
 
     private final KothEventDispatcher eventDispatcher = new KothEventDispatcher();
     private final KothRewardService rewardService = new KothRewardService(this);
-    private final InternalTeamTracker teamTracker;
+    private final TeamTracker teamTracker;
     private final Tally tally;
     private final boolean isSolo;
     private final boolean denyEnterWithoutTeam;
@@ -43,7 +43,7 @@ public class Koth extends AbstractKoth {
                 boolean isSolo, boolean denyEnterWithoutTeam, boolean createTeamIfNotExistsOnEnter, KothType type) {
         super(id, displayName, duration, captureTime, area, schedules, commands, physicalRewards);
 
-        this.teamTracker = InternalTeamTracker.getInstance();
+        this.teamTracker = HookedTeamTracker.getInstance();
         this.tally = TallyFactory.create(type, this);
         this.isSolo = isSolo;
         this.denyEnterWithoutTeam = denyEnterWithoutTeam;
@@ -75,8 +75,6 @@ public class Koth extends AbstractKoth {
     @Override
     public void tick() {
         if (!isRunning()) return;
-
-        teamTracker.cleanupInvalidTeams();
 
         remainingTime--;
         if (remainingTime <= 0) {
