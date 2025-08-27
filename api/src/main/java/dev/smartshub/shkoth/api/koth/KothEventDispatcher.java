@@ -43,10 +43,9 @@ public class KothEventDispatcher {
         return event;
     }
 
-    public PlayerStopKothCaptureEvent firePlayerStopKothCaptureEvent(Koth koth, Player player, long elapsed, PlayerStopKothCaptureEvent.StopReason reason) {
+    public void firePlayerStopKothCaptureEvent(Koth koth, Player player, long elapsed, PlayerStopKothCaptureEvent.StopReason reason) {
         PlayerStopKothCaptureEvent event = new PlayerStopKothCaptureEvent(koth, player, elapsed, reason);
         Bukkit.getPluginManager().callEvent(event);
-        return event;
     }
 
 
