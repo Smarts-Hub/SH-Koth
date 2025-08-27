@@ -8,10 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public interface TeamTracker {
-
     KothTeam getTeamFrom(UUID uuid);
-    KothTeam createTeam(UUID leader);
-
     Set<UUID> getTeamMembers(UUID anyTeamMember);
     Collection<KothTeam> getAllTeams();
     Optional<KothTeam> getTeamByLeader(UUID leader);
@@ -20,5 +17,15 @@ public interface TeamTracker {
     boolean isTeamLeader(UUID uuid);
     boolean areTeammates(UUID player1, UUID player2);
 
+    KothTeam createTeam(UUID leader);
+    boolean canCreateTeams();
+    boolean canManageTeams();
+
+    boolean addMemberToTeam(UUID member, UUID teamLeader);
+    boolean removeMemberFromTeam(UUID member);
+    boolean disbandTeam(UUID leader);
+    boolean transferLeadership(UUID oldLeader, UUID newLeader);
+
     String getTeamDisplayName(KothTeam team);
+    String getActiveProvider();
 }

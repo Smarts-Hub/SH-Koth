@@ -9,36 +9,35 @@ import dev.smartshub.shkoth.team.InternalTeamHook;
 import java.util.*;
 
 public class HookedTeamTracker implements TeamTracker {
-    
+
     private static HookedTeamTracker instance;
     private final List<TeamHook> hooks = new ArrayList<>();
-    private final InternalTeamTracker internalTracker;
-    
+    private final InternalTeamHook internalHook;
+
     private HookedTeamTracker() {
-        this.internalTracker = InternalTeamTracker.getInstance();
+        this.internalHook = new InternalTeamHook();
         setupHooks();
     }
-    
+
     public static HookedTeamTracker getInstance() {
         if (instance == null) {
             instance = new HookedTeamTracker();
         }
         return instance;
     }
-    
+
     private void setupHooks() {
         registerHook(new SimpleClansHook());
-        // TODO: others hooks
-        
-        registerHook(new InternalTeamHook(internalTracker));
+
+        registerHook(internalHook);
     }
-    
+
     public void registerHook(TeamHook hook) {
         hooks.removeIf(h -> h.getPluginName().equals(hook.getPluginName()));
         hooks.add(hook);
         hooks.sort(Comparator.comparingInt(TeamHook::getPriority).reversed());
     }
-    
+
     private TeamHook getActiveHook() {
         return hooks.stream()
                 .filter(TeamHook::isAvailable)
@@ -46,19 +45,15 @@ public class HookedTeamTracker implements TeamTracker {
                 .orElse(null);
     }
 
+    private boolean isUsingInternalSystem() {
+        TeamHook activeHook = getActiveHook();
+        return activeHook instanceof InternalTeamHook;
+    }
+
     @Override
     public KothTeam getTeamFrom(UUID uuid) {
         TeamHook activeHook = getActiveHook();
         return activeHook != null ? activeHook.getTeamFrom(uuid) : null;
-    }
-
-    @Override
-    public KothTeam createTeam(UUID leader) {
-        TeamHook activeHook = getActiveHook();
-        if (activeHook instanceof InternalTeamHook) {
-            return internalTracker.createTeam(leader);
-        }
-        throw new UnsupportedOperationException("Cannot create teams when external plugin is active");
     }
 
     @Override
@@ -101,18 +96,56 @@ public class HookedTeamTracker implements TeamTracker {
     public String getTeamDisplayName(KothTeam team) {
         return team.getDisplayName();
     }
-    
-    public String getActivePlugin() {
+
+    @Override
+    public String getActiveProvider() {
         TeamHook activeHook = getActiveHook();
         return activeHook != null ? activeHook.getPluginName() : "None";
     }
-    
-    public InternalTeamTracker getInternalTracker() {
-        return internalTracker;
+
+    @Override
+    public KothTeam createTeam(UUID leader) {
+        if (!canCreateTeams()) {
+            throw new UnsupportedOperationException("Cannot create teams with external plugin: " + getActiveProvider());
+        }
+        return internalHook.createTeam(leader);
     }
-    
-    public boolean isUsingExternalPlugin() {
-        TeamHook activeHook = getActiveHook();
-        return activeHook != null && !(activeHook instanceof InternalTeamHook);
+
+    @Override
+    public boolean canCreateTeams() {
+        return isUsingInternalSystem();
+    }
+
+    @Override
+    public boolean canManageTeams() {
+        return isUsingInternalSystem();
+    }
+
+    @Override
+    public boolean addMemberToTeam(UUID member, UUID teamLeader) {
+        if (!canManageTeams()) return false;
+        return internalHook.addMemberToTeam(member, teamLeader);
+    }
+
+    @Override
+    public boolean removeMemberFromTeam(UUID member) {
+        if (!canManageTeams()) return false;
+        return internalHook.removeMemberFromTeam(member);
+    }
+
+    @Override
+    public boolean disbandTeam(UUID leader) {
+        if (!canManageTeams()) return false;
+        return internalHook.disbandTeam(leader);
+    }
+
+    @Override
+    public boolean transferLeadership(UUID oldLeader, UUID newLeader) {
+        if (!canManageTeams()) return false;
+        return internalHook.transferLeadership(oldLeader, newLeader);
+    }
+
+    public InternalTeamHook getInternalHook() {
+        return internalHook;
     }
 }

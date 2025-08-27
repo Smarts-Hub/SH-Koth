@@ -11,12 +11,12 @@ public interface TeamHook {
     String getPluginName();
     boolean isAvailable();
     int getPriority();
-    
+
     KothTeam getTeamFrom(UUID playerId);
     Set<UUID> getTeamMembers(UUID anyTeamMember);
     Collection<KothTeam> getAllTeams();
     Optional<KothTeam> getTeamByLeader(UUID leader);
-    
+
     boolean isTeamMember(UUID uuid);
     boolean isTeamLeader(UUID uuid);
     boolean areTeammates(UUID player1, UUID player2);

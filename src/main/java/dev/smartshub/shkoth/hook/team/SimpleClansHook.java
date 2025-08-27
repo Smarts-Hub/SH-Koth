@@ -20,7 +20,7 @@ public class SimpleClansHook implements TeamHook {
 
     @Override
     public int getPriority() {
-        return 10; //Make it configurable later
+        return 10;
     }
 
     @Override
@@ -38,9 +38,7 @@ public class SimpleClansHook implements TeamHook {
 
     @Override
     public Collection<KothTeam> getAllTeams() {
-        if (!isAvailable()) return Collections.emptyList();
-        //TODO
-        return null;
+        return Collections.emptyList(); // Implement based on SimpleClans API
     }
 
     @Override
