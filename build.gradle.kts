@@ -39,8 +39,9 @@ dependencies {
     zap("com.h2database:h2:2.2.224")
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation("com.github.UlrichBR:UClans-API:8.4.0")
-    implementation("net.sacredlabyrinth.phaed.simpleclans:SimpleClans:2.19.2")
+    compileOnly("com.github.UlrichBR:UClans-API:8.4.0")
+    compileOnly("net.sacredlabyrinth.phaed.simpleclans:SimpleClans:2.19.2")
+    compileOnly("com.github.booksaw:BetterTeams:4.13.4")
 }
 
 
