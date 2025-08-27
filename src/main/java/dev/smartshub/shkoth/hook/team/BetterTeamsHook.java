@@ -5,6 +5,7 @@ import com.booksaw.betterTeams.TeamPlayer;
 import dev.smartshub.shkoth.api.team.hook.TeamHook;
 import org.bukkit.Bukkit;
 
+import java.util.Comparator;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -45,11 +46,14 @@ public class BetterTeamsHook implements TeamHook {
     @Override
     public UUID getTeamLeader(UUID anyTeamMember) {
         Team team = Team.getTeam(anyTeamMember);
-        if(team == null) return null;
+        if (team == null) return null;
 
-        // BetterTeams does not have a specific leader concept, so we return the first member
-        return team.getMembers().getOnlinePlayers().getFirst().getUniqueId();
+        return team.getMembers().get().stream()
+                .max(Comparator.comparingInt(member -> member.getRank().value))
+                .map(TeamPlayer::getPlayerUUID)
+                .orElse(null);
     }
+
 
     @Override
     public String getTeamDisplayName(UUID anyTeamMember) {
@@ -67,10 +71,14 @@ public class BetterTeamsHook implements TeamHook {
     @Override
     public boolean isTeamLeader(UUID uuid) {
         Team team = Team.getTeam(uuid);
-        if(team == null) return false;
+        if (team == null) return false;
 
-        return team.getMembers().get().stream().anyMatch(member -> member.getPlayerUUID().equals(uuid));
+        return team.getMembers().get().stream()
+                .max(Comparator.comparingInt(member -> member.getRank().value))
+                .map(topMember -> topMember.getPlayerUUID().equals(uuid))
+                .orElse(false);
     }
+
 
     @Override
     public boolean areTeammates(UUID player1, UUID player2) {
