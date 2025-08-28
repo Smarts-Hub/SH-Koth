@@ -17,7 +17,7 @@ public class PlayerStopKothCaptureListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerStopKothCaptureEvent(PlayerStopKothCaptureEvent event) {
         notifyService.sendChat(event.getPlayer(), "koth.capture.stop");
-        notifyService.sendBroadcastListToOnlinePlayers("koth.capture.stop.broadcast");
+        notifyService.sendBroadcastListToOnlinePlayers("koth.capture.stop");
     }
 
 }

@@ -17,7 +17,7 @@ public class PlayerStartKothCaptureListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerStartKothCapture(PlayerStartKothCaptureEvent event) {
         notifyService.sendChat(event.getPlayer(), "koth.capture.start");
-        notifyService.sendBroadcastListToOnlinePlayers("koth.capture.start.broadcast");
+        notifyService.sendBroadcastListToOnlinePlayers("koth.capture.start");
     }
 
 }
