@@ -8,8 +8,11 @@ import dev.smartshub.shkoth.command.handler.exception.ExceptionHandler;
 import dev.smartshub.shkoth.command.handler.suggestion.CommandSuggestionProvider;
 import dev.smartshub.shkoth.command.koth.KothCommand;
 import dev.smartshub.shkoth.command.team.TeamCommand;
+import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.koth.ticking.KothTicker;
 import dev.smartshub.shkoth.listener.koth.*;
+import dev.smartshub.shkoth.listener.player.PlayerJoinListener;
+import dev.smartshub.shkoth.listener.player.PlayerQuitListener;
 import dev.smartshub.shkoth.listener.team.*;
 import dev.smartshub.shkoth.message.MessageParser;
 import dev.smartshub.shkoth.message.MessageRepository;
@@ -27,7 +30,10 @@ import dev.smartshub.shkoth.service.team.TeamHandlingService;
 import dev.smartshub.shkoth.service.team.TeamHookHelpService;
 import dev.smartshub.shkoth.service.team.TeamInformationService;
 import dev.smartshub.shkoth.service.team.TeamInviteService;
+import dev.smartshub.shkoth.storage.cache.PlayerStatsCache;
 import dev.smartshub.shkoth.storage.database.connection.DatabaseConnection;
+import dev.smartshub.shkoth.storage.database.dao.PlayerStatsDAO;
+import dev.smartshub.shkoth.storage.database.table.SchemaCreator;
 import dev.smartshub.shkoth.task.UpdateTask;
 import dev.smartshub.shkoth.team.ContextualTeamTracker;
 import org.bukkit.entity.Player;
@@ -41,6 +47,8 @@ public class SHKoth extends ZapperJavaPlugin {
     private KothRegistry kothRegistry;
     private KothAPIImpl kothAPI;
 
+    private final PlayerStatsDAO playerStatsDAO = new PlayerStatsDAO();
+    private PlayerStatsCache playerStatsCache = new PlayerStatsCache(playerStatsDAO);
 
     private final MessageParser messageParser = new MessageParser();
     private MessageRepository messageRepository;
@@ -69,6 +77,7 @@ public class SHKoth extends ZapperJavaPlugin {
         getLogger().info("SHKoth has been enabled!");
         factoryRegister();
         setUpConfig();
+        setUpStorage();
         initAPI();
         initServices();
         initTracker();
@@ -76,6 +85,7 @@ public class SHKoth extends ZapperJavaPlugin {
         setUpTasks();
         registerCommands();
         registerListeners();
+        registerPlaceholders();
     }
 
     @Override
@@ -98,7 +108,13 @@ public class SHKoth extends ZapperJavaPlugin {
     private void setUpConfig() {
         configService = new ConfigService(this);
         messageRepository = new MessageRepository(configService);
-        CompletableFuture.runAsync(DatabaseConnection::init);
+    }
+
+    private void setUpStorage() {
+        CompletableFuture.runAsync(() -> {
+            DatabaseConnection.init();
+            SchemaCreator.createSchema();
+        });
     }
 
     private void initServices() {
@@ -140,10 +156,8 @@ public class SHKoth extends ZapperJavaPlugin {
                     providers.addProvider(Player.class, commandSuggestionProvider.getPlayerProvider());
                     providers.addProvider(int.class, commandSuggestionProvider.getNumberProvider());
                 })
-
                 .exceptionHandler(exceptionHandler)
                 .build();
-
 
         lamp.register(
                 new KothCommand(kothRegistry, notifyService, configService),
@@ -151,7 +165,7 @@ public class SHKoth extends ZapperJavaPlugin {
     }
 
     private void registerListeners() {
-        getServer().getPluginManager().registerEvents(new KothEndListener(notifyService), this);
+        getServer().getPluginManager().registerEvents(new KothEndListener(notifyService, playerStatsDAO), this);
         getServer().getPluginManager().registerEvents(new KothStartListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new KothStateChangeListener(scoreboardHandleService), this);
         getServer().getPluginManager().registerEvents(new PlayerEnterKothDuringRunListener(notifyService), this);
@@ -165,6 +179,15 @@ public class SHKoth extends ZapperJavaPlugin {
         getServer().getPluginManager().registerEvents(new MemberJoinedTeamListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new MemberLeavedTeamListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new MemberKickedFromTeamListener(notifyService), this);
+
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(playerStatsCache), this);
+        getServer().getPluginManager().registerEvents(new PlayerQuitListener(playerStatsCache), this);
+    }
+
+    private void registerPlaceholders(){
+        if(getServer().getPluginManager().getPlugin("PlaceholderAPI") != null){
+            new PlaceholderAPIHook(kothRegistry, playerStatsCache).register();
+        }
     }
 
 }

@@ -13,7 +13,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class PlayerStatsDAO {
 
-    // SQL queries
     private static final String SELECT_BY_ID =
             "SELECT player_id, solo_wins, team_wins FROM player_stats WHERE player_id = ?";
 
@@ -21,6 +20,13 @@ public class PlayerStatsDAO {
             "INSERT INTO player_stats (player_id, solo_wins, team_wins) VALUES (?, ?, ?) " +
                     "ON DUPLICATE KEY UPDATE solo_wins = VALUES(solo_wins), team_wins = VALUES(team_wins)";
 
+    private static final String INCREMENT_SOLO_WIN =
+            "INSERT INTO player_stats (player_id, solo_wins, team_wins) VALUES (?, 1, 0) " +
+                    "ON DUPLICATE KEY UPDATE solo_wins = solo_wins + 1";
+
+    private static final String INCREMENT_TEAM_WIN =
+            "INSERT INTO player_stats (player_id, solo_wins, team_wins) VALUES (?, 0, 1) " +
+                    "ON DUPLICATE KEY UPDATE team_wins = team_wins + 1";
 
     public CompletableFuture<Optional<PlayerStats>> getPlayerStats(UUID playerId) {
         return CompletableFuture.supplyAsync(() -> {
@@ -38,13 +44,11 @@ public class PlayerStatsDAO {
                     }
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new RuntimeException("Error fetching player stats", e);
             }
-
             return Optional.empty();
         });
     }
-
 
     public CompletableFuture<Void> savePlayerStats(PlayerStats stats) {
         return CompletableFuture.runAsync(() -> {
@@ -58,8 +62,68 @@ public class PlayerStatsDAO {
                 stmt.executeUpdate();
 
             } catch (SQLException e) {
-                e.printStackTrace();
+                throw new RuntimeException("Error saving player stats", e);
             }
         });
+    }
+
+    public CompletableFuture<Void> increaseSoloWin(UUID playerId) {
+        return CompletableFuture.runAsync(() -> {
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(INCREMENT_SOLO_WIN)) {
+
+                stmt.setString(1, playerId.toString());
+                stmt.executeUpdate();
+
+            } catch (SQLException e) {
+                throw new RuntimeException("Error incrementing solo wins", e);
+            }
+        });
+    }
+
+    public CompletableFuture<Void> increaseTeamWin(UUID playerId) {
+        return CompletableFuture.runAsync(() -> {
+            try (Connection conn = DatabaseConnection.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(INCREMENT_TEAM_WIN)) {
+
+                stmt.setString(1, playerId.toString());
+                stmt.executeUpdate();
+
+            } catch (SQLException e) {
+                throw new RuntimeException("Error incrementing team wins", e);
+            }
+        });
+    }
+
+    public CompletableFuture<Void> increasePlayerWins(UUID playerId, boolean isTeamWin) {
+        return isTeamWin ? increaseTeamWin(playerId) : increaseSoloWin(playerId);
+    }
+
+    public CompletableFuture<Integer> getTotalWins(UUID playerId) {
+        return getPlayerStats(playerId)
+                .thenApply(optionalStats ->
+                        optionalStats.map(stats -> stats.soloWins() + stats.teamWins())
+                                .orElse(0)
+                );
+    }
+
+    public CompletableFuture<Integer> getSoloWins(UUID playerId) {
+        return getPlayerStats(playerId)
+                .thenApply(optionalStats ->
+                        optionalStats.map(PlayerStats::soloWins)
+                                .orElse(0)
+                );
+    }
+
+    public CompletableFuture<Integer> getTeamWins(UUID playerId) {
+        return getPlayerStats(playerId)
+                .thenApply(optionalStats ->
+                        optionalStats.map(PlayerStats::teamWins)
+                                .orElse(0)
+                );
+    }
+
+    public CompletableFuture<Integer> getWins(UUID playerId, boolean isTeam) {
+        return isTeam ? getTeamWins(playerId) : getSoloWins(playerId);
     }
 }

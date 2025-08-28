@@ -1,19 +1,22 @@
 package dev.smartshub.shkoth.hook.placeholder;
 
+import dev.smartshub.shkoth.api.stat.StatType;
 import dev.smartshub.shkoth.registry.KothRegistry;
+import dev.smartshub.shkoth.storage.cache.PlayerStatsCache;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.temporal.TemporalUnit;
 
 public class PlaceholderAPIHook extends PlaceholderExpansion {
 
     private final KothRegistry kothRegistry;
+    private final PlayerStatsCache playerStatsCache;
     private final PlaceholderHelper placeholderHelper = new PlaceholderHelper();
 
-    public PlaceholderAPIHook(KothRegistry kothRegistry) {
+    public PlaceholderAPIHook(KothRegistry kothRegistry, PlayerStatsCache playerStatsCache) {
         this.kothRegistry = kothRegistry;
+        this.playerStatsCache = playerStatsCache;
     }
 
     // Temp storage for contextual arguments, like player name or koth name in some messages
@@ -54,7 +57,9 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 case "arg1" -> tempArg1 != null ? tempArg1 : "";
                 case "arg2" -> tempArg2 != null ? tempArg2 : "";
                 case "arg3" -> tempArg3 != null ? tempArg3 : "";
-                case "total_captured" -> ""; //TODO: player total wins
+                case "total_wins" -> playerStatsCache.getStat(player, StatType.TOTAL);
+                case "solo_wins" -> playerStatsCache.getStat(player, StatType.SOLO);
+                case "team_wins" -> playerStatsCache.getStat(player, StatType.TEAM);
                 case "next_koth" -> kothRegistry.getNextKothToRun();
                 case "next_koth_in" -> kothRegistry.getTimeUntilNextKoth();
                 case "next_koth_in_formatted" -> placeholderHelper.formatTime(kothRegistry.getTimeUntilNextKoth());
