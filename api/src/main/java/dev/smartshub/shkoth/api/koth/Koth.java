@@ -34,6 +34,7 @@ public interface Koth {
     @Nullable UUID getCurrentCapturer();
 
     long getCaptureStartTime();
+    long getSecondsUntilCaptureComplete();
     int getRemainingTime();
     @NotNull Set<UUID> getWinners();
     @NotNull Set<UUID> getPlayersInside();
@@ -45,6 +46,7 @@ public interface Koth {
     void checkCaptureProgress(KothTeam team);
     void tick();
     boolean isRunning();
+    boolean isCapturing();
     boolean isSolo();
     boolean isTeam();
     void playerEnter(Player player);

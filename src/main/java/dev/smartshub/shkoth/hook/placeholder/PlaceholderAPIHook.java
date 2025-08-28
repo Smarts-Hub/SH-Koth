@@ -5,6 +5,8 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.temporal.TemporalUnit;
+
 public class PlaceholderAPIHook extends PlaceholderExpansion {
 
     private final KothRegistry kothRegistry;
@@ -48,45 +50,44 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
         // Non related to any koth, just general placeholders
         if(kothName == null){
-            return switch (identifier) {
+            return String.valueOf(switch (identifier) {
                 case "arg1" -> tempArg1 != null ? tempArg1 : "";
                 case "arg2" -> tempArg2 != null ? tempArg2 : "";
                 case "arg3" -> tempArg3 != null ? tempArg3 : "";
-                case "total_wins" -> "";
-                case "next_koth" -> ""; // next scheduled koth display name
-                case "next_koth_in" -> ""; // time until next koth starts
-                case "next_koth_in_formatted" -> "";
+                case "total_captured" -> ""; //TODO: player total wins
+                case "next_koth" -> kothRegistry.getNextKothToRun();
+                case "next_koth_in" -> kothRegistry.getTimeUntilNextKoth();
+                case "next_koth_in_formatted" -> placeholderHelper.formatTime(kothRegistry.getTimeUntilNextKoth());
                 default -> "";
-            };
+            });
         }
 
         // Related to a specific koth
-        return switch (placeholderType) {
+        return String.valueOf(switch (placeholderType) {
             case "is_active" -> kothRegistry.get(kothName).isRunning() ? "true" : "false";
             case "is_scheduled" -> kothRegistry.isKothScheduledNow(kothName) ? "true" : "false";
             case "is_solo" -> kothRegistry.get(kothName).isSolo() ? "true" : "false";
-            case "next_schedule" -> "";
-            case "next_schedule_formatted" -> "";
-            case "display_name" -> "";
-            case "id" -> "";
-            case "world" -> "";
-            case "x" -> "";
-            case "y" -> "";
-            case "z" -> "";
-            case "is_running" -> "";
-            case "is_capturing" -> "";
-            case "capturer" -> ""; // Solo -> name, Team -> Leader's name  + koth formatting (pending to implement by config)
-            case "captured" -> ""; // time in seconds or score
-            case "captured_formatted" -> ""; // time formatted (no sense for score)
-            case "max_time" -> "";
-            case "max_time_formatted" -> "";
-            case "time_left" -> "";
-            case "time_left_formatted" -> "";
-            case "time_taken" -> "";
-            case "time_taken_formatted" -> "";
-            case "time_to_win" -> "";
-            case "time_to_win_formatted" -> "";
+            case "next_schedule" -> kothRegistry.getTimeUntilNextSchedule(kothName);
+            case "next_schedule_formatted" -> kothRegistry.getTimeUntilNextScheduleFormatted(kothName);
+            case "display_name" -> kothRegistry.get(kothName).getDisplayName();
+            case "progress" -> kothRegistry.get(kothName).getCaptureProgress();
+            case "id" -> kothName;
+            case "world" -> kothRegistry.get(kothName).getArea().worldName();
+            case "x" -> kothRegistry.get(kothName).getArea().getCenter().getBlockX();
+            case "y" -> kothRegistry.get(kothName).getArea().getCenter().getBlockY();
+            case "z" -> kothRegistry.get(kothName).getArea().getCenter().getBlockZ();
+            case "is_running" -> kothRegistry.get(kothName).isRunning();
+            case "is_capturing" -> kothRegistry.get(kothName).isCapturing();
+            case "capturer" -> kothRegistry.get(kothName).getCurrentCapturerPlayer().getName();
+            case "captured" -> kothRegistry.get(kothName).getCaptureTime();
+            case "captured_formatted" -> placeholderHelper.formatTime(kothRegistry.get(kothName).getCaptureTime());
+            case "max_time" -> kothRegistry.get(kothName).getDuration();
+            case "max_time_formatted" -> placeholderHelper.formatTime(kothRegistry.get(kothName).getDuration());
+            case "time_left" -> kothRegistry.getRemainingScheduleTime(kothName).getSeconds();
+            case "time_left_formatted" -> placeholderHelper.formatTime(kothRegistry.getRemainingScheduleTime(kothName).getSeconds());
+            case "time_to_win" -> kothRegistry.get(kothName).getSecondsUntilCaptureComplete();
+            case "time_to_win_formatted" -> placeholderHelper.formatTime(kothRegistry.get(kothName).getSecondsUntilCaptureComplete());
             default -> "";
-        };
+        });
     }
 }

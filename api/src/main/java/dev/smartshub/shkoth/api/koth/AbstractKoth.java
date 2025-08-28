@@ -65,6 +65,13 @@ public abstract class AbstractKoth implements Koth {
         public @NotNull KothState getState() { return state; }
         public UUID getCurrentCapturer() { return currentCapturer; }
         public long getCaptureStartTime() { return captureStartTime; }
+        public long getSecondsUntilCaptureComplete() {
+                if (captureStartTime == 0) return -1;
+                long elapsedSeconds = (System.currentTimeMillis() - captureStartTime) / 1000;
+                long remaining = captureTime - elapsedSeconds;
+                return (int) Math.max(0, remaining);
+        }
+
         public int getRemainingTime() { return remainingTime; }
 
         // Abstract methods to be implemented by subclasses
@@ -78,6 +85,8 @@ public abstract class AbstractKoth implements Koth {
         public abstract boolean isSolo();
 
         public abstract boolean isTeam();
+
+        public abstract boolean isCapturing();
 
         public abstract KothTeam getCurrentCapturingTeam();
 

@@ -16,7 +16,6 @@ import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import dev.smartshub.shkoth.api.koth.tally.TallyFactory;
 import dev.smartshub.shkoth.service.koth.KothRewardService;
 import dev.smartshub.shkoth.team.ContextualTeamTracker;
-import dev.smartshub.shkoth.team.UnifiedTeamTracker;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -226,6 +225,11 @@ public class Koth extends AbstractKoth {
     @Override
     public boolean isTeam() {
         return !isSolo;
+    }
+
+    @Override
+    public boolean isCapturing() {
+        return currentCapturingTeam != null;
     }
 
     public boolean isDenyEnterWithoutTeam() {

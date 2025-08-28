@@ -120,6 +120,30 @@ public class KothSchedulerService {
         }
     }
 
+    public String getNextKothToRun() {
+        return scheduleManagers.entrySet().stream()
+                .filter(entry -> {
+                    SchedulerManagementService manager = entry.getValue();
+                    return !manager.isActiveTime();
+                })
+                .min((e1, e2) -> {
+                    Duration d1 = e1.getValue().getTimeUntilNext();
+                    Duration d2 = e2.getValue().getTimeUntilNext();
+                    return d1.compareTo(d2);
+                })
+                .map(Map.Entry::getKey)
+                .orElse(null);
+    }
+
+    public long getSecondsUntilNextKothRuns() {
+        String nextKothId = getNextKothToRun();
+        if (nextKothId == null) {
+            return -1;
+        }
+        Duration untilNext = getTimeUntilNextSchedule(nextKothId);
+        return untilNext.getSeconds();
+    }
+
     private void handleKothStart(String kothId) {
         kothRegistry.startKoth(kothId);
     }

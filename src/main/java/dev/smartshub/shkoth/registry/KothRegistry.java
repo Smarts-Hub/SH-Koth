@@ -92,11 +92,23 @@ public class KothRegistry {
         return scheduler;
     }
 
+    public String getNextKothToRun() {
+        return scheduler.getNextKothToRun();
+    }
+
+    public long getTimeUntilNextKoth() {
+        return scheduler.getSecondsUntilNextKothRuns();
+    }
+
     public boolean isKothScheduledNow(String kothId) {
         return scheduler.isKothTime(kothId);
     }
 
-    public String getTimeUntilNextSchedule(String kothId) {
+    public long getTimeUntilNextSchedule(String kothId) {
+        return scheduler.getTimeUntilNextSchedule(kothId).getSeconds();
+    }
+
+    public String getTimeUntilNextScheduleFormatted(String kothId) {
         return scheduler.getFormattedTimeUntilNext(kothId);
     }
 
