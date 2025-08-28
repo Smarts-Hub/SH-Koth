@@ -1,5 +1,8 @@
 package dev.smartshub.shkoth.command.team;
 
+import dev.smartshub.shkoth.api.event.team.MemberLeavedTeamEvent;
+import dev.smartshub.shkoth.api.event.team.TeamCreatedEvent;
+import dev.smartshub.shkoth.api.event.team.TeamDissolvedEvent;
 import dev.smartshub.shkoth.service.team.TeamHandlingService;
 import dev.smartshub.shkoth.service.team.TeamInformationService;
 import dev.smartshub.shkoth.service.team.TeamInviteService;
@@ -23,19 +26,19 @@ public class TeamCommand {
     @Subcommand("create")
     public void create(BukkitCommandActor actor) {
         if(!actor.isPlayer()) return;
-        teamHandlingService.createTeam(actor.asPlayer(), Integer.MAX_VALUE);
+        teamHandlingService.createTeam(actor.asPlayer(), Integer.MAX_VALUE, TeamCreatedEvent.CreationReason.MANUAL);
     }
 
     @Subcommand("leave")
     public void leave(BukkitCommandActor actor) {
         if(!actor.isPlayer()) return;
-        teamHandlingService.leaveTeam(actor.asPlayer());
+        teamHandlingService.leaveTeam(actor.asPlayer(), MemberLeavedTeamEvent.RemovalReason.LEFT_VOLUNTARILY);
     }
 
     @Subcommand("disband")
     public void disband(BukkitCommandActor actor) {
         if(!actor.isPlayer()) return;
-        teamHandlingService.disbandTeam(actor.asPlayer());
+        teamHandlingService.disbandTeam(actor.asPlayer(), TeamDissolvedEvent.DissolutionReason.MANUAL_DISSOLVE);
     }
 
     @Subcommand("invite <player>")

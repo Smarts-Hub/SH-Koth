@@ -15,7 +15,6 @@ public class MemberLeavedTeamEvent extends Event {
     private final KothTeam oldTeam;
     private final KothTeam newTeam;
     private final UUID removedMember;
-    private final UUID remover;
     private final RemovalReason reason;
 
     public enum RemovalReason {
@@ -25,28 +24,22 @@ public class MemberLeavedTeamEvent extends Event {
         TEAM_DISSOLVED
     }
 
-    public MemberLeavedTeamEvent(KothTeam oldTeam, KothTeam newTeam, UUID removedMember,
-                                 UUID remover, RemovalReason reason) {
+    public MemberLeavedTeamEvent(KothTeam oldTeam, KothTeam newTeam, UUID removedMember, RemovalReason reason) {
         this.oldTeam = oldTeam;
         this.newTeam = newTeam;
         this.removedMember = removedMember;
-        this.remover = remover;
         this.reason = reason;
     }
 
     public KothTeam getOldTeam() { return oldTeam; }
     public KothTeam getNewTeam() { return newTeam; }
     public UUID getRemovedMember() { return removedMember; }
-    public UUID getRemover() { return remover; }
     public RemovalReason getReason() { return reason; }
 
     public Player getRemovedPlayer() {
         return removedMember != null ? Bukkit.getPlayer(removedMember) : null;
     }
 
-    public Player getRemoverPlayer() {
-        return remover != null ? Bukkit.getPlayer(remover) : null;
-    }
 
     public boolean wasVoluntary() { return reason == RemovalReason.LEFT_VOLUNTARILY; }
     public boolean causedDissolution() { return newTeam == null; }

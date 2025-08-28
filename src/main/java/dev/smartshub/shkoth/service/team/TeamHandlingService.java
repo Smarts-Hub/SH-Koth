@@ -1,5 +1,9 @@
 package dev.smartshub.shkoth.service.team;
 
+import dev.smartshub.shkoth.api.event.dispatcher.TeamEventDispatcher;
+import dev.smartshub.shkoth.api.event.team.MemberLeavedTeamEvent;
+import dev.smartshub.shkoth.api.event.team.TeamCreatedEvent;
+import dev.smartshub.shkoth.api.event.team.TeamDissolvedEvent;
 import dev.smartshub.shkoth.api.team.KothTeam;
 import dev.smartshub.shkoth.api.team.TeamWrapper;
 import dev.smartshub.shkoth.service.notify.NotifyService;
@@ -10,7 +14,8 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class TeamHandlingService {
-    
+
+    private final TeamEventDispatcher teamEventDispatcher = new TeamEventDispatcher();
     private final ContextualTeamTracker teamTracker;
     private final NotifyService notifyService;
     
@@ -19,7 +24,7 @@ public class TeamHandlingService {
         this.teamTracker = teamTracker;
     }
     
-    public void createTeam(Player leader, int maxMembers) {
+    public void createTeam(Player leader, int maxMembers, TeamCreatedEvent.CreationReason reason) {
         UUID leaderId = leader.getUniqueId();
         
         if (hasTeam(leaderId)) {
@@ -31,14 +36,16 @@ public class TeamHandlingService {
         if (!teamTracker.getActiveProvider().equals("Internal")) return;
         
         TeamWrapper team = teamTracker.createInternalTeam(leaderId, maxMembers);
-        if (team != null) return;
+        if (team == null) {
+            notifyService.sendChat(leader, "team.cant-create-team");
+        }
 
-        notifyService.sendChat(leader, "team.cant-create-team");
+        teamEventDispatcher.fireTeamCreatedEvent(team, reason);
     }
 
     public void joinTeam(Player player, UUID teamLeader) {
         UUID playerId = player.getUniqueId();
-        
+
         if (hasTeam(playerId)) {
             notifyService.sendChat(player, "team.already-in-a-team");
             return;
@@ -46,14 +53,17 @@ public class TeamHandlingService {
 
         // Silent fail, as this command should not be available due to existing external team plugin
         if (!teamTracker.getActiveProvider().equals("Internal")) return;
-        
-        boolean success = teamTracker.getInternalHandler().addMemberToTeam(playerId, teamLeader);
-        if(success) return;
 
-        notifyService.sendChat(player, "team.cant-join-team");
+        boolean success = teamTracker.getInternalHandler().addMemberToTeam(playerId, teamLeader);
+        if(!success) {
+            notifyService.sendChat(player, "team.cant-join-team");
+            return;
+        }
+
+        teamEventDispatcher.fireMemberKickedFromTeamEvent(teamTracker.getInternalHandler().getTeam(teamLeader), playerId, teamLeader);
     }
     
-    public void leaveTeam(Player player) {
+    public void leaveTeam(Player player, MemberLeavedTeamEvent.RemovalReason reason) {
         UUID playerId = player.getUniqueId();
         
         if (!hasTeam(playerId)) {
@@ -76,10 +86,10 @@ public class TeamHandlingService {
             return;
         }
 
-        notifyService.sendChat(player, "team.left-team-success");
+        teamEventDispatcher.fireMemberLeavedTeamEvent(teamTracker.getInternalHandler().getTeam(playerId), null, playerId, reason);
     }
     
-    public void disbandTeam(Player leader) {
+    public void disbandTeam(Player leader, TeamDissolvedEvent.DissolutionReason reason) {
         UUID leaderId = leader.getUniqueId();
         
         if (!isTeamLeader(leaderId)) {
@@ -91,9 +101,12 @@ public class TeamHandlingService {
         if (!teamTracker.getActiveProvider().equals("Internal")) return;
         
         boolean success = teamTracker.getInternalHandler().disbandTeam(leaderId);
-        if(success) return;
+        if(success) {
+            notifyService.sendChat(leader, "team.cant-disband-team");
+            return;
+        }
 
-        notifyService.sendChat(leader, "team.cant-disband-team");
+        teamEventDispatcher.fireTeamDissolvedEvent(teamTracker.getInternalHandler().getTeam(leaderId), leaderId, reason);
     }
     
     public void kickMember(Player leader, String toKickName) {
@@ -131,7 +144,7 @@ public class TeamHandlingService {
             return;
         }
 
-        notifyService.sendChat(leader, "team.kicked-member-success");
+        teamEventDispatcher.fireMemberKickedFromTeamEvent(teamTracker.getInternalHandler().getTeam(leaderId), memberToKick, leaderId);
     }
     
     public void transferLeadership(Player currentLeader, String newLeaderName) {
@@ -158,9 +171,12 @@ public class TeamHandlingService {
         if (!teamTracker.getActiveProvider().equals("Internal")) return;
         
         boolean success = teamTracker.getInternalHandler().transferLeadership(currentLeaderId, newLeaderId);
-        if(success) return;
+        if(!success) {
+            notifyService.sendChat(currentLeader, "team.cant-transfer-leadership");
+            return;
+        }
 
-        notifyService.sendChat(currentLeader, "team.cant-transfer-leadership");
+        teamEventDispatcher.fireTeamChangeLeaderEvent(teamTracker.getInternalHandler().getTeam(currentLeaderId), currentLeaderId, newLeaderId);
     }
     
     public KothTeam getPlayerTeam(UUID playerId) {
