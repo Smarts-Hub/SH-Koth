@@ -2,6 +2,7 @@ package dev.smartshub.shkoth.registry;
 
 import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
 import dev.smartshub.shkoth.api.koth.Koth;
+import dev.smartshub.shkoth.api.team.track.TeamTracker;
 import dev.smartshub.shkoth.loader.koth.KothLoader;
 import dev.smartshub.shkoth.service.config.ConfigService;
 import dev.smartshub.shkoth.service.schedule.KothSchedulerService;
@@ -19,9 +20,9 @@ public class KothRegistry {
 
     private final Set<Koth> koths;
 
-    public KothRegistry(ConfigService configService) {
+    public KothRegistry(ConfigService configService, TeamTracker teamHandler) {
         this.configService = configService;
-        this.kothLoader = new KothLoader(configService);
+        this.kothLoader = new KothLoader(configService, teamHandler);
         this.koths = kothLoader.load();
         scheduler.initializeFromKoths(koths);
     }

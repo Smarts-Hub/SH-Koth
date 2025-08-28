@@ -7,12 +7,14 @@ import dev.smartshub.shkoth.api.koth.tally.TallyFactory;
 import dev.smartshub.shkoth.koth.tally.capture.CaptureTally;
 import dev.smartshub.shkoth.koth.tally.score.ScoreTally;
 import dev.smartshub.shkoth.service.config.ConfigService;
+import dev.smartshub.shkoth.team.ContextualTeamTracker;
 import revxrsal.zapper.ZapperJavaPlugin;
 
 public class SHKoth extends ZapperJavaPlugin {
 
     private KothRegistry kothRegistry;
     private KothAPIImpl kothAPI;
+    private final ContextualTeamTracker teamTracker = new ContextualTeamTracker(null);
 
     private ConfigService configService;
 
@@ -36,7 +38,7 @@ public class SHKoth extends ZapperJavaPlugin {
     }
 
     private void initAPI() {
-        kothRegistry = new KothRegistry(configService);
+        kothRegistry = new KothRegistry(configService, teamTracker);
         kothAPI = new KothAPIImpl(kothRegistry);
         KothAPIProvider.setInstance(kothAPI);
     }

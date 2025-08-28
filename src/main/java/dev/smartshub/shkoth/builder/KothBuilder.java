@@ -9,6 +9,7 @@ import dev.smartshub.shkoth.api.location.Area;
 import dev.smartshub.shkoth.api.location.Corner;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.location.schedule.Schedule;
+import dev.smartshub.shkoth.api.team.track.TeamTracker;
 import dev.smartshub.shkoth.builder.mapper.PhysicalRewardsMapper;
 import dev.smartshub.shkoth.builder.mapper.SchedulesMapper;
 
@@ -17,8 +18,13 @@ import java.util.List;
 
 public class KothBuilder implements Builder<Koth, ConfigContainer> {
 
+    private final TeamTracker teamTracker;
     private final SchedulesMapper schedulesMapper = new SchedulesMapper();
     private final PhysicalRewardsMapper physicalRewardsMapper = new PhysicalRewardsMapper();
+
+    public KothBuilder(TeamTracker teamTracker) {
+        this.teamTracker = teamTracker;
+    }
 
     @Override
     public Koth build(ConfigContainer config) {
@@ -62,7 +68,7 @@ public class KothBuilder implements Builder<Koth, ConfigContainer> {
         boolean createTeamIfNotExistsOnEnter = config.getBoolean("create-team-if-not-exists-on-enter", true);
 
 
-        return new dev.smartshub.shkoth.koth.Koth(id, displayName, maxDuration, captureTime,area, schedules, commands,
+        return new dev.smartshub.shkoth.koth.Koth(teamTracker, id, displayName, maxDuration, captureTime,area, schedules, commands,
                 physicalRewards, isSolo, denyEnterWithoutTeam, createTeamIfNotExistsOnEnter, kothType);
     }
 }
