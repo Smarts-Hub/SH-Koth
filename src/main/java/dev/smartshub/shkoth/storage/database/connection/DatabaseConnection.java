@@ -14,7 +14,7 @@ public class DatabaseConnection {
     private static String PASSWORD;
     private static boolean initialized = false;
 
-     {
+     public DatabaseConnection() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Class.forName("org.h2.Driver");

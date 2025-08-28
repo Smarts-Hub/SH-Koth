@@ -27,11 +27,14 @@ import dev.smartshub.shkoth.service.team.TeamHandlingService;
 import dev.smartshub.shkoth.service.team.TeamHookHelpService;
 import dev.smartshub.shkoth.service.team.TeamInformationService;
 import dev.smartshub.shkoth.service.team.TeamInviteService;
+import dev.smartshub.shkoth.storage.database.connection.DatabaseConnection;
 import dev.smartshub.shkoth.task.UpdateTask;
 import dev.smartshub.shkoth.team.ContextualTeamTracker;
 import org.bukkit.entity.Player;
 import revxrsal.commands.bukkit.BukkitLamp;
 import revxrsal.zapper.ZapperJavaPlugin;
+
+import java.util.concurrent.CompletableFuture;
 
 public class SHKoth extends ZapperJavaPlugin {
 
@@ -95,6 +98,7 @@ public class SHKoth extends ZapperJavaPlugin {
     private void setUpConfig() {
         configService = new ConfigService(this);
         messageRepository = new MessageRepository(configService);
+        CompletableFuture.runAsync(DatabaseConnection::init);
     }
 
     private void initServices() {
@@ -154,12 +158,13 @@ public class SHKoth extends ZapperJavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerLeavekothDuringRunListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new PlayerStartKothCaptureListener(notifyService) , this);
         getServer().getPluginManager().registerEvents(new PlayerStopKothCaptureListener(notifyService) , this);
-        //TODO: Team event dispatcher and remove notifications from team events
+
         getServer().getPluginManager().registerEvents(new TeamChangeLeaderListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new TeamCreatedListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new TeamDissolvedListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new MemberJoinedTeamListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new MemberLeavedTeamListener(notifyService), this);
+        getServer().getPluginManager().registerEvents(new MemberKickedFromTeamListener(notifyService), this);
     }
 
 }
