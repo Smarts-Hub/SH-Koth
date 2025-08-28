@@ -1,3 +1,4 @@
+
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.1"
@@ -45,19 +46,18 @@ repositories {
 dependencies {
     paperweight.paperDevBundle("1.21.7-R0.1-SNAPSHOT")
     implementation(project(":api"))
-    compileOnly ("me.clip:placeholderapi:2.11.6")
     zap("io.github.revxrsal:lamp.common:4.0.0-beta.25")
     zap("io.github.revxrsal:lamp.bukkit:4.0.0-beta.25")
     zap("fr.mrmicky:fastboard:2.1.5")
     zap("com.saicone.rtag:rtag:1.5.11")
     zap("com.saicone.rtag:rtag-item:1.5.11")
     zap("com.h2database:h2:2.2.224")
-    implementation(kotlin("stdlib-jdk8"))
 
+    compileOnly ("me.clip:placeholderapi:2.11.6")
     compileOnly("com.github.UlrichBR:UClans-API:8.4.0")
     compileOnly("net.sacredlabyrinth.phaed.simpleclans:SimpleClans:2.19.2")
     compileOnly("com.github.booksaw:BetterTeams:4.13.4")
-    compileOnly("com.github.cryptomorin:kingdoms:1.17.18.1-BETA")
+    compileOnly(files("libs/KingdomsX-1.17.20-BETA.jar"))
     compileOnly("dev.kitteh:factions:4.0.0")
     compileOnly("com.palmergames.bukkit.towny:towny:0.101.2.0")
 }
