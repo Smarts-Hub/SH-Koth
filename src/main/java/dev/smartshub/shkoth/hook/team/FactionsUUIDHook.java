@@ -3,6 +3,7 @@ package dev.smartshub.shkoth.hook.team;
 import dev.kitteh.factions.FPlayer;
 import dev.kitteh.factions.FPlayers;
 import dev.smartshub.shkoth.api.team.hook.TeamHook;
+import dev.smartshub.shkoth.service.team.TeamHookHelpService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -12,10 +13,12 @@ import java.util.UUID;
 public class FactionsUUIDHook implements TeamHook {
 
     private boolean isAvailable = false;
+    private int priority = 0;
 
-    public FactionsUUIDHook(){
-        if(!Bukkit.getPluginManager().isPluginEnabled("FactionsUUID")) return;
-        isAvailable = true;
+    public FactionsUUIDHook(TeamHookHelpService teamHookHelpService) {
+        if (!Bukkit.getPluginManager().isPluginEnabled("FactionsUUID")) return;
+        isAvailable = teamHookHelpService.isEnabled("factions-uuid");
+        priority = teamHookHelpService.getPriority("factions-uuid");
     }
     @Override
     public String getPluginName() {
@@ -29,7 +32,7 @@ public class FactionsUUIDHook implements TeamHook {
 
     @Override
     public int getPriority() {
-        return 10;
+        return priority;
     }
 
     @Override

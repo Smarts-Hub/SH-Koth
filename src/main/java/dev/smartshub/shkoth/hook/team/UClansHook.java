@@ -1,6 +1,7 @@
 package dev.smartshub.shkoth.hook.team;
 
 import dev.smartshub.shkoth.api.team.hook.TeamHook;
+import dev.smartshub.shkoth.service.team.TeamHookHelpService;
 import me.ulrich.clans.api.ClanAPIManager;
 import me.ulrich.clans.api.PlayerAPIManager;
 import me.ulrich.clans.data.ClanData;
@@ -14,14 +15,12 @@ public class UClansHook implements TeamHook {
     private ClanAPIManager clanAPI;
     private PlayerAPIManager playerAPI;
     private boolean isAvailable = false;
+    private int priority = 0;
 
-    public UClansHook(){
+    public UClansHook(TeamHookHelpService teamHookHelpService) {
         if (!Bukkit.getPluginManager().isPluginEnabled("UltimateClans")) return;
-
-        UClans uClansPlugin = (UClans) Bukkit.getPluginManager().getPlugin("UltimateClans");
-        clanAPI = uClansPlugin.getClanAPI();
-        playerAPI = uClansPlugin.getPlayerAPI();
-        isAvailable = true;
+        isAvailable = teamHookHelpService.isEnabled("ultimate-clans");
+        priority = teamHookHelpService.getPriority("ultimate-clans");
     }
 
     @Override
@@ -36,7 +35,7 @@ public class UClansHook implements TeamHook {
 
     @Override
     public int getPriority() {
-        return 10;
+        return priority;
     }
 
     @Override

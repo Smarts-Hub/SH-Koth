@@ -1,0 +1,19 @@
+team-hooks:
+  ultimate-clans:
+    enabled: true
+    priority: 6
+  kingdoms-x:
+    enabled: true
+    priority: 5
+  towny:
+    enabled: true
+    priority: 4
+  factions-uuid:
+    enabled: true
+    priority: 3
+  better-teams:
+    enabled: true
+    priority: 2
+  simple-clans:
+    enabled: true
+    priority: 1

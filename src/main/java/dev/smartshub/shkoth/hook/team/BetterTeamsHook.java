@@ -3,6 +3,7 @@ package dev.smartshub.shkoth.hook.team;
 import com.booksaw.betterTeams.Team;
 import com.booksaw.betterTeams.TeamPlayer;
 import dev.smartshub.shkoth.api.team.hook.TeamHook;
+import dev.smartshub.shkoth.service.team.TeamHookHelpService;
 import org.bukkit.Bukkit;
 
 import java.util.Comparator;
@@ -13,10 +14,12 @@ import java.util.stream.Collectors;
 public class BetterTeamsHook implements TeamHook {
 
     private boolean isAvailable = false;
+    private int priority = 0;
 
-    public BetterTeamsHook(){
+    public BetterTeamsHook(TeamHookHelpService teamHookHelpService) {
         if (!Bukkit.getPluginManager().isPluginEnabled("BetterTeams")) return;
-        isAvailable = true;
+        isAvailable = teamHookHelpService.isEnabled("better-teams");
+        priority = teamHookHelpService.getPriority("better-teams");
     }
 
     @Override
@@ -31,7 +34,7 @@ public class BetterTeamsHook implements TeamHook {
 
     @Override
     public int getPriority() {
-        return 10;
+        return priority;
     }
 
     @Override

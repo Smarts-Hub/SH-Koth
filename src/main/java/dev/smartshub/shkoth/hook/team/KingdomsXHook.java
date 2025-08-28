@@ -1,6 +1,7 @@
 package dev.smartshub.shkoth.hook.team;
 
 import dev.smartshub.shkoth.api.team.hook.TeamHook;
+import dev.smartshub.shkoth.service.team.TeamHookHelpService;
 import org.bukkit.Bukkit;
 import org.kingdoms.constants.group.Kingdom;
 
@@ -10,10 +11,12 @@ import java.util.UUID;
 public class KingdomsXHook implements TeamHook {
 
     private boolean isAvailable = false;
+    private int priority = 0;
 
-    public KingdomsXHook(){
-        if(!Bukkit.getPluginManager().isPluginEnabled("KingdomsX")) return;
-        isAvailable = true;
+    public KingdomsXHook(TeamHookHelpService teamHookHelpService) {
+        if (!Bukkit.getPluginManager().isPluginEnabled("KingdomsX")) return;
+        isAvailable = teamHookHelpService.isEnabled("kingdoms-x");
+        priority = teamHookHelpService.getPriority("kingdoms-x");
     }
 
     @Override
@@ -28,7 +31,7 @@ public class KingdomsXHook implements TeamHook {
 
     @Override
     public int getPriority() {
-        return 10;
+        return priority;
     }
 
     @Override

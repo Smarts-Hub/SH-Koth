@@ -1,6 +1,7 @@
 package dev.smartshub.shkoth.hook.team;
 
 import dev.smartshub.shkoth.api.team.hook.TeamHook;
+import dev.smartshub.shkoth.service.team.TeamHookHelpService;
 import net.sacredlabyrinth.phaed.simpleclans.Clan;
 import net.sacredlabyrinth.phaed.simpleclans.ClanPlayer;
 import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
@@ -13,11 +14,12 @@ public class SimpleClansHook implements TeamHook {
 
     private SimpleClans simpleClansAPI;
     private boolean isAvailable = false;
+    private int priority = 0;
 
-    public SimpleClansHook() {
-        if (!Bukkit.getPluginManager().isPluginEnabled("UltimateClans")) return;
-        simpleClansAPI = (SimpleClans) Bukkit.getPluginManager().getPlugin("UltimateClans");
-        isAvailable = true;
+    public SimpleClansHook(TeamHookHelpService teamHookHelpService) {
+        if (!Bukkit.getPluginManager().isPluginEnabled("SimpleClans")) return;
+        isAvailable = teamHookHelpService.isEnabled("simple-clans");
+        priority = teamHookHelpService.getPriority("simple-clans");
     }
 
     @Override
@@ -32,7 +34,7 @@ public class SimpleClansHook implements TeamHook {
 
     @Override
     public int getPriority() {
-        return 10;
+        return priority;
     }
 
     @Override

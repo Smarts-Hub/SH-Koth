@@ -4,6 +4,7 @@ import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 import dev.smartshub.shkoth.api.team.hook.TeamHook;
+import dev.smartshub.shkoth.service.team.TeamHookHelpService;
 import org.bukkit.Bukkit;
 
 import java.util.Set;
@@ -12,10 +13,12 @@ import java.util.UUID;
 public class TownyHook implements TeamHook {
 
     private boolean isAvailable = false;
+    private int priority = 0;
 
-    public TownyHook() {
-        if(!Bukkit.getPluginManager().isPluginEnabled("Towny")) return;
-        isAvailable = true;
+    public TownyHook(TeamHookHelpService teamHookHelpService) {
+        if (!Bukkit.getPluginManager().isPluginEnabled("Towny")) return;
+        isAvailable = teamHookHelpService.isEnabled("towny");
+        priority = teamHookHelpService.getPriority("towny");
     }
     @Override
     public String getPluginName() {
@@ -29,7 +32,7 @@ public class TownyHook implements TeamHook {
 
     @Override
     public int getPriority() {
-        return 10;
+        return priority;
     }
 
     @Override
