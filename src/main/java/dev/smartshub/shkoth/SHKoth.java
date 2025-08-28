@@ -158,8 +158,8 @@ public class SHKoth extends ZapperJavaPlugin {
         getServer().getPluginManager().registerEvents(new TeamChangeLeaderListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new TeamCreatedListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new TeamDissolvedListener(notifyService), this);
-        getServer().getPluginManager().registerEvents(new TeamMemberAddedListener(notifyService), this);
-        getServer().getPluginManager().registerEvents(new TeamMemberRemovedListener(notifyService), this);
+        getServer().getPluginManager().registerEvents(new MemberJoinedTeamListener(notifyService), this);
+        getServer().getPluginManager().registerEvents(new MemberLeavedTeamListener(notifyService), this);
     }
 
 }

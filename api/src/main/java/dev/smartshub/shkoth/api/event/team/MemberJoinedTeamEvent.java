@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class TeamMemberAddedEvent extends Event implements Cancellable {
+public class MemberJoinedTeamEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final KothTeam oldTeam;
@@ -19,7 +19,7 @@ public class TeamMemberAddedEvent extends Event implements Cancellable {
     private final UUID inviter;
     private boolean cancelled = false;
 
-    public TeamMemberAddedEvent(KothTeam oldTeam, KothTeam newTeam, UUID addedMember, UUID inviter) {
+    public MemberJoinedTeamEvent(KothTeam oldTeam, KothTeam newTeam, UUID addedMember, UUID inviter) {
         this.oldTeam = oldTeam;
         this.newTeam = newTeam;
         this.addedMember = addedMember;

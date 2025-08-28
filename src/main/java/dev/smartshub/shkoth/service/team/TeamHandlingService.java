@@ -31,12 +31,9 @@ public class TeamHandlingService {
         if (!teamTracker.getActiveProvider().equals("Internal")) return;
         
         TeamWrapper team = teamTracker.createInternalTeam(leaderId, maxMembers);
-        if (team == null) {
-            notifyService.sendChat(leader, "team.cant-create-team");
-            return;
-        }
+        if (team != null) return;
 
-        notifyService.sendChat(leader, "team.team-created-success");
+        notifyService.sendChat(leader, "team.cant-create-team");
     }
 
     public void joinTeam(Player player, UUID teamLeader) {
@@ -51,13 +48,9 @@ public class TeamHandlingService {
         if (!teamTracker.getActiveProvider().equals("Internal")) return;
         
         boolean success = teamTracker.getInternalHandler().addMemberToTeam(playerId, teamLeader);
+        if(success) return;
 
-        if(!success){
-            notifyService.sendChat(player, "team.cant-join-team");
-            return;
-        }
-
-        notifyService.sendChat(player, "team.joined-team-success");
+        notifyService.sendChat(player, "team.cant-join-team");
     }
     
     public void leaveTeam(Player player) {
@@ -98,13 +91,9 @@ public class TeamHandlingService {
         if (!teamTracker.getActiveProvider().equals("Internal")) return;
         
         boolean success = teamTracker.getInternalHandler().disbandTeam(leaderId);
+        if(success) return;
 
-        if(!success){
-            notifyService.sendChat(leader, "team.cant-disband-team");
-            return;
-        }
-
-        notifyService.sendChat(leader, "team.disbanded-team-success");
+        notifyService.sendChat(leader, "team.cant-disband-team");
     }
     
     public void kickMember(Player leader, String toKickName) {
@@ -141,6 +130,7 @@ public class TeamHandlingService {
             notifyService.sendChat(leader, "team.cant-kick-member");
             return;
         }
+
         notifyService.sendChat(leader, "team.kicked-member-success");
     }
     
@@ -168,13 +158,9 @@ public class TeamHandlingService {
         if (!teamTracker.getActiveProvider().equals("Internal")) return;
         
         boolean success = teamTracker.getInternalHandler().transferLeadership(currentLeaderId, newLeaderId);
+        if(success) return;
 
-        if(!success){
-            notifyService.sendChat(currentLeader, "team.cant-transfer-leadership");
-            return;
-        }
-        notifyService.sendChat(currentLeader, "team.transferred-leadership-success");
-        notifyService.sendChat(newLeader, "team.you-are-leader-now");
+        notifyService.sendChat(currentLeader, "team.cant-transfer-leadership");
     }
     
     public KothTeam getPlayerTeam(UUID playerId) {

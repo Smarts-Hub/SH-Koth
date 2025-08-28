@@ -16,7 +16,7 @@ public class TeamCreatedListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTeamCreate(TeamCreatedEvent event){
-        notifyService.sendChat(event.getLeaderPlayer(), "team.create");
+        notifyService.sendChat(event.getLeaderPlayer(), "team.team-created-success");
     }
 
 }

@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class TeamMemberRemovedEvent extends Event {
+public class MemberLeavedTeamEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final KothTeam oldTeam;
@@ -20,14 +20,13 @@ public class TeamMemberRemovedEvent extends Event {
 
     public enum RemovalReason {
         LEFT_VOLUNTARILY,
-        KICKED,
         DISCONNECTED,
         LEADER_CHANGE,
         TEAM_DISSOLVED
     }
 
-    public TeamMemberRemovedEvent(KothTeam oldTeam, KothTeam newTeam, UUID removedMember,
-                                  UUID remover, RemovalReason reason) {
+    public MemberLeavedTeamEvent(KothTeam oldTeam, KothTeam newTeam, UUID removedMember,
+                                 UUID remover, RemovalReason reason) {
         this.oldTeam = oldTeam;
         this.newTeam = newTeam;
         this.removedMember = removedMember;
@@ -49,7 +48,6 @@ public class TeamMemberRemovedEvent extends Event {
         return remover != null ? Bukkit.getPlayer(remover) : null;
     }
 
-    public boolean wasKicked() { return reason == RemovalReason.KICKED; }
     public boolean wasVoluntary() { return reason == RemovalReason.LEFT_VOLUNTARILY; }
     public boolean causedDissolution() { return newTeam == null; }
     public boolean wasLeader() { return oldTeam.isLeader(removedMember); }

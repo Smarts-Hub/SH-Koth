@@ -20,6 +20,8 @@ public class TeamChangeLeaderListener implements Listener {
         for(Player player : event.getTeam().getOnlineMembers()){
             notifyService.sendChat(player, "team.change-leader");
         }
+        notifyService.sendChat(event.getOldLeaderPlayer(), "team.transferred-leadership-success");
+        notifyService.sendChat(event.getNewLeaderPlayer(), "team.you-are-leader-now");
     }
 
 }
