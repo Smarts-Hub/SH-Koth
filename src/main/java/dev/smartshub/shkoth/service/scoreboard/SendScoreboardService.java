@@ -2,6 +2,7 @@ package dev.smartshub.shkoth.service.scoreboard;
 
 import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.message.MessageParser;
+import dev.smartshub.shkoth.registry.KothRegistry;
 import dev.smartshub.shkoth.service.config.ConfigService;
 import dev.smartshub.shkoth.service.scoreboard.provider.CapturingScoreboard;
 import dev.smartshub.shkoth.service.scoreboard.provider.RunningScoreboard;

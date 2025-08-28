@@ -1,5 +1,6 @@
 package dev.smartshub.shkoth.api.koth;
 
+import dev.smartshub.shkoth.api.event.dispatcher.KothEventDispatcher;
 import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
 import dev.smartshub.shkoth.api.event.koth.KothStateChangeEvent;
 import dev.smartshub.shkoth.api.event.koth.PlayerStartKothCaptureEvent;

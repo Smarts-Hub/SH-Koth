@@ -11,7 +11,8 @@ public class UpdateTask extends BukkitRunnable {
     private final RefreshInsideKothService refreshInsideKothService;
     private final KothSchedulerService kothSchedulerService;
 
-    public UpdateTask(KothTicker capturedKothsHandler, RefreshInsideKothService refreshInsideKothService, KothSchedulerService kothSchedulerService) {
+    public UpdateTask(KothTicker capturedKothsHandler, RefreshInsideKothService refreshInsideKothService,
+                      KothSchedulerService kothSchedulerService) {
         this.capturedKothsHandler = capturedKothsHandler;
         this.refreshInsideKothService = refreshInsideKothService;
         this.kothSchedulerService = kothSchedulerService;
@@ -22,6 +23,5 @@ public class UpdateTask extends BukkitRunnable {
         capturedKothsHandler.handleTickForCapturedKoths();
         refreshInsideKothService.refreshInsideKoth();
         kothSchedulerService.processAllSchedulesAndExecute();
-        //TODO: Bossbar animations update (firstly implement the bossbar service)
     }
 }

@@ -50,7 +50,7 @@ public class ConfigContainerImpl implements ConfigContainer {
     @Override
     public Optional<List<String>> getStringList(String path) {
         List<String> value = config.getStringList(path);
-        return value != null && !value.isEmpty() ? Optional.of(value) : Optional.empty();
+        return !value.isEmpty() ? Optional.of(value) : Optional.empty();
     }
     
     @Override
@@ -81,7 +81,7 @@ public class ConfigContainerImpl implements ConfigContainer {
     @Override
     public List<String> getStringList(String path, List<String> defaultValue) {
         List<String> value = config.getStringList(path);
-        return value != null && !value.isEmpty() ? value : defaultValue;
+        return !value.isEmpty() ? value : defaultValue;
     }
 
     @Override

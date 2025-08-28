@@ -1,17 +1,16 @@
-package dev.smartshub.shkoth.handler;
+package dev.smartshub.shkoth.service.scoreboard;
 
 import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.koth.guideline.KothState;
-import dev.smartshub.shkoth.service.scoreboard.SendScoreboardService;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-public final class ScoreboardHandler {
+public final class ScoreboardHandleService {
 
     private final SendScoreboardService service;
 
-    public ScoreboardHandler(SendScoreboardService service) {
+    public ScoreboardHandleService(SendScoreboardService service) {
         this.service = service;
     }
 

@@ -20,13 +20,11 @@ public class KothCommand {
 
     private final KothRegistry kothRegistry;
     private final NotifyService notifyService;
-    private final ConfigService configService;
     private final PhysicalRewardAdder physicalRewardAdder;
 
     public KothCommand(KothRegistry kothRegistry, NotifyService notifyService, ConfigService configService) {
         this.kothRegistry = kothRegistry;
         this.notifyService = notifyService;
-        this.configService = configService;
         this.physicalRewardAdder = PhysicalRewardAdderFactory.create(configService);
     }
 

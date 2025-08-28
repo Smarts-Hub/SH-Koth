@@ -2,7 +2,7 @@ package dev.smartshub.shkoth.koth;
 
 import dev.smartshub.shkoth.api.event.koth.*;
 import dev.smartshub.shkoth.api.koth.AbstractKoth;
-import dev.smartshub.shkoth.api.koth.KothEventDispatcher;
+import dev.smartshub.shkoth.api.event.dispatcher.KothEventDispatcher;
 import dev.smartshub.shkoth.api.koth.command.Commands;
 import dev.smartshub.shkoth.api.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.koth.guideline.KothType;
@@ -179,6 +179,7 @@ public class Koth extends AbstractKoth {
                 .anyMatch(this::canPlayerCapture);
     }
 
+    //TODO: Refactor this method to reduce complexity?
     private void handlePlayerEntry(Player player) {
         UUID playerId = player.getUniqueId();
         ContextualTeamTracker tracker = (ContextualTeamTracker) teamTracker;
