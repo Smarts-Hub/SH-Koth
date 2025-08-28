@@ -26,6 +26,7 @@ public class ConfigService {
         
         provide(ConfigType.DATABASE);
         provide(ConfigType.MESSAGES);
+        provide(ConfigType.HOOKS);
     }
     
     public ConfigContainer provide(ConfigType type) {

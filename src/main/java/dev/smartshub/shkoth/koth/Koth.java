@@ -12,9 +12,10 @@ import dev.smartshub.shkoth.api.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.team.KothTeam;
 import dev.smartshub.shkoth.api.team.TeamWrapper;
 import dev.smartshub.shkoth.api.team.track.TeamTracker;
-import dev.smartshub.shkoth.api.schedule.Schedule;
+import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import dev.smartshub.shkoth.api.koth.tally.TallyFactory;
 import dev.smartshub.shkoth.service.koth.KothRewardService;
+import dev.smartshub.shkoth.team.ContextualTeamTracker;
 import dev.smartshub.shkoth.team.UnifiedTeamTracker;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -39,12 +40,12 @@ public class Koth extends AbstractKoth {
     private KothTeam currentCapturingTeam;
     private long captureStartTime;
 
-    public Koth(String id, String displayName, int duration, int captureTime, Area area,
+    public Koth(TeamTracker teamTracker, String id, String displayName, int duration, int captureTime, Area area,
                 List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards,
                 boolean isSolo, boolean denyEnterWithoutTeam, boolean createTeamIfNotExistsOnEnter, KothType type) {
         super(id, displayName, duration, captureTime, area, schedules, commands, physicalRewards);
 
-        this.teamTracker = UnifiedTeamTracker.getInstance();
+        this.teamTracker = teamTracker;
         this.tally = TallyFactory.create(type, this);
         this.isSolo = isSolo;
         this.denyEnterWithoutTeam = denyEnterWithoutTeam;
@@ -181,36 +182,36 @@ public class Koth extends AbstractKoth {
 
     private void handlePlayerEntry(Player player) {
         UUID playerId = player.getUniqueId();
-        UnifiedTeamTracker tracker = (UnifiedTeamTracker) teamTracker;
+        ContextualTeamTracker tracker = (ContextualTeamTracker) teamTracker;
 
-        TeamWrapper playerTeam = tracker.getTeamWrapper(playerId);
+        TeamWrapper playerTeam = tracker.getTeamForKoth(playerId, isSolo);
 
-        if (denyEnterWithoutTeam && playerTeam == null) {
+        if (!isSolo && denyEnterWithoutTeam && playerTeam == null) {
             if (createTeamIfNotExistsOnEnter) {
-                int maxMembers = isSolo ? 1 : Integer.MAX_VALUE;
-                playerTeam = tracker.createInternalTeam(playerId, maxMembers);
+                playerTeam = tracker.createInternalTeam(playerId, Integer.MAX_VALUE);
 
                 if (playerTeam == null) {
-                    player.sendMessage("§cNo se pudo crear un equipo automáticamente!");
+                    //Cant create team
                     return;
                 }
             } else {
-                player.sendMessage("§cNecesitas estar en un equipo para entrar a este KOTH!");
+                // Restrict entry?
                 return;
             }
         }
 
         if (playerTeam != null && !canTeamCapture(playerTeam)) {
             if (isSolo) {
-                player.sendMessage("§cEste es un KOTH solo y tu equipo tiene más de 1 miembro!");
+                // Player cant
             } else {
-                player.sendMessage("§cTu equipo no puede participar en este KOTH!");
+                // Team cant
             }
             return;
         }
 
         inside.add(playerId);
     }
+
 
 
     private void giveRewards() {

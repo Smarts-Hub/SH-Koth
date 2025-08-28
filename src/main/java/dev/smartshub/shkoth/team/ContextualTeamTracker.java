@@ -5,29 +5,32 @@ import dev.smartshub.shkoth.api.team.TeamWrapper;
 import dev.smartshub.shkoth.api.team.handle.TeamHandler;
 import dev.smartshub.shkoth.api.team.hook.TeamHook;
 import dev.smartshub.shkoth.api.team.track.TeamTracker;
+import dev.smartshub.shkoth.hook.team.*;
+import dev.smartshub.shkoth.service.team.TeamHookHelpService;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
-public class UnifiedTeamTracker implements TeamTracker {
+public class ContextualTeamTracker implements TeamTracker {
     
-    private static UnifiedTeamTracker instance;
     private final List<TeamHook> hooks = new ArrayList<>();
     private final TeamHandler internalHandler;
+    private final TeamHookHelpService teamHookHelpService;
     
-    private UnifiedTeamTracker() {
+    public ContextualTeamTracker(TeamHookHelpService teamHookHelpService) {
+        this.teamHookHelpService = teamHookHelpService;
         this.internalHandler = new InternalTeamHandler();
         setupHooks();
     }
     
-    public static UnifiedTeamTracker getInstance() {
-        if (instance == null) {
-            instance = new UnifiedTeamTracker();
-        }
-        return instance;
-    }
-    
     private void setupHooks() {
-        // TODO: register external hooks here
+        registerHook(new SimpleClansHook(teamHookHelpService));
+        registerHook(new FactionsUUIDHook(teamHookHelpService));
+        registerHook(new BetterTeamsHook(teamHookHelpService));
+        registerHook(new TownyHook(teamHookHelpService));
+        registerHook(new KingdomsXHook(teamHookHelpService));
+        registerHook(new UClansHook(teamHookHelpService));
     }
     
     public void registerHook(TeamHook hook) {
@@ -43,13 +46,56 @@ public class UnifiedTeamTracker implements TeamTracker {
                 .orElse(null);
     }
     
+    public TeamWrapper getTeamForKoth(UUID playerId, boolean isSoloMode) {
+        if (isSoloMode) {
+            return createSoloTeamWrapper(playerId);
+        } else {
+            return getTeamWrapper(playerId);
+        }
+    }
+    
+    private TeamWrapper createSoloTeamWrapper(UUID playerId) {
+        Player player = Bukkit.getPlayer(playerId);
+        String displayName = player != null ? player.getName() : "Unknown";
+        
+        return new TeamWrapper(
+            playerId, 
+            Set.of(playerId), 
+            displayName,
+            true
+        );
+    }
+    
+    public TeamWrapper getTeamWrapper(UUID playerId) {
+        TeamHook activeHook = getActiveHook();
+        
+        if (activeHook != null) {
+            Set<UUID> members = activeHook.getTeamMembers(playerId);
+            if (members.isEmpty()) return null;
+            
+            String displayName = activeHook.getTeamDisplayName(playerId);
+            return new TeamWrapper(playerId, members, displayName, false);
+        } else {
+            KothTeam internalTeam = internalHandler.getTeam(playerId);
+            return internalTeam != null ? new TeamWrapper(internalTeam, false) : null;
+        }
+    }
+    
+    public TeamWrapper createInternalTeam(UUID leaderId, int maxMembers) {
+        if (getActiveHook() != null) {
+            return null;
+        }
+        
+        KothTeam internalTeam = internalHandler.createTeam(leaderId, maxMembers);
+        return internalTeam != null ? new TeamWrapper(internalTeam, false) : null;
+    }
+    
     @Override
     public Set<UUID> getTeamMembers(UUID uuid) {
         TeamHook activeHook = getActiveHook();
         if (activeHook != null) {
             return activeHook.getTeamMembers(uuid);
         }
-        
         return internalHandler.getTeamMembers(uuid);
     }
     
@@ -59,7 +105,6 @@ public class UnifiedTeamTracker implements TeamTracker {
         if (activeHook != null) {
             return activeHook.isTeamMember(uuid);
         }
-        
         return internalHandler.isTeamMember(uuid);
     }
     
@@ -69,7 +114,6 @@ public class UnifiedTeamTracker implements TeamTracker {
         if (activeHook != null) {
             return activeHook.isTeamLeader(uuid);
         }
-        
         return internalHandler.isTeamLeader(uuid);
     }
     
@@ -79,7 +123,6 @@ public class UnifiedTeamTracker implements TeamTracker {
         if (activeHook != null) {
             return activeHook.areTeammates(player1, player2);
         }
-        
         return internalHandler.areTeammates(player1, player2);
     }
     
@@ -89,7 +132,6 @@ public class UnifiedTeamTracker implements TeamTracker {
         if (activeHook != null) {
             return activeHook.getTeamDisplayName(anyTeamMember);
         }
-        
         return internalHandler.getTeamDisplayName(anyTeamMember);
     }
     
@@ -97,55 +139,6 @@ public class UnifiedTeamTracker implements TeamTracker {
     public String getActiveProvider() {
         TeamHook activeHook = getActiveHook();
         return activeHook != null ? activeHook.getPluginName() : "Internal";
-    }
-
-    public TeamWrapper getOrCreateTeamWrapper(UUID playerId, boolean isSoloMode) {
-        TeamHook activeHook = getActiveHook();
-        
-        if (activeHook != null) {
-            Set<UUID> members = activeHook.getTeamMembers(playerId);
-            if (members.isEmpty()) {
-                if (isSoloMode) {
-                    members = Set.of(playerId);
-                } else {
-                    return null;
-                }
-            }
-            
-            String displayName = activeHook.getTeamDisplayName(playerId);
-            return new TeamWrapper(playerId, members, displayName);
-        } else {
-            KothTeam internalTeam = internalHandler.getTeam(playerId);
-            if (internalTeam == null && isSoloMode) {
-                internalTeam = internalHandler.createTeam(playerId, 1);
-            }
-            
-            return internalTeam != null ? new TeamWrapper(internalTeam) : null;
-        }
-    }
-
-    public TeamWrapper getTeamWrapper(UUID playerId) {
-        TeamHook activeHook = getActiveHook();
-        
-        if (activeHook != null) {
-            Set<UUID> members = activeHook.getTeamMembers(playerId);
-            if (members.isEmpty()) return null;
-            
-            String displayName = activeHook.getTeamDisplayName(playerId);
-            return new TeamWrapper(playerId, members, displayName);
-        } else {
-            KothTeam internalTeam = internalHandler.getTeam(playerId);
-            return internalTeam != null ? new TeamWrapper(internalTeam) : null;
-        }
-    }
-
-    public TeamWrapper createInternalTeam(UUID leaderId, int maxMembers) {
-        if (getActiveHook() != null) {
-            return null;
-        }
-
-        KothTeam internalTeam = internalHandler.createTeam(leaderId, maxMembers);
-        return internalTeam != null ? new TeamWrapper(internalTeam) : null;
     }
     
     public TeamHandler getInternalHandler() {

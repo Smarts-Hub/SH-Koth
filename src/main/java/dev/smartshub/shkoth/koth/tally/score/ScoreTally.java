@@ -3,7 +3,7 @@ package dev.smartshub.shkoth.koth.tally.score;
 import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.koth.tally.Tally;
 import dev.smartshub.shkoth.api.team.TeamWrapper;
-import dev.smartshub.shkoth.team.UnifiedTeamTracker;
+import dev.smartshub.shkoth.team.ContextualTeamTracker;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,10 +20,10 @@ public class ScoreTally implements Tally {
 
     @Override
     public void handle() {
-        UnifiedTeamTracker tracker = (UnifiedTeamTracker) koth.getTeamTracker();
+        ContextualTeamTracker tracker = (ContextualTeamTracker) koth.getTeamTracker();
 
         koth.getPlayersInside().stream()
-                .map(uuid -> tracker.getOrCreateTeamWrapper(uuid, koth.isSolo()))
+                .map(uuid -> tracker.getTeamForKoth(uuid, koth.isSolo()))
                 .filter(Objects::nonNull)
                 .distinct()
                 .forEach(team -> scores.merge(team, 1, Integer::sum));

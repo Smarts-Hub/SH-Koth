@@ -8,7 +8,7 @@ import dev.smartshub.shkoth.api.koth.guideline.KothType;
 import dev.smartshub.shkoth.api.location.Area;
 import dev.smartshub.shkoth.api.location.Corner;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
-import dev.smartshub.shkoth.api.schedule.Schedule;
+import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import dev.smartshub.shkoth.builder.mapper.PhysicalRewardsMapper;
 import dev.smartshub.shkoth.builder.mapper.SchedulesMapper;
 

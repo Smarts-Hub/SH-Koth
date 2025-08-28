@@ -3,19 +3,20 @@ package dev.smartshub.shkoth.service.team;
 import dev.smartshub.shkoth.api.team.KothTeam;
 import dev.smartshub.shkoth.api.team.TeamWrapper;
 import dev.smartshub.shkoth.service.notify.NotifyService;
-import dev.smartshub.shkoth.team.UnifiedTeamTracker;
+import dev.smartshub.shkoth.team.ContextualTeamTracker;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
 public class TeamHandlingService {
     
-    private final UnifiedTeamTracker teamTracker;
+    private final ContextualTeamTracker teamTracker;
     private final NotifyService notifyService;
     
-    public TeamHandlingService(NotifyService notifyService) {
+    public TeamHandlingService(NotifyService notifyService, ContextualTeamTracker teamTracker) {
         this.notifyService = notifyService;
-        this.teamTracker = UnifiedTeamTracker.getInstance();
+        this.teamTracker = teamTracker;
     }
     
     public void createTeam(Player leader, int maxMembers) {
@@ -106,9 +107,16 @@ public class TeamHandlingService {
         notifyService.sendChat(leader, "team.disbanded-team-success");
     }
     
-    public void kickMember(Player leader, UUID memberToKick) {
+    public void kickMember(Player leader, String toKickName) {
+        Player toKick = Bukkit.getPlayer(toKickName);
+        if (toKick == null) {
+            notifyService.sendChat(leader, "team.player-not-found");
+            return;
+        }
+
         UUID leaderId = leader.getUniqueId();
-        
+        UUID memberToKick = toKick.getUniqueId();
+
         if (!isTeamLeader(leaderId)) {
             notifyService.sendChat(leader, "team.only-leader-can-kick");
             return;
@@ -136,15 +144,22 @@ public class TeamHandlingService {
         notifyService.sendChat(leader, "team.kicked-member-success");
     }
     
-    public void transferLeadership(Player currentLeader, UUID newLeader) {
+    public void transferLeadership(Player currentLeader, String newLeaderName) {
+        Player newLeader = Bukkit.getPlayer(newLeaderName);
+        if (newLeader == null) {
+            notifyService.sendChat(currentLeader, "team.player-not-found");
+            return;
+        }
+
         UUID currentLeaderId = currentLeader.getUniqueId();
-        
+        UUID newLeaderId = newLeader.getUniqueId();
+
         if (!isTeamLeader(currentLeaderId)) {
             notifyService.sendChat(currentLeader, "team.only-leader-can-transfer");
             return;
         }
         
-        if (!teamTracker.areTeammates(currentLeaderId, newLeader)) {
+        if (!teamTracker.areTeammates(currentLeaderId, newLeaderId)) {
             notifyService.sendChat(currentLeader, "team.player-not-in-your-team");
             return;
         }
@@ -152,13 +167,14 @@ public class TeamHandlingService {
         // Silent fail, as this command should not be available due to existing external team plugin
         if (!teamTracker.getActiveProvider().equals("Internal")) return;
         
-        boolean success = teamTracker.getInternalHandler().transferLeadership(currentLeaderId, newLeader);
+        boolean success = teamTracker.getInternalHandler().transferLeadership(currentLeaderId, newLeaderId);
 
         if(!success){
             notifyService.sendChat(currentLeader, "team.cant-transfer-leadership");
             return;
         }
         notifyService.sendChat(currentLeader, "team.transferred-leadership-success");
+        notifyService.sendChat(newLeader, "team.you-are-leader-now");
     }
     
     public KothTeam getPlayerTeam(UUID playerId) {

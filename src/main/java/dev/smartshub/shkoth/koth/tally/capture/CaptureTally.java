@@ -3,9 +3,8 @@ package dev.smartshub.shkoth.koth.tally.capture;
 import dev.smartshub.shkoth.api.event.koth.PlayerStopKothCaptureEvent;
 import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.koth.tally.Tally;
-import dev.smartshub.shkoth.api.team.KothTeam;
 import dev.smartshub.shkoth.api.team.TeamWrapper;
-import dev.smartshub.shkoth.team.UnifiedTeamTracker;
+import dev.smartshub.shkoth.team.ContextualTeamTracker;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -22,14 +21,14 @@ public class CaptureTally implements Tally {
 
     @Override
     public void handle(){
-        UnifiedTeamTracker tracker = (UnifiedTeamTracker) koth.getTeamTracker();
+        ContextualTeamTracker tracker = (ContextualTeamTracker) koth.getTeamTracker();
 
         Set<TeamWrapper> eligibleTeams = koth.getPlayersInside().stream()
                 .map(uuid -> {
                     Player player = Bukkit.getPlayer(uuid);
                     if (player == null || !koth.canPlayerCapture(player)) return null;
 
-                    return tracker.getOrCreateTeamWrapper(uuid, koth.isSolo());
+                    return tracker.getTeamForKoth(uuid, koth.isSolo());
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
@@ -48,7 +47,8 @@ public class CaptureTally implements Tally {
         TeamWrapper currentTeamWrapper = new TeamWrapper(
                 koth.getCurrentCapturingTeam().getLeader(),
                 koth.getCurrentCapturingTeam().getMembers(),
-                koth.getCurrentCapturingTeam().getDisplayName()
+                koth.getCurrentCapturingTeam().getDisplayName(),
+                koth.isSolo()
         );
 
         if (eligibleTeams.contains(currentTeamWrapper)) {

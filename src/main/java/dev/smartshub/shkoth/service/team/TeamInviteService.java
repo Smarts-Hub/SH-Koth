@@ -20,7 +20,13 @@ public class TeamInviteService {
         this.notifyService = notifyService;
     }
     
-    public void sendInvitation(Player leader, Player target) {
+    public void sendInvitation(Player leader, String targetName) {
+        Player target = Bukkit.getPlayer(targetName);
+        if(target == null) {
+            notifyService.sendChat(leader, "team.player-not-found");
+            return;
+        }
+
         UUID leaderId = leader.getUniqueId();
         UUID targetId = target.getUniqueId();
         

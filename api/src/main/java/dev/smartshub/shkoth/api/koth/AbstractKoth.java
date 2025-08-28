@@ -7,7 +7,7 @@ import dev.smartshub.shkoth.api.koth.command.Commands;
 import dev.smartshub.shkoth.api.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.location.Area;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
-import dev.smartshub.shkoth.api.schedule.Schedule;
+import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import dev.smartshub.shkoth.api.team.KothTeam;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

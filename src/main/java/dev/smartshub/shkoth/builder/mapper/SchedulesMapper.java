@@ -2,7 +2,7 @@ package dev.smartshub.shkoth.builder.mapper;
 
 import dev.smartshub.shkoth.api.builder.mapper.Mapper;
 import dev.smartshub.shkoth.api.config.ConfigContainer;
-import dev.smartshub.shkoth.api.schedule.Schedule;
+import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 

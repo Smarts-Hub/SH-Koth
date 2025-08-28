@@ -1,8 +1,8 @@
 package dev.smartshub.shkoth.service.schedule;
 
 import dev.smartshub.shkoth.api.koth.Koth;
-import dev.smartshub.shkoth.api.schedule.Schedule;
-import dev.smartshub.shkoth.api.schedule.ScheduleStatus;
+import dev.smartshub.shkoth.api.location.schedule.Schedule;
+import dev.smartshub.shkoth.api.location.schedule.ScheduleStatus;
 import dev.smartshub.shkoth.registry.KothRegistry;
 
 import java.time.Duration;

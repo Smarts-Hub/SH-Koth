@@ -4,7 +4,8 @@ public enum ConfigType {
     DATABASE("database.yml"),
     MESSAGES("messages.yml"),
     KOTH_DEFINITION("koths/"),
-    PLUGIN_CONFIG("config.yml");
+    PLUGIN_CONFIG("config.yml"),
+    HOOKS("hook.yml");
     
     private final String defaultPath;
     

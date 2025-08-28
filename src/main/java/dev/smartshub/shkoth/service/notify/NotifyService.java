@@ -44,8 +44,8 @@ public class NotifyService {
         sender.sendMessage(component);
     }
 
-    public void sendRawMessage(Player player, String path) {
-        sendChat(player, path);
+    public void sendRawMessage(Player player, String message) {
+        player.sendMessage(message);
     }
 
     public void sendTitle(Player player, String path) {
