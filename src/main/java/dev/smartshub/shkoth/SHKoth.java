@@ -2,7 +2,10 @@ package dev.smartshub.shkoth;
 
 import dev.smartshub.shkoth.api.KothAPIProvider;
 import dev.smartshub.shkoth.api.config.ConfigType;
+import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.koth.guideline.KothType;
+import dev.smartshub.shkoth.command.handler.exception.ExceptionHandler;
+import dev.smartshub.shkoth.command.handler.suggestion.CommandSuggestionProvider;
 import dev.smartshub.shkoth.command.koth.KothCommand;
 import dev.smartshub.shkoth.command.team.TeamCommand;
 import dev.smartshub.shkoth.koth.ticking.KothTicker;
@@ -26,6 +29,7 @@ import dev.smartshub.shkoth.service.team.TeamInformationService;
 import dev.smartshub.shkoth.service.team.TeamInviteService;
 import dev.smartshub.shkoth.task.UpdateTask;
 import dev.smartshub.shkoth.team.ContextualTeamTracker;
+import org.bukkit.entity.Player;
 import revxrsal.commands.bukkit.BukkitLamp;
 import revxrsal.zapper.ZapperJavaPlugin;
 
@@ -122,10 +126,22 @@ public class SHKoth extends ZapperJavaPlugin {
     }
 
     private void registerCommands() {
-        //TODO: advanced suggestions (kothId list, online player list, etc)
-        var lamp = BukkitLamp.builder(this).build();
+
+        final var exceptionHandler = new ExceptionHandler(notifyService);
+        final var commandSuggestionProvider = new CommandSuggestionProvider(kothRegistry);
+
+        var lamp = BukkitLamp.builder(this)
+                .suggestionProviders(providers -> {
+                    providers.addProvider(Koth.class, commandSuggestionProvider.getKothProvider());
+                    providers.addProvider(Player.class, commandSuggestionProvider.getPlayerProvider());
+                    providers.addProvider(int.class, commandSuggestionProvider.getNumberProvider());
+                })
+
+                .exceptionHandler(exceptionHandler)
+                .build();
+
+
         lamp.register(
-                //TODO: permissions for KothCommand
                 new KothCommand(kothRegistry, notifyService, configService),
                 new TeamCommand(teamHandlingService, teamInviteService, teamInformationService));
     }

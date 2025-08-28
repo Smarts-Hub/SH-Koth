@@ -7,15 +7,13 @@ import dev.smartshub.shkoth.koth.reward.PhysicalRewardAdderFactory;
 import dev.smartshub.shkoth.registry.KothRegistry;
 import dev.smartshub.shkoth.service.config.ConfigService;
 import dev.smartshub.shkoth.service.notify.NotifyService;
-import me.lucko.spark.paper.common.command.sender.CommandSender;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Subcommand;
-import revxrsal.commands.annotation.Suggest;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
 
 @Command("koth")
-@CommandPermission("shkoth.command.admin")
+@CommandPermission("shkoth.admin")
 public class KothCommand {
 
     private final KothRegistry kothRegistry;
@@ -28,40 +26,40 @@ public class KothCommand {
         this.physicalRewardAdder = PhysicalRewardAdderFactory.create(configService);
     }
 
-    @Subcommand("force-start <kothId>")
-    public void forceStart(BukkitCommandActor actor, @Suggest({"kothIdExample"}) String kothId){
-        kothRegistry.startKoth(kothId);
-        notifyService.sendChat((CommandSender) actor.sender(), "koth.force-start");
+    @Subcommand("force-start")
+    public void forceStart(BukkitCommandActor actor, Koth koth){
+        kothRegistry.startKoth(koth.getId());
+        notifyService.sendChat(actor.sender(), "koth.force-start");
         notifyService.sendBroadcastListToOnlinePlayers("koth.force-start");
     }
 
-    @Subcommand("force-stop <kothId>")
-    public void forceStop(BukkitCommandActor actor, @Suggest({"kothIdExample"}) String kothId){
-        kothRegistry.stopKoth(kothId);
-        notifyService.sendChat((CommandSender) actor.sender(), "koth.force-stop");
+    @Subcommand("force-stop")
+    public void forceStop(BukkitCommandActor actor,Koth koth){
+       kothRegistry.stopKoth(koth.getId());
+        notifyService.sendChat(actor.sender(), "koth.force-stop");
         notifyService.sendBroadcastListToOnlinePlayers("koth.force-stop");
     }
 
     @Subcommand("force-stop all")
     public void forceStopAll(BukkitCommandActor actor) {
         kothRegistry.getRunning().forEach(koth -> koth.stop(KothEndEvent.EndReason.MANUAL_STOP));
-        notifyService.sendChat((CommandSender) actor.sender(), "koth.force-stop-all");
+        notifyService.sendChat(actor.sender(), "koth.force-stop-all");
         notifyService.sendBroadcastListToOnlinePlayers("koth.force-stop-all");
     }
 
-    @Subcommand("add-physical-reward <kothId> <amount>")
-    public void addPhysicalReward(BukkitCommandActor actor, @Suggest({"kothIdExample"}) String kothId, @Suggest({"1", "2", "3", "4"}) int amount) {
+    @Subcommand("add-physical-reward")
+    public void addPhysicalReward(BukkitCommandActor actor, Koth koth, int amount) {
+        if(!actor.isPlayer()) return;
         // Not so clean but works for now (will be refactored later)
-        Koth koth = kothRegistry.get(kothId);
         physicalRewardAdder.addRewards(koth, actor.asPlayer().getItemInHand(), amount);
         notifyService.sendChat(actor.asPlayer(), "koth.add-physical-reward");
     }
 
-    @Subcommand("tp <kothId>")
-    public void teleportToKoth(BukkitCommandActor actor, @Suggest({"kothIdExample"}) String kothId) {
-        // Not so clean but works for now (will be refactored later) x2
+    @Subcommand("tp")
+    public void teleportToKoth(BukkitCommandActor actor, Koth koth) {
         if(!actor.isPlayer()) return;
-        actor.asPlayer().teleport(kothRegistry.get(kothId).getArea().getCenter());
+        // Not so clean but works for now (will be refactored later) x2
+        actor.asPlayer().teleport(koth.getArea().getCenter());
         notifyService.sendChat(actor.asPlayer(), "koth.teleport");
     }
 
@@ -70,13 +68,14 @@ public class KothCommand {
         // Not so clean but works for now (will be refactored later) (too) x3
         kothRegistry.getAll().forEach(koth -> {
             String message = String.format("Koth ID: %s, Status: %s", koth.getId(), koth.isRunning() ? "Running" : "Not Running");
-            notifyService.sendChat((CommandSender) actor.sender(), message);
+            notifyService.sendChat(actor.sender(), message);
         });
     }
 
     @Subcommand("reload koths")
     public void reload(BukkitCommandActor actor) {
         kothRegistry.reloadKoths();
-        notifyService.sendChat((CommandSender) actor.sender(), "koth.reload");
+        notifyService.sendChat(actor.sender(), "koth.reload");
     }
+
 }

@@ -2,9 +2,10 @@ package dev.smartshub.shkoth.service.notify;
 
 import dev.smartshub.shkoth.message.MessageParser;
 import dev.smartshub.shkoth.message.MessageRepository;
-import me.lucko.spark.paper.common.command.sender.CommandSender;
+
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
