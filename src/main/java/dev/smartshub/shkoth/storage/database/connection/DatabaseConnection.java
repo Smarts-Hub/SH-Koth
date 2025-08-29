@@ -1,7 +1,7 @@
 package dev.smartshub.shkoth.storage.database.connection;
 
 
-import dev.smartshub.shkoth.storage.config.Configuration;
+import dev.smartshub.shkoth.api.config.ConfigContainer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -23,24 +23,21 @@ public class DatabaseConnection {
         }
     }
 
-    public static void init() {
+    public static void init(ConfigContainer config) {
         if (initialized) return;
 
-        Configuration config = null;
-        config.saveFile();
-
-        String DRIVER = config.getString("driver", "mysql").toLowerCase();
-        String dbName = config.getString("db-name");
+        String DRIVER = config.getString("driver", "h2").toLowerCase();
+        String dbName = config.getString("db-name", "shkoth");
 
         if (dbName == null) {
             throw new IllegalArgumentException("No 'db-name' at database.yml");
         }
 
         if (DRIVER.equals("mysql")) {
-            String host = config.getString("host");
-            String port = config.getString("port");
-            String username = config.getString("username");
-            String password = config.getString("password");
+            String host = config.getString("host" , "localhost");
+            String port = config.getString("port", "3306");
+            String username = config.getString("username", "root");
+            String password = config.getString("password", "");
 
             if (host == null || port == null || username == null || password == null) {
                 throw new IllegalArgumentException("MySQL configuration is incomplete!");

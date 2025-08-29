@@ -114,7 +114,7 @@ public class SHKoth extends ZapperJavaPlugin {
 
     private void setUpStorage() {
         CompletableFuture.runAsync(() -> {
-            DatabaseConnection.init();
+            DatabaseConnection.init(configService.provide(ConfigType.DATABASE));
             SchemaCreator.createSchema();
         });
     }
