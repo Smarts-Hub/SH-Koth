@@ -1,3 +1,13 @@
+# _____        _        _
+# |  __ \      | |      | |
+# | |  | | __ _| |_ __ _| |__   __ _ ___  ___
+# | |  | |/ _` | __/ _` | '_ \ / _` / __|/ _ \
+# | |__| | (_| | || (_| | |_) | (_| \__ \  __/
+# |_____/ \__,_|\__\__,_|_.__/ \__,_|___/\___|
+#
+# Database configuration file
+# Support: https://discord.smartshub.dev/
+
 # Available drivers: "h2" (local, recommended) and "mysql" (remote).
 driver: h2
 host: localhost
@@ -5,3 +15,8 @@ port: 3006
 db-name: shkoth
 username: koth_user
 password: SECRET_PASSWORD
+
+
+
+# DO NOT TOUCH THIS!
+config-version: 1

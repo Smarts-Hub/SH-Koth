@@ -6,64 +6,70 @@ import dev.smartshub.shkoth.api.config.ConfigException;
 import dev.smartshub.shkoth.api.config.ConfigType;
 import dev.smartshub.shkoth.loader.config.ConfigLoader;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Set;
 
 public class ConfigService {
-    
+
     private final ConfigLoader loader;
-    private final Map<ConfigType, String> typeToPath = new EnumMap<>(ConfigType.class);
-    
+
     public ConfigService(SHKoth plugin) {
         this.loader = new ConfigLoader(plugin);
-        initializeTypePaths();
         initialize();
     }
-    
+
     public void initialize() {
-        loader.ensureFolderExists("koths");
-        
+        loader.initializeAllFolders();
+
         provide(ConfigType.DATABASE);
         provide(ConfigType.MESSAGES);
+        provide(ConfigType.BROADCAST);
         provide(ConfigType.HOOKS);
     }
-    
+
     public ConfigContainer provide(ConfigType type) {
-        String path = typeToPath.get(type);
-        return loader.load(path, type);
+        if (type.isFolder()) {
+            throw new IllegalArgumentException("Use provideAllKoths() for folder types.");
+        }
+        return loader.load(type);
     }
-    
+
     public ConfigContainer provide(String customPath, ConfigType type) {
         return loader.load(customPath, type);
     }
-    
+
     public Set<ConfigContainer> provideAllKoths() {
-        return loader.loadFromFolder("koths", ConfigType.KOTH_DEFINITION);
+        return loader.loadFromFolder(ConfigType.KOTH_DEFINITION);
     }
-    
+
     public void reload(ConfigType type) {
-        String path = typeToPath.get(type);
-        loader.reload(path, type);
+        if (type.isFolder()) {
+            loader.evictFromCache(type);
+        } else {
+            loader.reload(type);
+        }
     }
-    
+
     public void save(ConfigType type) {
-        String path = typeToPath.get(type);
-        loader.save(path);
+        if (type.isFolder()) {
+            throw new IllegalArgumentException("Cannot save folder types directly.");
+        }
+        loader.save(type);
     }
-    
+
     public void clearCache() {
         loader.clearCache();
     }
-    
+
     public void validateConfiguration(ConfigContainer config) throws ConfigException {
         switch (config.getType()) {
             case DATABASE -> validateDatabaseConfig(config);
             case MESSAGES -> validateMessagesConfig(config);
+            case BROADCAST -> validateBroadcastConfig(config);
             case KOTH_DEFINITION -> validateKothConfig(config);
+            case HOOKS -> validateHooksConfig(config);
         }
     }
-    
+
     private void validateDatabaseConfig(ConfigContainer config) {
         config.requirePath("host");
         config.requirePath("password");
@@ -72,21 +78,23 @@ public class ConfigService {
         config.requirePath("db-name");
         config.requirePath("driver");
     }
-    
+
     private void validateMessagesConfig(ConfigContainer config) {
         config.requirePath("messages");
     }
-    
+
+    private void validateBroadcastConfig(ConfigContainer config) {
+        config.requirePath("broadcast");
+    }
+
     private void validateKothConfig(ConfigContainer config) {
         config.requirePath("corner-2");
         config.requirePath("corner-1");
         config.requirePath("display-name");
         config.requirePath("max-duration");
     }
-    
-    private void initializeTypePaths() {
-        for (ConfigType type : ConfigType.values()) {
-            typeToPath.put(type, type.getDefaultPath());
-        }
+
+    private void validateHooksConfig(ConfigContainer config) {
     }
+
 }

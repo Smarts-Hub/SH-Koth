@@ -1,6 +1,7 @@
 package dev.smartshub.shkoth.listener.team;
 
 import dev.smartshub.shkoth.api.event.team.MemberLeavedTeamEvent;
+import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.service.notify.NotifyService;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -16,6 +17,7 @@ public class MemberLeavedTeamListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMemberLeaveTeam(MemberLeavedTeamEvent event){
+        PlaceholderAPIHook.pushArgs("", event.getRemovedPlayer().getName());
         notifyService.sendChat(event.getRemovedPlayer(), "team.removed-from-team");
         for (var player : event.getNewTeam().getOnlineMembers()) {
             notifyService.sendChat(player, "team.member-removed");

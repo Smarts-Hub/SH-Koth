@@ -1,0 +1,44 @@
+#  ____                      _               _
+# |  _ \                    | |             | |
+# | |_) |_ __ ___   __ _  __| | ___ __ _ ___| |_
+# |  _ <| '__/ _ \ / _` |/ _` |/ __/ _` / __| __|
+# | |_) | | | (_) | (_| | (_| | (_| (_| \__ \ |_
+# |____/|_|  \___/ \__,_|\__,_|\___\__,_|___/\__|
+#
+# Broadcast configuration file
+# * Formatting: MiniMessage (https://docs.advntr.dev/minimessage/format)
+# * PlaceholderAPI is supported in every message
+# * If you want to avoid a broadcast message, simply replace it with empty: ""
+# Support: https://discord.smartshub.dev/
+
+# * %shkoth_koth_context% - The koth's display-name, is only valid at the moment of the message is sent
+# * %shkoth_player_context% - The player's name, is only valid at the moment of the message is sent
+# For "permanent valid" placeholders, use the mentioned at documentation:
+koth:
+  force-start:
+    - "The KOTH %shkoth_koth_context% has been force started by an administrator."
+    - "Prepare for battle!"
+    - "First to capture the KOTH wins!"
+  force-stop:
+    - "The KOTH %shkoth_koth_context% has been force stopped by an administrator."
+    - "The event has been cancelled."
+  force-stop-all:
+    - "All KOTH events have been force stopped by an administrator."
+    - "All ongoing events have been cancelled."
+  end:
+    - "The KOTH %shkoth_koth_context% has ended!"
+    - "Congratulations to the winners!"
+  start:
+    - "The KOTH %shkoth_koth_context% has started!"
+    - "Capture the KOTH to win amazing rewards!"
+  capture:
+    start:
+      - "The KOTH %shkoth_koth_context% is being captured by %shkoth_player_contextual%!"
+      - "Defend your position and secure the victory!"
+    stop:
+      - "The KOTH %shkoth_koth_context% capture has been stopped!"
+      - "The battle continues!"
+
+
+# DO NOT TOUCH THIS!
+config-version: 1

@@ -2,6 +2,7 @@ package dev.smartshub.shkoth.command.koth;
 
 import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
 import dev.smartshub.shkoth.api.koth.Koth;
+import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.koth.reward.PhysicalRewardAdder;
 import dev.smartshub.shkoth.koth.reward.PhysicalRewardAdderFactory;
 import dev.smartshub.shkoth.registry.KothRegistry;
@@ -29,6 +30,7 @@ public class KothCommand {
     @Subcommand("force-start")
     public void forceStart(BukkitCommandActor actor, Koth koth){
         kothRegistry.startKoth(koth.getId());
+        PlaceholderAPIHook.pushArgs(koth.getDisplayName());
         notifyService.sendChat(actor.sender(), "koth.force-start");
         notifyService.sendBroadcastListToOnlinePlayers("koth.force-start");
     }
@@ -36,6 +38,7 @@ public class KothCommand {
     @Subcommand("force-stop")
     public void forceStop(BukkitCommandActor actor,Koth koth){
        kothRegistry.stopKoth(koth.getId());
+        PlaceholderAPIHook.pushArgs(koth.getDisplayName());
         notifyService.sendChat(actor.sender(), "koth.force-stop");
         notifyService.sendBroadcastListToOnlinePlayers("koth.force-stop");
     }
@@ -60,6 +63,7 @@ public class KothCommand {
         if(!actor.isPlayer()) return;
         // Not so clean but works for now (will be refactored later) x2
         actor.asPlayer().teleport(koth.getArea().getCenter());
+        PlaceholderAPIHook.pushArgs(koth.getDisplayName());
         notifyService.sendChat(actor.asPlayer(), "koth.teleport");
     }
 

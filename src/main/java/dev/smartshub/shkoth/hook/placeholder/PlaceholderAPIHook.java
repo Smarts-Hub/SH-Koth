@@ -51,11 +51,10 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
         String kothName = placeholderHelper.extractKothName(identifier);
         String placeholderType = placeholderHelper.extractPlaceholderType(identifier);
 
-        // Non related to any koth, just general placeholders
         if(kothName == null){
             return String.valueOf(switch (identifier) {
-                case "arg1" -> tempArg1 != null ? tempArg1 : "";
-                case "arg2" -> tempArg2 != null ? tempArg2 : "";
+                case "player_context" -> tempArg1 != null ? tempArg1 : "";
+                case "koth_context" -> tempArg2 != null ? tempArg2 : "";
                 case "arg3" -> tempArg3 != null ? tempArg3 : "";
                 case "total_wins" -> playerStatsCache.getStat(player, StatType.TOTAL);
                 case "solo_wins" -> playerStatsCache.getStat(player, StatType.SOLO);

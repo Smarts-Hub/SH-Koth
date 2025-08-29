@@ -1,83 +1,77 @@
-messages:
-  exception:
-    no-permission: "You do not have permission to perform this action."
+#  __  __
+# |  \/  |
+# | \  / | ___  ___ ___  __ _  __ _  ___  ___
+# | |\/| |/ _ \/ __/ __|/ _` |/ _` |/ _ \/ __|
+# | |  | |  __/\__ \__ \ (_| | (_| |  __/\__ \
+# |_|  |_|\___||___/___/\__,_|\__, |\___||___/
+#                              __/ |
+#                             |___/
+#
+# Messages configuration file
+# * Formatting: MiniMessage (https://docs.advntr.dev/minimessage/format)
+# * PlaceholderAPI is supported in every message
+# * If you want to avoid a broadcast message, simply replace it with empty: ""
+# Support: https://discord.smartshub.dev/
 
-  koth:
-    force-start: "KOTH event has been force started."
-    force-stop: "KOTH event has been force stopped."
-    force-stop-all: "All KOTH events have been force stopped."
-    add-physical-reward: "Physical reward has been added to the KOTH."
-    teleport: "You have been teleported to the KOTH."
-    leave: "You have left the KOTH event."
-    capture:
-      start: "You started capturing the KOTH!"
-      stop: "You stopped capturing the KOTH."
-    reload: "KOTH configuration reloaded."
-    enter: "You have entered the KOTH event."
+exception:
+  no-permission: "You do not have permission to perform this action."
 
-  team:
-    player-not-found: "The specified player could not be found."
-    not-team-leader: "You are not the team leader."
-    target-already-in-a-team: "The target player is already in a team."
-    target-already-invited: "The target player has already been invited."
-    invitation-received: "You have received a team invitation."
-    invitation-sent: "Team invitation sent successfully."
-    no-pending-invitations: "You have no pending team invitations."
-    invitation-accepted: "Team invitation accepted."
-    invitation-declined: "Team invitation declined."
-    invitation-declined-success: "You have successfully declined the team invitation."
-    kicked-from-team: "You have been kicked from your team."
-    member-kicked: "A member has been kicked from your team."
-    kick-member-success: "You have successfully kicked a member from your team."
-    removed-from-team: "You have been removed from your team."
-    member-removed: "A member has been removed from your team."
-    not-in-a-team: "You are not in a team."
-    team-info-header: "--- Team Information ---"
-    team-info-footer: "------------------------"
-    change-leader: "You have changed the team leader."
-    transferred-leadership-success: "You have successfully transferred team leadership."
-    you-are-leader-now: "You are now the team leader!"
-    team-created-success: "Team created successfully."
-    added-to-team: "You have been added to a team."
-    new-member-joined: "A new member has joined your team."
-    disbanded-team-success: "You have successfully disbanded your team."
-    already-in-a-team: "You are already in a team."
-    cant-create-team: "You cannot create a team right now."
-    cant-join-team: "You cannot join this team."
-    leader-cant-leave: "The team leader cannot leave the team."
-    cant-leave-team: "You cannot leave the team."
-    only-leader-can-disband: "Only the team leader can disband the team."
-    cant-disband-team: "You cannot disband the team."
-    only-leader-can-kick: "Only the team leader can kick members."
-    cant-kick-yourself: "You cannot kick yourself from the team."
-    player-not-in-your-team: "The specified player is not in your team."
-    cant-kick-member: "You cannot kick this member."
-    only-leader-can-transfer: "Only the team leader can transfer leadership."
-    cant-transfer-leadership: "You cannot transfer team leadership."
+# * %shkoth_koth_context% - The koth's display-name, is only valid at the moment of the message is sent
+# For "permanent valid" placeholders, use the mentioned at documentation:
+koth:
+  force-start: "The KOTH %shkoth_koth_context% has been force started."
+  force-stop: "The KOTH %shkoth_koth_context% has been force stopped."
+  force-stop-all: "All KOTH events have been force stopped."
+  add-physical-reward: "Physical reward has been added to the KOTH."
+  teleport: "You have been teleported to the KOTH %shkoth_koth_context%."
+  leave: "You have left the KOTH  %shkoth_koth_context%."
+  capture:
+    start: "You started capturing the KOTH %shkoth_koth_context%!"
+    stop: "You stopped capturing the KOTH %shkoth_koth_context%."
+  reload: "KOTHs configurations reloaded."
+  enter: "You have entered the KOTH %shkoth_koth_context%."
 
+# * %shkoth_player_context% - The player's name, is only valid at the moment of the message is sent
+# For "permanent valid" placeholders, use the mentioned at documentation:
+team:
+  player-not-found: "The specified player could not be found."
+  not-team-leader: "You are not the team leader."
+  target-already-in-a-team: "The target player is already in a team."
+  target-already-invited: "The target player has already been invited."
+  invitation-received: "You have received a team invitation."
+  invitation-sent: "Team invitation sent successfully."
+  no-pending-invitations: "You have no pending team invitations."
+  invitation-accepted: "Team invitation accepted."
+  invitation-declined: "Team invitation declined."
+  invitation-declined-success: "You have successfully declined the team invitation."
+  kicked-from-team: "You have been kicked from your team."
+  member-kicked: "%shkoth_player_context% has been kicked from your team."
+  kick-member-success: "You have successfully kicked %shkoth_player_context% from your team."
+  removed-from-team: "You have been removed from your team."
+  member-removed: " %shkoth_player_context% has been removed from your team."
+  not-in-a-team: "You are not in a team."
+  team-info-header: "--- Team Information ---"
+  team-info-footer: "------------------------"
+  change-leader: "You have changed the team leader. The new one is %shkoth_player_context%."
+  transferred-leadership-success: "You have successfully transferred team leadership to %shkoth_player_context%."
+  you-are-leader-now: "You are now the team leader!"
+  team-created-success: "Team created successfully."
+  added-to-team: "You have been added to a team."
+  new-member-joined: "%shkoth_player_context% has joined your team."
+  disbanded-team-success: "You have successfully disbanded your team."
+  already-in-a-team: "You are already in a team."
+  cant-create-team: "You cannot create a team right now."
+  cant-join-team: "You cannot join this team."
+  leader-cant-leave: "The team leader cannot leave the team."
+  cant-leave-team: "You cannot leave the team."
+  only-leader-can-disband: "Only the team leader can disband the team."
+  cant-disband-team: "You cannot disband the team."
+  only-leader-can-kick: "Only the team leader can kick members."
+  cant-kick-yourself: "You cannot kick yourself from the team."
+  player-not-in-your-team: "The specified player is not in your team."
+  cant-kick-member: "You cannot kick %shkoth_player_context%."
+  only-leader-can-transfer: "Only the team leader can transfer leadership."
+  cant-transfer-leadership: "You cannot transfer team leadership."
 
-broadcast:
-  koth:
-    force-start:
-      - "The KOTH event has been force started by an administrator."
-      - "Prepare for battle!"
-      - "First to capture the KOTH wins!"
-    force-stop:
-      - "The KOTH event has been force stopped by an administrator."
-      - "The event has been cancelled."
-    force-stop-all:
-      - "All KOTH events have been force stopped by an administrator."
-      - "All ongoing events have been cancelled."
-    end:
-      - "The KOTH event has ended!"
-      - "Congratulations to the winners!"
-    start:
-      - "The KOTH event has started!"
-      - "Capture the KOTH to win amazing rewards!"
-    capture:
-      start:
-        - "The KOTH is being captured!"
-        - "Defend your position and secure the victory!"
-      stop:
-        - "The KOTH capture has been stopped!"
-        - "The battle continues!"
+# DO NOT TOUCH THIS!
+config-version: 1

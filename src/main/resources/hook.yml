@@ -1,19 +1,43 @@
-team-hooks:
-  ultimate-clans:
-    enabled: true
-    priority: 6
-  kingdoms-x:
-    enabled: true
-    priority: 5
-  towny:
-    enabled: true
-    priority: 4
-  factions-uuid:
-    enabled: true
-    priority: 3
-  better-teams:
-    enabled: true
-    priority: 2
-  simple-clans:
-    enabled: true
-    priority: 1
+# _    _             _
+# | |  | |           | |
+# | |__| | ___   ___ | | __
+# |  __  |/ _ \ / _ \| |/ /
+# | |  | | (_) | (_) |   <
+# |_|  |_|\___/ \___/|_|\_\
+#
+# Hook Clans/Teams configuration file
+# Support: https://discord.smartshub.dev/
+
+# You can enable/disable support for each plugin and set their priority.
+# The priority is used when more than one plugin is detected, the one with the highest priority will be used.
+# If two or more plugins have the same priority, the one that appears first
+# Also know that SH-Koth owns a Team system, so if no plugin is detected or enabled, it will use its own system.
+
+ultimate-clans:
+  enabled: true
+  priority: 6
+
+kingdoms-x:
+  enabled: true
+  priority: 5
+
+towny:
+  enabled: true
+  priority: 4
+
+factions-uuid:
+  enabled: true
+  priority: 3
+
+better-teams:
+  enabled: true
+  priority: 2
+
+simple-clans:
+  enabled: true
+  priority: 1
+
+
+
+# DO NOT TOUCH THIS!
+config-version: 1

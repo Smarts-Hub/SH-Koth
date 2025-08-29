@@ -14,153 +14,249 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConfigLoader {
-    
+
     private final SHKoth plugin;
     private final Map<String, Configuration> configCache = new ConcurrentHashMap<>();
     private final Map<String, Long> lastModified = new ConcurrentHashMap<>();
     private final boolean cacheEnabled;
-    
+
     public ConfigLoader(SHKoth plugin) {
         this(plugin, true);
     }
-    
+
     public ConfigLoader(SHKoth plugin, boolean cacheEnabled) {
         this.plugin = plugin;
         this.cacheEnabled = cacheEnabled;
     }
-    
+
     public ConfigContainer load(String fileName, ConfigType type) {
-        String normalizedName = normalizeFileName(fileName);
-        
-        if (cacheEnabled && isCacheValid(normalizedName)) {
-            Configuration cachedConfig = configCache.get(normalizedName);
-            return new ConfigContainerImpl(normalizedName, cachedConfig, type);
+        String fullPath = resolveFullPath(fileName, type);
+
+        ensureParentFolderExists(fullPath);
+
+        if (cacheEnabled && isCacheValid(fullPath)) {
+            Configuration cachedConfig = configCache.get(fullPath);
+            return new ConfigContainerImpl(extractFileName(fullPath), cachedConfig, type);
         }
-        
-        Configuration config = loadFromFile(normalizedName);
-        
+
+        Configuration config = loadFromFile(fullPath);
+
         if (cacheEnabled) {
-            configCache.put(normalizedName, config);
-            updateLastModified(normalizedName);
+            configCache.put(fullPath, config);
+            updateLastModified(fullPath);
         }
-        
-        return new ConfigContainerImpl(normalizedName, config, type);
+
+        return new ConfigContainerImpl(extractFileName(fullPath), config, type);
     }
-    
+
+    public ConfigContainer load(ConfigType type) {
+        if (type.isFolder()) {
+            throw new IllegalArgumentException("Cannot load a folder type directly. Use loadFromFolder() instead.");
+        }
+        return load(type.getDefaultPath(), type);
+    }
+
     public void reload(String fileName, ConfigType type) {
-        String normalizedName = normalizeFileName(fileName);
-        
+        String fullPath = resolveFullPath(fileName, type);
+
         try {
-            Configuration config = configCache.get(normalizedName);
+            Configuration config = configCache.get(fullPath);
             if (config != null) {
                 config.reloadFile();
-                updateLastModified(normalizedName);
+                updateLastModified(fullPath);
             } else {
                 load(fileName, type);
             }
         } catch (Exception e) {
-            throw new ConfigException.ConfigLoadException(normalizedName, e);
+            throw new ConfigException.ConfigLoadException(fullPath, e);
         }
     }
-    
-    public void save(String fileName) {
-        String normalizedName = normalizeFileName(fileName);
-        Configuration config = configCache.get(normalizedName);
-        
-        if (config == null) {
-            throw new ConfigException.ConfigNotFoundException(normalizedName);
+
+    public void reload(ConfigType type) {
+        if (type.isFolder()) {
+            throw new IllegalArgumentException("Cannot reload a folder type directly.");
         }
-        
+        reload(type.getDefaultPath(), type);
+    }
+
+    public void save(String fileName) {
+        Configuration config = configCache.get(fileName);
+
+        if (config == null) {
+            throw new ConfigException.ConfigNotFoundException(fileName);
+        }
+
         try {
             config.saveFile();
-            updateLastModified(normalizedName);
+            updateLastModified(fileName);
         } catch (Exception e) {
-            throw new ConfigException.ConfigSaveException(normalizedName, e);
+            throw new ConfigException.ConfigSaveException(fileName, e);
         }
     }
-    
-    public Set<ConfigContainer> loadFromFolder(String folderName, ConfigType type) {
+
+    public void save(ConfigType type) {
+        if (type.isFolder()) {
+            throw new IllegalArgumentException("Cannot save a folder type directly.");
+        }
+        save(type.getDefaultPath());
+    }
+
+    public Set<ConfigContainer> loadFromFolder(String folderPath, ConfigType type) {
         Set<ConfigContainer> containers = new HashSet<>();
-        File folder = new File(plugin.getDataFolder(), folderName);
-        
-        if (!folder.exists() || !folder.isDirectory()) {
-            plugin.getLogger().warning("Folder '" + folderName + "' does not exist or is not a directory.");
+
+        ensureFolderExists(folderPath);
+
+        File folder = new File(plugin.getDataFolder(), folderPath);
+
+        if (!folder.isDirectory()) {
+            plugin.getLogger().warning("Path '" + folderPath + "' is not a directory.");
             return containers;
         }
-        
+
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".yml"));
         if (files == null) return containers;
-        
+
         for (File file : files) {
             try {
                 String fileName = file.getName();
+                String fullPath = folderPath + "/" + fileName;
+
                 Configuration config = new Configuration(plugin, file, fileName);
                 config.load(file);
-                
+
                 if (cacheEnabled) {
-                    configCache.put(fileName, config);
-                    lastModified.put(fileName, file.lastModified());
+                    configCache.put(fullPath, config);
+                    lastModified.put(fullPath, file.lastModified());
                 }
-                
+
                 containers.add(new ConfigContainerImpl(fileName, config, type));
             } catch (Exception e) {
                 plugin.getLogger().severe("Failed to load config: " + file.getName());
                 e.printStackTrace();
             }
         }
-        
+
         return containers;
     }
-    
+
+    public Set<ConfigContainer> loadFromFolder(ConfigType type) {
+        if (!type.isFolder()) {
+            throw new IllegalArgumentException("ConfigType must be a folder type to use this method.");
+        }
+
+        String folderPath = type.getDefaultPath();
+        folderPath = folderPath.substring(0, folderPath.length() - 1);
+
+        return loadFromFolder(folderPath, type);
+    }
+
+    public void initializeAllFolders() {
+        Set<String> foldersToCreate = new HashSet<>();
+
+        for (ConfigType type : ConfigType.values()) {
+            String parentFolder = type.getParentFolder();
+            if (parentFolder != null) {
+                foldersToCreate.add(parentFolder);
+            }
+
+            if (type.isFolder()) {
+                String folderName = type.getDefaultPath().substring(0, type.getDefaultPath().length() - 1);
+                foldersToCreate.add(folderName);
+            }
+        }
+
+        for (String folder : foldersToCreate) {
+            ensureFolderExists(folder);
+        }
+    }
+
     public void ensureFolderExists(String folderName) {
         File folder = new File(plugin.getDataFolder(), folderName);
         if (!folder.exists()) {
             boolean created = folder.mkdirs();
             if (!created) {
                 throw new ConfigException("Cannot create folder: " + folderName);
+            } else {
+                plugin.getLogger().info("Created folder: " + folderName);
             }
         }
     }
-    
+
     public void clearCache() {
         configCache.clear();
         lastModified.clear();
     }
-    
+
     public void evictFromCache(String fileName) {
-        String normalizedName = normalizeFileName(fileName);
-        configCache.remove(normalizedName);
-        lastModified.remove(normalizedName);
+        configCache.remove(fileName);
+        lastModified.remove(fileName);
     }
-    
-    private Configuration loadFromFile(String fileName) {
-        File file = new File(plugin.getDataFolder(), fileName);
+
+    public void evictFromCache(ConfigType type) {
+        if (type.isFolder()) {
+            String folderPath = type.getDefaultPath();
+            configCache.entrySet().removeIf(entry -> entry.getKey().startsWith(folderPath));
+            lastModified.entrySet().removeIf(entry -> entry.getKey().startsWith(folderPath));
+        } else {
+            evictFromCache(type.getDefaultPath());
+        }
+    }
+
+    private Configuration loadFromFile(String fullPath) {
+        File file = new File(plugin.getDataFolder(), fullPath);
+        String fileName = extractFileName(fullPath);
         Configuration config = new Configuration(plugin, file, fileName);
-        
+
         try {
             config.load(file);
             return config;
         } catch (Exception e) {
-            throw new ConfigException.ConfigLoadException(fileName, e);
+            throw new ConfigException.ConfigLoadException(fullPath, e);
         }
     }
 
-    private boolean isCacheValid(String fileName) {
-        if (!configCache.containsKey(fileName)) {
+    private boolean isCacheValid(String fullPath) {
+        if (!configCache.containsKey(fullPath)) {
             return false;
         }
-        
-        File file = new File(plugin.getDataFolder(), fileName);
-        Long cachedTime = lastModified.get(fileName);
-        
+
+        File file = new File(plugin.getDataFolder(), fullPath);
+        Long cachedTime = lastModified.get(fullPath);
+
         return cachedTime != null && cachedTime >= file.lastModified();
     }
-    
-    private void updateLastModified(String fileName) {
-        File file = new File(plugin.getDataFolder(), fileName);
-        lastModified.put(fileName, file.lastModified());
+
+    private void updateLastModified(String fullPath) {
+        File file = new File(plugin.getDataFolder(), fullPath);
+        lastModified.put(fullPath, file.lastModified());
     }
-    
+
+    private String resolveFullPath(String fileName, ConfigType type) {
+        if (fileName.contains("/")) {
+            return normalizeFileName(fileName);
+        }
+
+        String parentFolder = type.getParentFolder();
+        if (parentFolder != null) {
+            return parentFolder + "/" + normalizeFileName(fileName);
+        }
+
+        return normalizeFileName(fileName);
+    }
+
+    private void ensureParentFolderExists(String fullPath) {
+        int lastSlash = fullPath.lastIndexOf('/');
+        if (lastSlash > 0) {
+            String parentFolder = fullPath.substring(0, lastSlash);
+            ensureFolderExists(parentFolder);
+        }
+    }
+
+    private String extractFileName(String fullPath) {
+        int lastSlash = fullPath.lastIndexOf('/');
+        return lastSlash >= 0 ? fullPath.substring(lastSlash + 1) : fullPath;
+    }
+
     private String normalizeFileName(String name) {
         return name.endsWith(".yml") ? name : name + ".yml";
     }

@@ -6,6 +6,7 @@ import dev.smartshub.shkoth.api.event.team.TeamCreatedEvent;
 import dev.smartshub.shkoth.api.event.team.TeamDissolvedEvent;
 import dev.smartshub.shkoth.api.team.KothTeam;
 import dev.smartshub.shkoth.api.team.TeamWrapper;
+import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.service.notify.NotifyService;
 import dev.smartshub.shkoth.team.ContextualTeamTracker;
 import org.bukkit.Bukkit;
@@ -140,6 +141,7 @@ public class TeamHandlingService {
         boolean success = teamTracker.getInternalHandler().removeMemberFromTeam(memberToKick);
 
         if(!success){
+            PlaceholderAPIHook.pushArgs("", toKick.getName());
             notifyService.sendChat(leader, "team.cant-kick-member");
             return;
         }
