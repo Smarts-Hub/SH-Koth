@@ -27,6 +27,7 @@ public class ConfigLoader {
     public ConfigLoader(SHKoth plugin, boolean cacheEnabled) {
         this.plugin = plugin;
         this.cacheEnabled = cacheEnabled;
+        loadFromFile("koths/koth-template.yml");
     }
 
     public ConfigContainer load(String fileName, ConfigType type) {
@@ -205,15 +206,37 @@ public class ConfigLoader {
     private Configuration loadFromFile(String fullPath) {
         File file = new File(plugin.getDataFolder(), fullPath);
         String fileName = extractFileName(fullPath);
-        Configuration config = new Configuration(plugin, file, fileName);
 
         try {
-            config.load(file);
+            if (!file.exists()) {
+                if (file.getParentFile() != null) {
+                    file.getParentFile().mkdirs();
+                }
+
+                if (plugin.getResource(fullPath) != null) {
+                    plugin.saveResource(fullPath, false);
+                } else {
+                    plugin.getLogger().warning("Resource '" + fullPath + "' not found in jar!");
+                }
+            }
+
+            Configuration config = new Configuration(plugin, file, fileName);
             return config;
         } catch (Exception e) {
             throw new ConfigException.ConfigLoadException(fullPath, e);
         }
     }
+
+
+    private String getResourceNameForPath(String fullPath) {
+        for (ConfigType type : ConfigType.values()) {
+            if (!type.isFolder() && type.getDefaultPath().equals(fullPath)) {
+                return type.getResourceName();
+            }
+        }
+        return null;
+    }
+
 
     private boolean isCacheValid(String fullPath) {
         if (!configCache.containsKey(fullPath)) {

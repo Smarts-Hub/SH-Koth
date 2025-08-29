@@ -14,27 +14,30 @@ public class Configuration extends YamlConfiguration {
 
     public Configuration(SHKoth plugin, File file, String fileName) {
         this.plugin = plugin;
-        if (file != null && file.isDirectory()) {
-            this.file = new File(file, fileName.endsWith(".yml") ? fileName : fileName + ".yml");
-        } else {
+
+        if (file == null) {
             this.file = new File(plugin.getDataFolder(), fileName.endsWith(".yml") ? fileName : fileName + ".yml");
+        } else {
+            if (file.isDirectory()) {
+                this.file = new File(file, fileName.endsWith(".yml") ? fileName : fileName + ".yml");
+            } else {
+                this.file = file;
+            }
         }
 
-        saveDefault();
+        if (this.file.getParentFile() != null) {
+            this.file.getParentFile().mkdirs();
+        }
+
         loadFile();
     }
+
 
     private void loadFile() {
         try {
             this.load(file);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
-        }
-    }
-
-    private void saveDefault() {
-        if (!file.exists()) {
-            plugin.saveResource(file.getName(), false);
         }
     }
 

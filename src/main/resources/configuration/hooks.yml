@@ -1,4 +1,4 @@
-# _    _             _
+#  _    _             _
 # | |  | |           | |
 # | |__| | ___   ___ | | __
 # |  __  |/ _ \ / _ \| |/ /
@@ -36,7 +36,6 @@ better-teams:
 simple-clans:
   enabled: true
   priority: 1
-
 
 
 # DO NOT TOUCH THIS!

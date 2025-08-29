@@ -27,6 +27,8 @@ public class KothLoader implements Loader<Set<Koth>> {
         Set<Koth> koths = new HashSet<>();
 
         for (ConfigContainer config : configService.provideAllKoths()) {
+            if(config.getName().equalsIgnoreCase("koth-template.yml")) continue;
+
             koths.add(kothBuilder.build(config));
         }
 

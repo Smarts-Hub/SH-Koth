@@ -5,7 +5,9 @@ import dev.smartshub.shkoth.api.config.ConfigType;
 import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.koth.guideline.KothType;
 import dev.smartshub.shkoth.command.handler.exception.ExceptionHandler;
-import dev.smartshub.shkoth.command.handler.suggestion.CommandSuggestionProvider;
+import dev.smartshub.shkoth.command.handler.parameter.KothParameterType;
+import dev.smartshub.shkoth.command.handler.parameter.NumberParameterType;
+import dev.smartshub.shkoth.command.handler.parameter.PlayerParameterType;
 import dev.smartshub.shkoth.command.koth.KothCommand;
 import dev.smartshub.shkoth.command.team.TeamCommand;
 import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
@@ -148,13 +150,12 @@ public class SHKoth extends ZapperJavaPlugin {
     private void registerCommands() {
 
         final var exceptionHandler = new ExceptionHandler(notifyService);
-        final var commandSuggestionProvider = new CommandSuggestionProvider(kothRegistry);
 
         var lamp = BukkitLamp.builder(this)
-                .suggestionProviders(providers -> {
-                    providers.addProvider(Koth.class, commandSuggestionProvider.getKothProvider());
-                    providers.addProvider(Player.class, commandSuggestionProvider.getPlayerProvider());
-                    providers.addProvider(int.class, commandSuggestionProvider.getNumberProvider());
+                .parameterTypes(builder -> {
+                    builder.addParameterType(Koth.class, new KothParameterType(kothRegistry));
+                    builder.addParameterType(Player.class, new PlayerParameterType());
+                    builder.addParameterType(Integer.class, new NumberParameterType());
                 })
                 .exceptionHandler(exceptionHandler)
                 .build();

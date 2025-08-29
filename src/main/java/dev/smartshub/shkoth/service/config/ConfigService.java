@@ -28,7 +28,7 @@ public class ConfigService {
 
     public ConfigContainer provide(ConfigType type) {
         if (type.isFolder()) {
-            throw new IllegalArgumentException("Use provideAllKoths() for folder types.");
+            loader.loadFromFolder(type);
         }
         return loader.load(type);
     }
