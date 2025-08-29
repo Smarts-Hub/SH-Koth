@@ -121,7 +121,7 @@ public class SHKoth extends ZapperJavaPlugin {
         notifyService = new NotifyService(messageParser, messageRepository);
 
         sendScoreboardService = new SendScoreboardService(configService, messageParser);
-        scoreboardHandleService = new ScoreboardHandleService(sendScoreboardService);
+        scoreboardHandleService = new ScoreboardHandleService(sendScoreboardService, kothRegistry);
 
         teamHandlingService = new TeamHandlingService(notifyService, teamTracker);
         teamHookHelpService = new TeamHookHelpService(configService.provide(ConfigType.HOOKS));
@@ -141,7 +141,7 @@ public class SHKoth extends ZapperJavaPlugin {
     }
 
     private void setUpTasks() {
-        task = new UpdateTask(kothTicker, refreshInsideKothService, kothSchedulerService);
+        task = new UpdateTask(kothTicker, refreshInsideKothService, kothSchedulerService, scoreboardHandleService);
         task.runTaskTimer(this, 20L, 20L);
     }
 
