@@ -49,8 +49,8 @@ dependencies {
     implementation("io.github.revxrsal:lamp.common:4.0.0-rc.12")
     implementation("io.github.revxrsal:lamp.bukkit:4.0.0-rc.12")
 
-    zap("fr.mrmicky:fastboard:2.1.5")
-    zap("com.h2database:h2:2.2.224")
+    implementation("fr.mrmicky:fastboard:2.1.5")
+    implementation("com.h2database:h2:2.2.224")
 
 
     implementation("com.saicone.rtag:rtag:1.5.11")
