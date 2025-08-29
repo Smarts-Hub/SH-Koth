@@ -132,10 +132,46 @@ public class Koth extends AbstractKoth {
 
     @Override
     public void playerEnter(Player player) {
-        PlayerEnterKothDuringRunEvent event = eventDispatcher.firePlayerEnterKothDuringRunEvent(this, player);
-        if (!event.isCancelled()) return;
+        System.out.println("DEBUG - playerEnter called for: " + player.getName());
+        System.out.println("DEBUG - inside set BEFORE: " + inside.size() + " - contains player: " + inside.contains(player.getUniqueId()));
 
-        handlePlayerEntry(player);
+        PlayerEnterKothDuringRunEvent event = eventDispatcher.firePlayerEnterKothDuringRunEvent(this, player);
+        if (event.isCancelled()) {
+            System.out.println("DEBUG - PlayerEnter event was CANCELLED for: " + player.getName());
+            return;
+        }
+
+        if (!isPlayerEligibleToEnter(player)) {
+            System.out.println("DEBUG - Player NOT eligible to enter: " + player.getName());
+            return;
+        }
+
+        System.out.println("DEBUG - Player IS eligible, adding to inside set: " + player.getName());
+        inside.add(player.getUniqueId());
+        System.out.println("DEBUG - inside set AFTER: " + inside.size() + " - contains player: " + inside.contains(player.getUniqueId()));
+    }
+
+    private boolean handlePlayerEntry(Player player) {
+        UUID playerId = player.getUniqueId();
+        ContextualTeamTracker tracker = (ContextualTeamTracker) teamTracker;
+
+        TeamWrapper playerTeam = tracker.getTeamForKoth(playerId, isSolo);
+
+        if (!isSolo && denyEnterWithoutTeam && playerTeam == null) {
+            if (createTeamIfNotExistsOnEnter) {
+                playerTeam = tracker.createInternalTeam(playerId, Integer.MAX_VALUE);
+                if (playerTeam == null) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        if (playerTeam != null && !canTeamCapture(playerTeam)) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -163,9 +199,37 @@ public class Koth extends AbstractKoth {
         }
     }
 
+    public boolean isPlayerEligibleToStay(Player player) {
+        if (!canPlayerCapture(player)) {
+            return false;
+        }
+
+        if (teamTracker == null) {
+            return isSolo;
+        }
+
+        if (!isSolo) {
+            UUID playerId = player.getUniqueId();
+            ContextualTeamTracker tracker = (ContextualTeamTracker) teamTracker;
+            TeamWrapper playerTeam = tracker.getTeamForKoth(playerId, isSolo);
+
+            if (denyEnterWithoutTeam && playerTeam == null) {
+                return false;
+            }
+
+            if (playerTeam != null && !canTeamCapture(playerTeam)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     @Override
     public boolean canPlayerCapture(@NotNull Player player) {
-        return !player.isDead() && player.getGameMode() == GameMode.SURVIVAL && !winners.contains(player.getUniqueId());
+        boolean canCapture = !player.isDead() && player.getGameMode() == GameMode.SURVIVAL && !winners.contains(player.getUniqueId());
+        System.out.println("DEBUG - canPlayerCapture for " + player.getName() + ": " + canCapture);
+        return canCapture;
     }
 
     public boolean canTeamCapture(KothTeam team) {
@@ -177,39 +241,6 @@ public class Koth extends AbstractKoth {
 
         return team.getOnlineMembers().stream()
                 .anyMatch(this::canPlayerCapture);
-    }
-
-    //TODO: Refactor this method to reduce complexity?
-    private void handlePlayerEntry(Player player) {
-        UUID playerId = player.getUniqueId();
-        ContextualTeamTracker tracker = (ContextualTeamTracker) teamTracker;
-
-        TeamWrapper playerTeam = tracker.getTeamForKoth(playerId, isSolo);
-
-        if (!isSolo && denyEnterWithoutTeam && playerTeam == null) {
-            if (createTeamIfNotExistsOnEnter) {
-                playerTeam = tracker.createInternalTeam(playerId, Integer.MAX_VALUE);
-
-                if (playerTeam == null) {
-                    //Cant create team
-                    return;
-                }
-            } else {
-                // Restrict entry?
-                return;
-            }
-        }
-
-        if (playerTeam != null && !canTeamCapture(playerTeam)) {
-            if (isSolo) {
-                // Player cant
-            } else {
-                // Team cant
-            }
-            return;
-        }
-
-        inside.add(playerId);
     }
 
 
@@ -269,5 +300,53 @@ public class Koth extends AbstractKoth {
         if (currentCapturingTeam == null || captureStartTime == 0) return 0;
         long elapsedTime = (System.currentTimeMillis() - captureStartTime) / 1000;
         return (int) Math.min(100, (elapsedTime * 100) / captureTime);
+    }
+
+    private boolean isPlayerEligibleToEnter(Player player) {
+        System.out.println("DEBUG - Checking eligibility for: " + player.getName());
+
+        if (!canPlayerCapture(player)) {
+            System.out.println("DEBUG - Player cannot capture (dead/wrong gamemode/already winner): " + player.getName());
+            System.out.println("DEBUG - isDead: " + player.isDead());
+            System.out.println("DEBUG - gameMode: " + player.getGameMode());
+            System.out.println("DEBUG - isWinner: " + winners.contains(player.getUniqueId()));
+            return false;
+        }
+
+        if (teamTracker == null) {
+            System.out.println("DEBUG - No team tracker, returning isSolo: " + isSolo);
+            return isSolo;
+        }
+
+        UUID playerId = player.getUniqueId();
+        ContextualTeamTracker tracker = (ContextualTeamTracker) teamTracker;
+
+        TeamWrapper playerTeam = tracker.getTeamForKoth(playerId, isSolo);
+        System.out.println("DEBUG - Player team: " + (playerTeam != null ? playerTeam.toString() : "null"));
+
+        if (!isSolo && denyEnterWithoutTeam && playerTeam == null) {
+            System.out.println("DEBUG - Team mode, deny without team, player has no team");
+            if (createTeamIfNotExistsOnEnter) {
+                System.out.println("DEBUG - Attempting to create team for player");
+                playerTeam = tracker.createInternalTeam(playerId, Integer.MAX_VALUE);
+                if (playerTeam == null) {
+                    System.out.println("DEBUG - Failed to create team for player");
+                    return false;
+                } else {
+                    System.out.println("DEBUG - Successfully created team for player");
+                }
+            } else {
+                System.out.println("DEBUG - Not creating team, player rejected");
+                return false;
+            }
+        }
+
+        if (playerTeam != null && !canTeamCapture(playerTeam)) {
+            System.out.println("DEBUG - Team cannot capture");
+            return false;
+        }
+
+        System.out.println("DEBUG - Player is eligible to enter");
+        return true;
     }
 }

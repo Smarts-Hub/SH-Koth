@@ -81,8 +81,8 @@ public class SHKoth extends ZapperJavaPlugin {
         factoryRegister();
         setUpConfig();
         setUpStorage();
-        initAPI();
         initTracker();
+        initAPI();
         initServices();
         initTicking();
         setUpTasks();
@@ -127,7 +127,6 @@ public class SHKoth extends ZapperJavaPlugin {
         scoreboardHandleService = new ScoreboardHandleService(sendScoreboardService, kothRegistry);
 
         teamHandlingService = new TeamHandlingService(notifyService, teamTracker);
-        teamHookHelpService = new TeamHookHelpService(configService.provide(ConfigType.HOOKS));
         teamInformationService = new TeamInformationService(teamHandlingService, notifyService);
         teamInviteService = new TeamInviteService(teamHandlingService, notifyService);
 
@@ -136,6 +135,8 @@ public class SHKoth extends ZapperJavaPlugin {
     }
 
     private void initTracker() {
+        // My flow is broken, allow me to do this here for now
+        teamHookHelpService = new TeamHookHelpService(configService.provide(ConfigType.HOOKS));
         teamTracker = new ContextualTeamTracker(teamHookHelpService);
     }
 
