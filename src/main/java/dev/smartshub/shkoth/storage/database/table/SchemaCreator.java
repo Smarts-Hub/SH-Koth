@@ -2,6 +2,7 @@ package dev.smartshub.shkoth.storage.database.table;
 
 
 import dev.smartshub.shkoth.storage.database.connection.DatabaseConnection;
+import org.bukkit.Bukkit;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,7 +14,6 @@ public class SchemaCreator {
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement()) {
 
-            // Main table
             stmt.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS player_stats (
                     player_id VARCHAR(36) PRIMARY KEY,
@@ -24,19 +24,14 @@ public class SchemaCreator {
                 )
             """);
 
-            stmt.executeUpdate("""
-                CREATE INDEX IF NOT EXISTS idx_solo_wins ON player_stats(solo_wins DESC)
-            """);
+            stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_solo_wins ON player_stats(solo_wins)");
+            stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_team_wins ON player_stats(team_wins)");
 
-            stmt.executeUpdate("""
-                CREATE INDEX IF NOT EXISTS idx_team_wins ON player_stats(team_wins DESC)
-            """);
+            if (DatabaseConnection.getDriver().equalsIgnoreCase("mysql")) {
+                stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_total_wins ON player_stats((solo_wins + team_wins))");
+            }
 
-            stmt.executeUpdate("""
-                CREATE INDEX IF NOT EXISTS idx_total_wins ON player_stats((solo_wins + team_wins) DESC)
-            """);
-
-            System.out.println("Database schema created successfully!");
+            Bukkit.getLogger().info("Database schema created successfully!");
 
         } catch (SQLException e) {
             System.err.println("Error creating database schema:");
@@ -44,3 +39,4 @@ public class SchemaCreator {
         }
     }
 }
+

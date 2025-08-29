@@ -12,9 +12,10 @@ public class DatabaseConnection {
     private static String URL;
     private static String USER;
     private static String PASSWORD;
+    private static String DRIVER;
     private static boolean initialized = false;
 
-     public DatabaseConnection() {
+     static  {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Class.forName("org.h2.Driver");
@@ -26,7 +27,7 @@ public class DatabaseConnection {
     public static void init(ConfigContainer config) {
         if (initialized) return;
 
-        String DRIVER = config.getString("driver", "h2").toLowerCase();
+        DRIVER = config.getString("driver", "h2").toLowerCase();
         String dbName = config.getString("db-name", "shkoth");
 
         if (dbName == null) {
@@ -65,6 +66,11 @@ public class DatabaseConnection {
         }
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
+
+    public static String getDriver() {
+        return DRIVER;
+    }
+
 }
 
 
