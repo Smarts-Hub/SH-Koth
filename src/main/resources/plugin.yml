@@ -4,4 +4,4 @@ version: 1.0.0
 api-version: 1.21
 authors: [hhitt, SmartsHub]
 description: "Simple to use, powerful in action. A smarter KOTH solution."
-soft-depend: [PlaceholderAPI, BetterTeams, FactionsUUID, Towny, KingdomsX, UltimateClans, SimpleClans]
+soft-depend: [PlaceholderAPI, MultiverseCore, BetterTeams, FactionsUUID, Towny, KingdomsX, UltimateClans, SimpleClans]

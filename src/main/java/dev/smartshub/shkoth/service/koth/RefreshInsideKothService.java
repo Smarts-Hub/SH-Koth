@@ -98,7 +98,6 @@ public class RefreshInsideKothService {
         }
     }
 
-
     private World getKothWorld(Koth koth) {
         try {
             return Bukkit.getWorld(koth.getArea().worldName());

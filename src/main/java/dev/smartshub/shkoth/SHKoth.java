@@ -10,6 +10,7 @@ import dev.smartshub.shkoth.command.handler.parameter.NumberParameterType;
 import dev.smartshub.shkoth.command.handler.parameter.PlayerParameterType;
 import dev.smartshub.shkoth.command.koth.KothCommand;
 import dev.smartshub.shkoth.command.team.TeamCommand;
+import dev.smartshub.shkoth.hook.bstats.Metrics;
 import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.koth.ticking.KothTicker;
 import dev.smartshub.shkoth.listener.koth.*;
@@ -81,13 +82,13 @@ public class SHKoth extends ZapperJavaPlugin {
         setUpConfig();
         setUpStorage();
         initAPI();
-        initServices();
         initTracker();
+        initServices();
         initTicking();
         setUpTasks();
         registerCommands();
         registerListeners();
-        registerPlaceholders();
+        registerHooks();
     }
 
     @Override
@@ -185,10 +186,14 @@ public class SHKoth extends ZapperJavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerQuitListener(playerStatsCache), this);
     }
 
-    private void registerPlaceholders(){
+    private void registerHooks(){
+        //PlaceholderAPI
         if(getServer().getPluginManager().getPlugin("PlaceholderAPI") != null){
             new PlaceholderAPIHook(kothRegistry, playerStatsCache).register();
         }
+
+        // BStats
+        Metrics metrics = new Metrics(this, 27090);
     }
 
 }

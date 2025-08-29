@@ -72,7 +72,7 @@ public class KothCommand {
         // Not so clean but works for now (will be refactored later) (too) x3
         kothRegistry.getAll().forEach(koth -> {
             String message = String.format("Koth ID: %s, Status: %s", koth.getId(), koth.isRunning() ? "Running" : "Not Running");
-            notifyService.sendChat(actor.sender(), message);
+            notifyService.sendRawMessage(actor.sender(), message);
         });
     }
 

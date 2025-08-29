@@ -19,7 +19,7 @@ public class PhysicalRewardsMapper implements Mapper<List<PhysicalReward>, Confi
 
         ConfigurationSection rewardsSection = config.getConfigurationSection("physical-rewards");
 
-        if (rewardsSection != null) {
+        if (rewardsSection == null) {
             Bukkit.getLogger().warning("No physical rewards section found in " + config.getName());
             return physicalRewards;
         }
@@ -30,10 +30,16 @@ public class PhysicalRewardsMapper implements Mapper<List<PhysicalReward>, Confi
 
             int amount = reward.getInt("amount");
             String base64 = reward.getString("item");
-            ItemStack[] item = ItemTagStream.INSTANCE.fromBase64(base64);
+            if (base64 == null) continue;
 
-            physicalRewards.add(new PhysicalReward(item[0], amount));
+            Object[] rawItems = ItemTagStream.INSTANCE.fromBase64(base64);
+            if (rawItems.length == 0) continue;
 
+            if (rawItems[0] instanceof ItemStack itemStack) {
+                physicalRewards.add(new PhysicalReward(itemStack, amount));
+            } else {
+                Bukkit.getLogger().warning("Reward at key " + key + " is not an ItemStack in " + config.getName());
+            }
         }
 
         return physicalRewards;

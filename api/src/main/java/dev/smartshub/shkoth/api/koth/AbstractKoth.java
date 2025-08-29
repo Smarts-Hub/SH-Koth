@@ -13,9 +13,7 @@ import dev.smartshub.shkoth.api.team.KothTeam;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public abstract class AbstractKoth implements Koth {
         // Immutable data (configuration)
@@ -48,8 +46,13 @@ public abstract class AbstractKoth implements Koth {
                 this.area = area;
                 this.schedules = List.copyOf(schedules);
                 this.commands = commands;
-                this.physicalRewards = List.copyOf(physicalRewards);
+                this.physicalRewards = new ArrayList<>(physicalRewards);
                 this.remainingTime = duration;
+
+                this.inside = new HashSet<>();
+                this.winners = new HashSet<>();
+                this.currentCapturer = null;
+                this.captureStartTime = 0;
 
                 this.eventDispatcher = new KothEventDispatcher();
         }

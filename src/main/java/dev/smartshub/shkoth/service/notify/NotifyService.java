@@ -49,6 +49,10 @@ public class NotifyService {
         player.sendMessage(message);
     }
 
+    public void sendRawMessage(CommandSender sender, String message) {
+        sender.sendMessage(message);
+    }
+
     public void sendTitle(Player player, String path) {
         if (player == null) return;
         String titleText = repository.getMessage(path);

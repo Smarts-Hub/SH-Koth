@@ -5,6 +5,7 @@ import dev.smartshub.shkoth.api.config.ConfigException;
 import dev.smartshub.shkoth.api.config.ConfigType;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -139,4 +140,13 @@ public class ConfigContainerImpl implements ConfigContainer {
         
         return (T) value;
     }
+
+    public Configuration getInternalConfiguration() {
+        return this.config;
+    }
+
+    public File getFile() {
+        return new File("plugins/SH-Koth/koths/", name);
+    }
+
 }

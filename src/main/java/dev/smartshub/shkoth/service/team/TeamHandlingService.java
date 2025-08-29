@@ -102,7 +102,7 @@ public class TeamHandlingService {
         if (!teamTracker.getActiveProvider().equals("Internal")) return;
         
         boolean success = teamTracker.getInternalHandler().disbandTeam(leaderId);
-        if(success) {
+        if(!success) {
             notifyService.sendChat(leader, "team.cant-disband-team");
             return;
         }

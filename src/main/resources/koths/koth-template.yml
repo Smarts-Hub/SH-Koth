@@ -1,6 +1,7 @@
 # The following is a template for a King of the Hill (KoTH) configuration file.
 # The id is a unique identifier for the KoTH. Is the name of the file without the extension.
 # In this case, the file name is "koth-template.yml" and the id "koth-template".
+# Is not necessary to delete this file, it will be ignored if the id is not changed.
 
 # The world where the KoTH is located
 world: world_name
@@ -55,11 +56,11 @@ deny-entry-if-not-in-team: false
 # You can define multiple schedules at same day, but be sure to don't overlap them.
 schedule:
   '1':
-    day: monday
-    hour: 20:00
+    day: "monday"
+    hour: "20:00"
   '2':
-    day: tuesday
-    hour: 20:00
+    day: "tuesday"
+    hour: "20:00"
 
 # List of commands to perform at different stages of the KoTH.
 commands-perform:
