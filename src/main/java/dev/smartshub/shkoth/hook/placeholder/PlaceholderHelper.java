@@ -9,7 +9,7 @@ public class PlaceholderHelper {
 
         int lastUnderscoreIndex = identifier.lastIndexOf('_');
         if (lastUnderscoreIndex <= 0) {
-            return "";
+            return null;
         }
 
         return identifier.substring(0, lastUnderscoreIndex);

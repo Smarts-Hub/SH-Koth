@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class RefreshInsideKothService {
 
@@ -19,90 +20,58 @@ public class RefreshInsideKothService {
     }
 
     public void refreshInsideKoth() {
-        Collection<Koth> runningKoths = kothRegistry.getRunning();
-
-        if (runningKoths.isEmpty()) {
-            return;
-        }
-
-        runningKoths.forEach(this::refreshKothPlayers);
+        kothRegistry.getRunning().forEach(this::refreshKothPlayers);
     }
 
     private void refreshKothPlayers(Koth koth) {
         World world = getKothWorld(koth);
-        if (world == null) {
-            return;
-        }
+        if (world == null) return;
 
         Collection<? extends Player> worldPlayers = world.getPlayers();
+        Set<UUID> currentPlayersInside = koth.getPlayersInside();
+
         if (worldPlayers.isEmpty()) {
-            handleAllPlayersLeft(koth);
+            removeAllPlayers(koth, currentPlayersInside);
             return;
         }
 
-        Set<UUID> currentPlayersInside = koth.getPlayersInside();
-
-        for (Player player : worldPlayers) {
-            if (!koth.canPlayerCapture(player)) {
-                if (currentPlayersInside.contains(player.getUniqueId())) {
-                    System.out.println("DEBUG - Removing player who can no longer capture: " + player.getName());
-                    koth.playerLeave(player);
-                }
-                continue;
-            }
-
-            processPlayer(koth, player, currentPlayersInside);
-        }
-
-        handleOfflineOrWorldChangedPlayers(koth, worldPlayers);
+        worldPlayers.forEach(player -> processPlayer(koth, player, currentPlayersInside));
+        removeOfflinePlayers(koth, worldPlayers, currentPlayersInside);
     }
 
     private void processPlayer(Koth koth, Player player, Set<UUID> currentPlayersInside) {
         UUID playerId = player.getUniqueId();
+        boolean isInsideArea = koth.isInsideArea(player);
+        boolean wasInsideArea = currentPlayersInside.contains(playerId);
+        boolean canCapture = koth.canPlayerCapture(player);
 
-        if (!koth.canPlayerCapture(player)) {
-            System.out.println("DEBUG - Ignoring player who cannot capture: " + player.getName() +
-                    " (GameMode: " + player.getGameMode() + ", Dead: " + player.isDead() + ")");
-
-            boolean wasInsideArea = currentPlayersInside.contains(playerId);
-            if (wasInsideArea) {
-                System.out.println("DEBUG - Removing player who can no longer capture: " + player.getName());
-                koth.playerLeave(player);
-            }
+        if (!canCapture && wasInsideArea) {
+            koth.playerLeave(player);
             return;
         }
 
-        boolean isInsideArea = koth.isInsideArea(player);
-        boolean wasInsideArea = koth.getPlayersInside().contains(playerId);
-
-        System.out.println("DEBUG - processPlayer: " + player.getName() +
-                ", isInsideArea: " + isInsideArea +
-                ", wasInsideArea: " + wasInsideArea +
-                ", kothInsideSetSize: " + koth.getPlayersInside().size() +
-                ", currentPlayersInsideSize: " + currentPlayersInside.size());
+        if (!canCapture) return;
 
         if (isInsideArea && !wasInsideArea) {
-            System.out.println("DEBUG - Calling playerEnter for: " + player.getName());
             koth.playerEnter(player);
-            System.out.println("DEBUG - After playerEnter, koth inside set size: " + koth.getPlayersInside().size());
         } else if (!isInsideArea && wasInsideArea) {
-            System.out.println("DEBUG - Calling playerLeave for: " + player.getName());
             koth.playerLeave(player);
         } else if (isInsideArea && wasInsideArea) {
-            System.out.println("DEBUG - Player already inside, validating eligibility");
-            validatePlayerStillEligible(koth, player);
+            validatePlayerEligibility(koth, player);
         }
     }
 
-    private void handleOfflineOrWorldChangedPlayers(Koth koth, Collection<? extends Player> worldPlayers) {
-        Set<UUID> currentPlayersInside = koth.getPlayersInside();
-        if (currentPlayersInside.isEmpty()) {
-            return;
+    private void validatePlayerEligibility(Koth koth, Player player) {
+        dev.smartshub.shkoth.koth.Koth concreteKoth = (dev.smartshub.shkoth.koth.Koth) koth;
+        if (!concreteKoth.isPlayerEligibleToStay(player)) {
+            koth.playerLeave(player);
         }
+    }
 
+    private void removeOfflinePlayers(Koth koth, Collection<? extends Player> worldPlayers, Set<UUID> currentPlayersInside) {
         Set<UUID> worldPlayerIds = worldPlayers.stream()
                 .map(Player::getUniqueId)
-                .collect(java.util.stream.Collectors.toSet());
+                .collect(Collectors.toSet());
 
         currentPlayersInside.stream()
                 .filter(playerId -> !worldPlayerIds.contains(playerId))
@@ -116,26 +85,15 @@ public class RefreshInsideKothService {
                 });
     }
 
-    private void validatePlayerStillEligible(Koth koth, Player player) {
-        dev.smartshub.shkoth.koth.Koth konkretKoth = (dev.smartshub.shkoth.koth.Koth) koth;
-
-        if (!konkretKoth.isPlayerEligibleToStay(player)) {
-            koth.playerLeave(player);
-        }
-    }
-
-    private void handleAllPlayersLeft(Koth koth) {
-        Set<UUID> currentPlayersInside = koth.getPlayersInside();
-        if (!currentPlayersInside.isEmpty()) {
-            currentPlayersInside.forEach(playerId -> {
-                Player player = Bukkit.getPlayer(playerId);
-                if (player != null) {
-                    koth.playerLeave(player);
-                } else {
-                    koth.removePlayerDirectly(playerId);
-                }
-            });
-        }
+    private void removeAllPlayers(Koth koth, Set<UUID> currentPlayersInside) {
+        currentPlayersInside.forEach(playerId -> {
+            Player player = Bukkit.getPlayer(playerId);
+            if (player != null) {
+                koth.playerLeave(player);
+            } else {
+                koth.removePlayerDirectly(playerId);
+            }
+        });
     }
 
     private World getKothWorld(Koth koth) {

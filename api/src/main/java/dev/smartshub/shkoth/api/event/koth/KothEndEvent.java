@@ -19,7 +19,6 @@ public class KothEndEvent extends Event {
     private final EndReason reason;
 
     public enum EndReason {
-        //TODO: force stop command
         TIME_EXPIRED,
         MANUAL_STOP,
         CAPTURE_COMPLETED

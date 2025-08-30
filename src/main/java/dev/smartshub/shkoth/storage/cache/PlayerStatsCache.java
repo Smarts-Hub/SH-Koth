@@ -54,9 +54,10 @@ public class PlayerStatsCache {
             return String.valueOf(cached.value);
         }
 
-        future.thenAccept(value ->
-                cache.put(key, new CachedValue(value, System.currentTimeMillis()))
-        );
+        future.thenAccept(value -> {
+            System.out.println("[SHKoth] Caching " + type.name() + " wins for player " + player.getName() + ": " + value);
+            cache.put(key, new CachedValue(value, System.currentTimeMillis()));
+        });
 
         return cached != null ? String.valueOf(cached.value) : "0";
     }

@@ -96,7 +96,7 @@ public abstract class AbstractKoth implements Koth {
 
         // Common utility methods
         public boolean isRunning() {
-                return state == KothState.RUNNING;
+                return state == KothState.RUNNING || state == KothState.CAPTURING;
         }
 
         public boolean isInsideArea(@NotNull Player player) {

@@ -20,43 +20,53 @@ public class CaptureTally implements Tally {
     }
 
     @Override
-    public void handle(){
+    public void handle() {
+        Set<TeamWrapper> eligibleTeams = getEligibleTeams();
+
+        if (eligibleTeams.isEmpty()) {
+            if (koth.isCapturing()) {
+                koth.stopCapture(PlayerStopKothCaptureEvent.StopReason.PLAYER_LEFT_ZONE);
+            }
+            return;
+        }
+
+        if (!koth.isCapturing()) {
+            startNewCapture(eligibleTeams);
+            return;
+        }
+
+        handleOngoingCapture(eligibleTeams);
+    }
+
+    private Set<TeamWrapper> getEligibleTeams() {
         ContextualTeamTracker tracker = (ContextualTeamTracker) koth.getTeamTracker();
 
-        Set<TeamWrapper> eligibleTeams = koth.getPlayersInside().stream()
+        return koth.getPlayersInside().stream()
                 .map(uuid -> {
                     Player player = Bukkit.getPlayer(uuid);
-                    if (player == null || !koth.canPlayerCapture(player)) return null;
-
-                    return tracker.getTeamForKoth(uuid, koth.isSolo());
+                    return (player != null && koth.canPlayerCapture(player))
+                            ? tracker.getTeamForKoth(uuid, koth.isSolo())
+                            : null;
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
+    }
 
-        if (eligibleTeams.isEmpty()) {
-            koth.stopCapture(PlayerStopKothCaptureEvent.StopReason.PLAYER_LEFT_ZONE);
-            return;
-        }
+    private void startNewCapture(Set<TeamWrapper> eligibleTeams) {
+        TeamWrapper teamToCapture = eligibleTeams.iterator().next();
+        koth.startCapture(teamToCapture);
+    }
 
-        if (koth.getCurrentCapturingTeam() == null) {
-            TeamWrapper firstTeam = eligibleTeams.iterator().next();
-            koth.startCapture(firstTeam);
-            return;
-        }
+    private void handleOngoingCapture(Set<TeamWrapper> eligibleTeams) {
+        boolean currentTeamStillEligible = eligibleTeams.stream()
+                .anyMatch(team -> koth.getCurrentCapturingTeam() != null &&
+                        team.getLeader().equals(koth.getCurrentCapturingTeam().getLeader()));
 
-        TeamWrapper currentTeamWrapper = new TeamWrapper(
-                koth.getCurrentCapturingTeam().getLeader(),
-                koth.getCurrentCapturingTeam().getMembers(),
-                koth.getCurrentCapturingTeam().getDisplayName(),
-                koth.isSolo()
-        );
-
-        if (eligibleTeams.contains(currentTeamWrapper)) {
+        if (currentTeamStillEligible) {
             koth.checkCaptureProgress(koth.getCurrentCapturingTeam());
         } else {
-            TeamWrapper newTeam = eligibleTeams.iterator().next();
             koth.stopCapture(PlayerStopKothCaptureEvent.StopReason.PLAYER_LEFT_ZONE);
-            koth.startCapture(newTeam);
+            startNewCapture(eligibleTeams);
         }
     }
 }

@@ -7,7 +7,6 @@ import dev.smartshub.shkoth.api.koth.guideline.KothType;
 import dev.smartshub.shkoth.command.handler.exception.ExceptionHandler;
 import dev.smartshub.shkoth.command.handler.parameter.KothParameterType;
 import dev.smartshub.shkoth.command.handler.parameter.NumberParameterType;
-import dev.smartshub.shkoth.command.handler.parameter.PlayerParameterType;
 import dev.smartshub.shkoth.command.koth.KothCommand;
 import dev.smartshub.shkoth.command.team.TeamCommand;
 import dev.smartshub.shkoth.hook.bstats.Metrics;
@@ -39,7 +38,6 @@ import dev.smartshub.shkoth.storage.database.dao.PlayerStatsDAO;
 import dev.smartshub.shkoth.storage.database.table.SchemaCreator;
 import dev.smartshub.shkoth.task.UpdateTask;
 import dev.smartshub.shkoth.team.ContextualTeamTracker;
-import org.bukkit.entity.Player;
 import revxrsal.commands.bukkit.BukkitLamp;
 import revxrsal.zapper.ZapperJavaPlugin;
 
@@ -156,7 +154,6 @@ public class SHKoth extends ZapperJavaPlugin {
         var lamp = BukkitLamp.builder(this)
                 .parameterTypes(builder -> {
                     builder.addParameterType(Koth.class, new KothParameterType(kothRegistry));
-                    builder.addParameterType(Player.class, new PlayerParameterType());
                     builder.addParameterType(Integer.class, new NumberParameterType());
                 })
                 .exceptionHandler(exceptionHandler)

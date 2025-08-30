@@ -19,11 +19,13 @@ public class KothCommand {
 
     private final KothRegistry kothRegistry;
     private final NotifyService notifyService;
+    private final ConfigService configService;
     private final PhysicalRewardAdder physicalRewardAdder;
 
     public KothCommand(KothRegistry kothRegistry, NotifyService notifyService, ConfigService configService) {
         this.kothRegistry = kothRegistry;
         this.notifyService = notifyService;
+        this.configService = configService;
         this.physicalRewardAdder = PhysicalRewardAdderFactory.create(configService);
     }
 
@@ -79,6 +81,7 @@ public class KothCommand {
     @Subcommand("reload koths")
     public void reload(BukkitCommandActor actor) {
         kothRegistry.reloadKoths();
+        configService.reloadAll();
         notifyService.sendChat(actor.sender(), "koth.reload");
     }
 

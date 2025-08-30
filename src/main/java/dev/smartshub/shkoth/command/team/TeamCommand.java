@@ -59,13 +59,13 @@ public class TeamCommand {
         teamHandlingService.transferLeadership(actor.asPlayer(), player);
     }
 
-    @Subcommand("invite accept")
+    @Subcommand("invitation accept")
     public void acceptInvite(BukkitCommandActor actor) {
         if(!actor.isPlayer()) return;
         teamInviteService.acceptInvitation(actor.asPlayer());
     }
 
-    @Subcommand("invite decline")
+    @Subcommand("invitation decline")
     public void declineInvite(BukkitCommandActor actor) {
         if(!actor.isPlayer()) return;
         teamInviteService.declineInvitation(actor.asPlayer());

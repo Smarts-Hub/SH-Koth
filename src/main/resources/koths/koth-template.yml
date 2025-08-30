@@ -79,15 +79,6 @@ commands-perform:
 # This must be added by commands in game, taken the item in ur main hand.
 # You can add as many items as u want.
 physical-rewards:
-  '1':
-    item: "<base64-value>"
-    amount: 1
-  '2':
-    item: "<base64-value>"
-    amount: 4
-  '3':
-    item: "<base64-value>"
-    amount: 2
 
 # Configuration for the scoreboards.
 scoreboard:

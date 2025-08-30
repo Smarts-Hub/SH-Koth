@@ -16,28 +16,48 @@
 # For "permanent valid" placeholders, use the mentioned at documentation:
 koth:
   force-start:
-    - "The KOTH %shkoth_koth_context% has been force started by an administrator."
-    - "Prepare for battle!"
-    - "First to capture the KOTH wins!"
+    - "<gold>--------------------------------------------------"
+    - "<yellow>The KOTH %shkoth_koth_context% has been force started by an administrator."
+    - "                <yellow>Prepare for battle!"
+    - "         <yellow>First to capture the KOTH wins!"
+    - "<gold>--------------------------------------------------"
+
   force-stop:
-    - "The KOTH %shkoth_koth_context% has been force stopped by an administrator."
-    - "The event has been cancelled."
+    - "<dark_red>--------------------------------------------------"
+    - "<red>The KOTH %shkoth_koth_context% has been force stopped by an administrator."
+    - "           <red>The event has been cancelled."
+    - "<dark_red>--------------------------------------------------"
+
   force-stop-all:
-    - "All KOTH events have been force stopped by an administrator."
-    - "All ongoing events have been cancelled."
+    - "<dark_red>--------------------------------------------------"
+    - "    <red>All KOTH events have been force stopped."
+    - "    <red>All ongoing events have been cancelled."
+    - "<dark_red>--------------------------------------------------"
+
   end:
-    - "The KOTH %shkoth_koth_context% has ended!"
-    - "Congratulations to the winners!"
+    - "<dark_purple>--------------------------------------------------"
+    - "    <light_purple>The KOTH %shkoth_koth_context% has ended!"
+    - "        <light_purple>Congratulations to the winners!"
+    - "<dark_purple>--------------------------------------------------"
+
   start:
-    - "The KOTH %shkoth_koth_context% has started!"
-    - "Capture the KOTH to win amazing rewards!"
+    - "--------------------------------------------------"
+    - "   The KOTH %shkoth_koth_context% has started!"
+    - "    Capture the KOTH to win amazing rewards!"
+    - "--------------------------------------------------"
+
   capture:
     start:
-      - "The KOTH %shkoth_koth_context% is being captured by %shkoth_player_contextual%!"
-      - "Defend your position and secure the victory!"
+      - "<dark_green>--------------------------------------------------"
+      - "<green>The KOTH %shkoth_koth_context% is being captured by %shkoth_player_contextual%!"
+      - "     <green>Try to reclaim it before it's too late!"
+      - "<dark_green>--------------------------------------------------"
+
     stop:
-      - "The KOTH %shkoth_koth_context% capture has been stopped!"
-      - "The battle continues!"
+      - "<dark_blue>--------------------------------------------------"
+      - "<blue>The KOTH %shkoth_koth_context% capture has been stopped!"
+      - "              <blue>The battle continues!"
+      - "<dark_blue>--------------------------------------------------"
 
 
 # DO NOT TOUCH THIS!

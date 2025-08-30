@@ -97,4 +97,11 @@ public class ConfigService {
     private void validateHooksConfig(ConfigContainer config) {
     }
 
+    public void reloadAll() {
+        reload(ConfigType.DATABASE);
+        reload(ConfigType.MESSAGES);
+        reload(ConfigType.BROADCAST);
+        reload(ConfigType.HOOKS);
+    }
+
 }

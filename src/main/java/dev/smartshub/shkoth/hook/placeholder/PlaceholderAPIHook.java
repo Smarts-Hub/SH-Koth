@@ -55,7 +55,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
             return String.valueOf(switch (identifier) {
                 case "player_context" -> tempArg1 != null ? tempArg1 : "";
                 case "koth_context" -> tempArg2 != null ? tempArg2 : "";
-                case "arg3" -> tempArg3 != null ? tempArg3 : "";
+                case "aux_context" -> tempArg3 != null ? tempArg3 : "";
                 case "total_wins" -> playerStatsCache.getStat(player, StatType.TOTAL);
                 case "solo_wins" -> playerStatsCache.getStat(player, StatType.SOLO);
                 case "team_wins" -> playerStatsCache.getStat(player, StatType.TEAM);
