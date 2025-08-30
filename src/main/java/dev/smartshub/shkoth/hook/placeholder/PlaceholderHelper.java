@@ -7,12 +7,12 @@ public class PlaceholderHelper {
             return null;
         }
 
-        int lastUnderscoreIndex = identifier.lastIndexOf('_');
-        if (lastUnderscoreIndex <= 0) {
+        int firstUnderscoreIndex = identifier.indexOf('_');
+        if (firstUnderscoreIndex <= 0) {
             return null;
         }
 
-        return identifier.substring(0, lastUnderscoreIndex);
+        return identifier.substring(0, firstUnderscoreIndex);
     }
 
     public String extractPlaceholderType(String identifier) {
