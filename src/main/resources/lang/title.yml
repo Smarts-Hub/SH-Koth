@@ -10,6 +10,7 @@
 # * PlaceholderAPI is supported in every message
 # * If you want to disable the boss-bar, simply replace titles with empty: ""
 # Support: https://discord.smartshub.dev/
+# Documentation: https://docs.smartshub.dev/sh-koth/intro/introduction/
 
 koth:
   start:

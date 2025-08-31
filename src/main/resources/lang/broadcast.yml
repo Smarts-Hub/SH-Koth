@@ -10,6 +10,7 @@
 # * PlaceholderAPI is supported in every message
 # * If you want to avoid a broadcast message, simply replace it with empty: ""
 # Support: https://discord.smartshub.dev/
+# Documentation: https://docs.smartshub.dev/sh-koth/intro/introduction/
 
 # * %shkoth_koth_context% - The koth's display-name, is only valid at the moment of the message is sent
 # * %shkoth_player_context% - The player's name, is only valid at the moment of the message is sent

@@ -3,28 +3,39 @@ package dev.smartshub.shkoth.service.bossbar;
 import dev.smartshub.shkoth.api.config.ConfigContainer;
 import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.message.MessageParser;
+import dev.smartshub.shkoth.registry.KothRegistry;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AdventureBossbarService {
 
-    private static final PlainTextComponentSerializer PLAIN_SERIALIZER = PlainTextComponentSerializer.plainText();
-
+    private final KothRegistry kothRegistry;
     private final ConfigContainer config;
     private final MessageParser parser;
 
-    private final Map<String, BossBar> activeBossbars = new ConcurrentHashMap<>();
-    private final Map<String, Set<Player>> bossbarPlayers = new ConcurrentHashMap<>();
+    private static class PlayerBossbarInfo {
+        final BossBar bossbar;
+        String currentKothId;
 
-    public AdventureBossbarService(ConfigContainer config, MessageParser parser) {
+        PlayerBossbarInfo(BossBar bossbar, String kothId) {
+            this.bossbar = bossbar;
+            this.currentKothId = kothId;
+        }
+    }
+
+    private final Map<UUID, PlayerBossbarInfo> playerBossbars = new ConcurrentHashMap<>();
+    private final Set<String> activeKoths = ConcurrentHashMap.newKeySet();
+
+    public AdventureBossbarService(KothRegistry kothRegistry,ConfigContainer config, MessageParser parser) {
+        this.kothRegistry = kothRegistry;
         this.config = config;
         this.parser = parser;
     }
@@ -34,20 +45,8 @@ public class AdventureBossbarService {
             return;
         }
 
-        String kothId = koth.getId();
-        Component title = buildTitle(koth);
-
-        if (isTitleEmpty(title)) {
-            return;
-        }
-
-        BossBar.Color color = getColorForProgress(koth.getCaptureProgress());
-        float progress = Math.max(0.0f, Math.min(1.0f, koth.getCaptureProgress() / 100.0f));
-
-        BossBar bossbar = BossBar.bossBar(title, progress, color, BossBar.Overlay.PROGRESS);
-        activeBossbars.put(kothId, bossbar);
-
-        addRelevantPlayers(kothId, koth, bossbar);
+        activeKoths.add(koth.getId());
+        updateBossbarsForKoth(koth);
     }
 
     public void stopBossbars(Koth koth) {
@@ -56,38 +55,97 @@ public class AdventureBossbarService {
         }
 
         String kothId = koth.getId();
-        stopBossbarById(kothId);
+        activeKoths.remove(kothId);
+
+        playerBossbars.entrySet().removeIf(entry -> {
+            PlayerBossbarInfo info = entry.getValue();
+            if (kothId.equals(info.currentKothId)) {
+                Player player = Bukkit.getPlayer(entry.getKey());
+                if (player != null && player.isOnline()) {
+                    player.hideBossBar(info.bossbar);
+                }
+                return true;
+            }
+            return false;
+        });
     }
 
     public void refreshBossbars() {
-        activeBossbars.keySet().forEach(this::updateSingleBossbar);
+        for (String kothId : activeKoths) {
+            Koth koth = getKothById(kothId);
+            if (koth != null && koth.isRunning()) {
+                updateBossbarsForKoth(koth);
+            } else {
+                activeKoths.remove(kothId);
+            }
+        }
     }
 
-    private void updateSingleBossbar(String kothId) {
-        BossBar bossbar = activeBossbars.get(kothId);
-        if (bossbar == null) {
+    private void updateBossbarsForKoth(Koth koth) {
+        String kothId = koth.getId();
+        Component title = buildTitle(koth);
+
+        if (title.children().isEmpty()) {
+            hideKothFromPlayers(kothId);
             return;
         }
 
-        Koth koth = getKothById(kothId);
-        if (koth == null || !koth.isRunning()) {
-            stopBossbarById(kothId);
-            return;
-        }
-
-        Component newTitle = buildTitle(koth);
-
-        if (isTitleEmpty(newTitle)) {
-            stopBossbarById(kothId);
-            return;
-        }
+        Set<Player> targetPlayers = getPlayersForScope(koth);
 
         int captureProgress = koth.getCaptureProgress();
-        bossbar.name(newTitle);
-        bossbar.progress(Math.max(0.0f, Math.min(1.0f, captureProgress / 100.0f)));
-        bossbar.color(getColorForProgress(captureProgress));
+        BossBar.Color color = getColorForProgress(captureProgress);
+        float progress = Math.max(0.0f, Math.min(1.0f, captureProgress / 100.0f));
 
-        updateBossbarPlayers(kothId, koth, bossbar);
+        for (Player player : targetPlayers) {
+            UUID playerId = player.getUniqueId();
+            PlayerBossbarInfo info = playerBossbars.get(playerId);
+
+            if (info == null) {
+                BossBar bossbar = BossBar.bossBar(title, progress, color, BossBar.Overlay.PROGRESS);
+                info = new PlayerBossbarInfo(bossbar, kothId);
+                playerBossbars.put(playerId, info);
+                player.showBossBar(bossbar);
+            } else {
+                info.bossbar.name(title);
+                info.bossbar.progress(progress);
+                info.bossbar.color(color);
+                info.currentKothId = kothId;
+            }
+        }
+
+        Set<UUID> targetPlayerIds = Set.of(targetPlayers.stream()
+                .map(Player::getUniqueId)
+                .toArray(UUID[]::new));
+
+        playerBossbars.entrySet().removeIf(entry -> {
+            PlayerBossbarInfo info = entry.getValue();
+            if (kothId.equals(info.currentKothId)) {
+                UUID playerId = entry.getKey();
+                Player player = Bukkit.getPlayer(playerId);
+
+                if (player == null || !player.isOnline() || !targetPlayerIds.contains(playerId)) {
+                    if (player != null && player.isOnline()) {
+                        player.hideBossBar(info.bossbar);
+                    }
+                    return true;
+                }
+            }
+            return false;
+        });
+    }
+
+    private void hideKothFromPlayers(String kothId) {
+        playerBossbars.entrySet().removeIf(entry -> {
+            PlayerBossbarInfo info = entry.getValue();
+            if (kothId.equals(info.currentKothId)) {
+                Player player = Bukkit.getPlayer(entry.getKey());
+                if (player != null && player.isOnline()) {
+                    player.hideBossBar(info.bossbar);
+                }
+                return true;
+            }
+            return false;
+        });
     }
 
     private Component buildTitle(Koth koth) {
@@ -98,14 +156,6 @@ public class AdventureBossbarService {
         return parser.parseWithPlayer(configTitle, contextPlayer);
     }
 
-    private boolean isTitleEmpty(Component title) {
-        if (title == null) {
-            return true;
-        }
-
-        String plainText = PLAIN_SERIALIZER.serialize(title);
-        return plainText.trim().isEmpty();
-    }
 
     private BossBar.Color getColorForProgress(int progress) {
         String colorConfig = config.getString("color-by-progress", "auto");
@@ -125,36 +175,6 @@ public class AdventureBossbarService {
         } catch (IllegalArgumentException e) {
             return BossBar.Color.RED;
         }
-    }
-
-    private void addRelevantPlayers(String kothId, Koth koth, BossBar bossbar) {
-        Set<Player> players = getPlayersForScope(koth);
-
-        players.forEach(player -> player.showBossBar(bossbar));
-        bossbarPlayers.put(kothId, players);
-    }
-
-    private void updateBossbarPlayers(String kothId, Koth koth, BossBar bossbar) {
-        Set<Player> currentPlayers = bossbarPlayers.get(kothId);
-        if (currentPlayers == null) {
-            return;
-        }
-
-        Set<Player> shouldHaveBossbar = getPlayersForScope(koth);
-
-        currentPlayers.removeIf(player -> {
-            if (!shouldHaveBossbar.contains(player) || !player.isOnline()) {
-                player.hideBossBar(bossbar);
-                return true;
-            }
-            return false;
-        });
-
-        shouldHaveBossbar.forEach(player -> {
-            if (currentPlayers.add(player)) {
-                player.showBossBar(bossbar);
-            }
-        });
     }
 
     private Set<Player> getPlayersForScope(Koth koth) {
@@ -178,54 +198,46 @@ public class AdventureBossbarService {
         return players;
     }
 
-    private void stopBossbarById(String kothId) {
-        BossBar bossbar = activeBossbars.remove(kothId);
-        Set<Player> players = bossbarPlayers.remove(kothId);
-
-        if (bossbar != null && players != null) {
-            players.stream()
-                    .filter(Player::isOnline)
-                    .forEach(player -> player.hideBossBar(bossbar));
-        }
-    }
-
     private Koth getKothById(String kothId) {
-        return null;
+        return kothRegistry.get(kothId);
     }
 
     public boolean hasBossbar(String kothId) {
-        return activeBossbars.containsKey(kothId);
+        return activeKoths.contains(kothId);
     }
 
     public void addPlayerToBossbar(String kothId, Player player) {
-        BossBar bossbar = activeBossbars.get(kothId);
-        Set<Player> players = bossbarPlayers.get(kothId);
+        if (!activeKoths.contains(kothId)) return;
 
-        if (bossbar != null && players != null && players.add(player)) {
-            player.showBossBar(bossbar);
+        Koth koth = getKothById(kothId);
+        if (koth != null && koth.isRunning()) {
+            updateBossbarsForKoth(koth);
         }
     }
 
     public void removePlayerFromBossbar(String kothId, Player player) {
-        BossBar bossbar = activeBossbars.get(kothId);
-        Set<Player> players = bossbarPlayers.get(kothId);
+        UUID playerId = player.getUniqueId();
+        PlayerBossbarInfo info = playerBossbars.remove(playerId);
 
-        if (bossbar != null && players != null && players.remove(player)) {
-            player.hideBossBar(bossbar);
+        if (info != null && kothId.equals(info.currentKothId)) {
+            player.hideBossBar(info.bossbar);
         }
     }
 
     public void removeAllBossbars() {
-        activeBossbars.forEach((kothId, bossbar) -> {
-            Set<Player> players = bossbarPlayers.get(kothId);
-            if (players != null) {
-                players.stream()
-                        .filter(Player::isOnline)
-                        .forEach(player -> player.hideBossBar(bossbar));
+        playerBossbars.forEach((playerId, info) -> {
+            Player player = Bukkit.getPlayer(playerId);
+            if (player != null && player.isOnline()) {
+                player.hideBossBar(info.bossbar);
             }
         });
 
-        activeBossbars.clear();
-        bossbarPlayers.clear();
+        playerBossbars.clear();
+        activeKoths.clear();
+    }
+
+    public void cleanupOfflinePlayers() {
+        playerBossbars.keySet().removeIf(playerId ->
+                Bukkit.getPlayer(playerId) == null);
     }
 }

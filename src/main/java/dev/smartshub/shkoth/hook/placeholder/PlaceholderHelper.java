@@ -1,7 +1,10 @@
 package dev.smartshub.shkoth.hook.placeholder;
 
 import dev.smartshub.shkoth.api.koth.Koth;
+import dev.smartshub.shkoth.api.stat.StatType;
 import dev.smartshub.shkoth.registry.KothRegistry;
+
+import java.util.List;
 
 public class PlaceholderHelper {
 
@@ -11,7 +14,21 @@ public class PlaceholderHelper {
         this.kothRegistry = kothRegistry;
     }
 
+    private static List<String> ignoredToExtract = List.of(
+            "player_context",
+            "koth_context",
+            "aux_context",
+            "total_wins",
+            "solo_wins",
+            "team_wins",
+            "next_koth",
+            "next_koth_in",
+            "next_koth_in_formatted");
+
     public String extractKothName(String identifier) {
+
+        if(ignoredToExtract.contains(identifier)) return null;
+
         if (identifier == null || identifier.isEmpty()) {
             return null;
         }
@@ -33,6 +50,8 @@ public class PlaceholderHelper {
 
 
     public String extractPlaceholderType(String identifier) {
+        if(ignoredToExtract.contains(identifier)) return identifier;
+
         if (identifier == null || identifier.isEmpty()) {
             return null;
         }

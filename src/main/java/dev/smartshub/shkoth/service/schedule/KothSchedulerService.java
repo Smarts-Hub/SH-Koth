@@ -44,7 +44,7 @@ public class KothSchedulerService {
     public void addKothSchedule(String kothId, List<Schedule> schedules, Duration duration) {
         if (schedules == null || schedules.isEmpty()) return;
 
-        SchedulerManagementService manager = new SchedulerManagementService(kothId, schedules, duration, timeService);
+        SchedulerManagementService manager = new SchedulerManagementService(kothRegistry.get(kothId), schedules, duration, timeService);
         scheduleManagers.put(kothId, manager);
     }
 
@@ -53,8 +53,7 @@ public class KothSchedulerService {
     }
 
     public boolean isKothTime(String kothId) {
-        SchedulerManagementService manager = scheduleManagers.get(kothId);
-        return manager != null && manager.isActiveTime();
+        return  kothRegistry.get(kothId).isRunning();
     }
 
     public ScheduleStatus updateAndCheckStatusChange(String kothId) {

@@ -7,6 +7,7 @@
 #
 # Hook Clans/Teams configuration file
 # Support: https://discord.smartshub.dev/
+# Documentation: https://docs.smartshub.dev/sh-koth/intro/introduction/
 
 # You can enable/disable support for each plugin and set their priority.
 # The priority is used when more than one plugin is detected, the one with the highest priority will be used.

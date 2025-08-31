@@ -80,9 +80,9 @@ public class KothCommand {
 
     @Subcommand("reload")
     public void reload(BukkitCommandActor actor) {
-        kothRegistry.reloadKoths();
-        configService.reloadAll();
         notifyService.sendChat(actor.sender(), "koth.reload");
+        configService.reloadAll();
+        kothRegistry.reloadKoths();
     }
 
 }

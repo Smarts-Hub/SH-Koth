@@ -6,12 +6,12 @@
 # |_|  |_|\___||___/___/\__,_|\__, |\___||___/
 #                              __/ |
 #                             |___/
-#
 # Messages configuration file
 # * Formatting: MiniMessage (https://docs.advntr.dev/minimessage/format)
 # * PlaceholderAPI is supported in every message
 # * If you want to avoid a broadcast message, simply replace it with empty: ""
 # Support: https://discord.smartshub.dev/
+# Documentation: https://docs.smartshub.dev/sh-koth/intro/introduction/
 
 exception:
   no-permission: "<red>You do not have permission to perform this action."

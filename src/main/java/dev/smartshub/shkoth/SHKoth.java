@@ -53,7 +53,7 @@ public class SHKoth extends ZapperJavaPlugin {
     private final PlayerStatsDAO playerStatsDAO = new PlayerStatsDAO();
     private PlayerStatsCache playerStatsCache = new PlayerStatsCache(playerStatsDAO);
 
-    private final MessageParser messageParser = new MessageParser();
+    private MessageParser messageParser;
     private MessageRepository messageRepository;
     private ConfigService configService;
 
@@ -112,6 +112,7 @@ public class SHKoth extends ZapperJavaPlugin {
     }
 
     private void setUpConfig() {
+        messageParser = new MessageParser();
         configService = new ConfigService(this);
         messageRepository = new MessageRepository(configService);
     }
@@ -136,7 +137,7 @@ public class SHKoth extends ZapperJavaPlugin {
         refreshInsideKothService = new RefreshInsideKothService(kothRegistry);
         kothSchedulerService = new KothSchedulerService(kothRegistry);
 
-        adventureBossbarService = new AdventureBossbarService(configService.provide(ConfigType.BOSSBAR), messageParser);
+        adventureBossbarService = new AdventureBossbarService(kothRegistry, configService.provide(ConfigType.BOSSBAR), messageParser);
     }
 
     private void initTracker() {

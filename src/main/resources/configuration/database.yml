@@ -7,6 +7,7 @@
 #
 # Database configuration file
 # Support: https://discord.smartshub.dev/
+# Documentation: https://docs.smartshub.dev/sh-koth/intro/introduction/
 
 # Available drivers: "h2" (local, recommended) and "mysql" (remote).
 driver: h2

@@ -24,6 +24,10 @@ public class ConfigService {
         provide(ConfigType.MESSAGES);
         provide(ConfigType.BROADCAST);
         provide(ConfigType.HOOKS);
+        provide(ConfigType.ACTIONBAR);
+        provide(ConfigType.TITLE);
+        provide(ConfigType.SOUND);
+        provide(ConfigType.BOSSBAR);
     }
 
     public ConfigContainer provide(ConfigType type) {
@@ -102,6 +106,10 @@ public class ConfigService {
         reload(ConfigType.MESSAGES);
         reload(ConfigType.BROADCAST);
         reload(ConfigType.HOOKS);
+        reload(ConfigType.ACTIONBAR);
+        reload(ConfigType.TITLE);
+        reload(ConfigType.SOUND);
+        reload(ConfigType.BOSSBAR);
     }
 
 }

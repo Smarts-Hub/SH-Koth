@@ -37,11 +37,9 @@ public class PlayerStatsCache {
         pendingRequests.put(key, future);
 
         future.thenAccept(value -> {
-            System.out.println("[SHKoth] Caching " + type.name() + " wins for player " + player.getName() + ": " + value);
             cache.put(key, new CachedValue(value, System.currentTimeMillis()));
             pendingRequests.remove(key);
         }).exceptionally(throwable -> {
-            System.err.println("[SHKoth] Error caching stats for " + player.getName() + ": " + throwable.getMessage());
             pendingRequests.remove(key);
             return null;
         });
@@ -57,24 +55,16 @@ public class PlayerStatsCache {
                 long now = System.currentTimeMillis();
                 var stats = optStats.get();
 
-                System.out.println("[SHKoth] Preloading stats for " + player.getName() +
-                        " - Solo: " + stats.soloWins() + ", Team: " + stats.teamWins() +
-                        ", Total: " + (stats.soloWins() + stats.teamWins()));
-
                 cache.put(key(id, StatType.TOTAL), new CachedValue(stats.soloWins() + stats.teamWins(), now));
                 cache.put(key(id, StatType.SOLO), new CachedValue(stats.soloWins(), now));
                 cache.put(key(id, StatType.TEAM), new CachedValue(stats.teamWins(), now));
             } else {
-                System.out.println("[SHKoth] No stats found for " + player.getName() + " during preload");
                 UUID id = player.getUniqueId();
                 long now = System.currentTimeMillis();
                 cache.put(key(id, StatType.TOTAL), new CachedValue(0, now));
                 cache.put(key(id, StatType.SOLO), new CachedValue(0, now));
                 cache.put(key(id, StatType.TEAM), new CachedValue(0, now));
             }
-        }).exceptionally(throwable -> {
-            System.err.println("[SHKoth] Error preloading stats for " + player.getName() + ": " + throwable.getMessage());
-            return null;
         });
     }
 
@@ -87,7 +77,6 @@ public class PlayerStatsCache {
                 pending.cancel(false);
             }
         }
-        System.out.println("[SHKoth] Cache invalidated for player " + playerId);
     }
 
     public void clear() {
@@ -98,21 +87,6 @@ public class PlayerStatsCache {
             }
         });
         pendingRequests.clear();
-        System.out.println("[SHKoth] Full cache cleared");
-    }
-
-    public void debugCache(UUID playerId) {
-        System.out.println("[SHKoth] Cache debug for " + playerId + ":");
-        for (StatType type : StatType.values()) {
-            String key = key(playerId, type);
-            CachedValue cached = cache.get(key);
-            if (cached != null) {
-                System.out.println("  " + type + ": " + cached.value +
-                        " (expired: " + cached.isExpired() + ")");
-            } else {
-                System.out.println("  " + type + ": NOT CACHED");
-            }
-        }
     }
 
     public void refreshPlayer(UUID playerId) {

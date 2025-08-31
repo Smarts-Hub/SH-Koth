@@ -1,5 +1,6 @@
 package dev.smartshub.shkoth.service.schedule;
 
+import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import dev.smartshub.shkoth.api.location.schedule.ScheduleStatus;
 
@@ -11,14 +12,14 @@ import java.util.List;
 
 public class SchedulerManagementService {
 
-    private final String kothId;
+    private final Koth koth;
     private final List<Schedule> schedules;
     private final Duration duration;
     private final TimeService timeService;
     private boolean wasActiveTime = false;
 
-    public SchedulerManagementService(String kothId, List<Schedule> schedules, Duration duration, TimeService timeService) {
-        this.kothId = kothId;
+    public SchedulerManagementService(Koth koth, List<Schedule> schedules, Duration duration, TimeService timeService) {
+        this.koth = koth;
         this.schedules = new ArrayList<>(schedules);
         this.duration = duration;
         this.timeService = timeService;
@@ -42,7 +43,7 @@ public class SchedulerManagementService {
     }
 
     public ScheduleStatus checkStatusChange() {
-        boolean nowActive = isActiveTime();
+        boolean nowActive = koth.isRunning();
 
         if (!wasActiveTime && nowActive) {
             wasActiveTime = true;
@@ -58,7 +59,7 @@ public class SchedulerManagementService {
     }
 
     public Duration getTimeUntilNext() {
-        if (isActiveTime()) return Duration.ZERO;
+        if (!koth.isRunning()) return Duration.ZERO;
 
         LocalDateTime now = timeService.getCurrentDateTime();
         Schedule nextSchedule = findNextSchedule(now);
@@ -70,12 +71,12 @@ public class SchedulerManagementService {
     }
 
     public Duration getTimeUntilEnds() {
-        if (!isActiveTime()) return Duration.ZERO;
+        if (!koth.isRunning()) return Duration.ZERO;
         return duration.minus(getTimeSinceStarted());
     }
 
     public Duration getTimeSinceStarted() {
-        if (!isActiveTime()) return Duration.ZERO;
+        if (!koth.isRunning()) return Duration.ZERO;
 
         LocalDateTime now = timeService.getCurrentDateTime();
         Schedule currentSchedule = findCurrentSchedule(now);
@@ -150,10 +151,6 @@ public class SchedulerManagementService {
         }
 
         return targetDate.atTime(schedule.time());
-    }
-
-    public String getKothId() {
-        return kothId;
     }
 
     public List<Schedule> getSchedules() {

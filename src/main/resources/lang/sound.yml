@@ -10,6 +10,7 @@
 # * If you want to disable the sound, simply replace titles with empty: ""
 # * Sound list: https://minecraftsounds.com/
 # Support: https://discord.smartshub.dev/
+# Documentation: https://docs.smartshub.dev/sh-koth/intro/introduction/
 
 koth:
   start: "minecraft:entity.experience_orb.pickup"

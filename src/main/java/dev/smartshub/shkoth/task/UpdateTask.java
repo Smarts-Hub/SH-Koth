@@ -30,3 +30,4 @@ public class UpdateTask extends BukkitRunnable {
         kothSchedulerService.processAllSchedulesAndExecute();
     }
 }
+
