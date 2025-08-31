@@ -81,4 +81,20 @@ public class FactionsUUIDHook implements TeamHook {
         if(!fPlayer1.hasFaction() || !fPlayer2.hasFaction()) return false;
         return fPlayer1.faction().equals(fPlayer2.faction());
     }
+
+    @Override
+    public boolean validateTeamMembership(UUID playerId) {
+        return isTeamMember(playerId);
+    }
+
+    @Override
+    public Set<UUID> validateTeamMembers(Set<UUID> teamMembers) {
+        return teamMembers.stream().filter(this::isTeamMember).collect(java.util.stream.Collectors.toSet());
+    }
+
+    @Override
+    public boolean hasTeamChanged(UUID playerId, Set<UUID> lastKnownMembers) {
+        Set<UUID> currentMembers = getTeamMembers(playerId);
+        return !currentMembers.equals(lastKnownMembers);
+    }
 }

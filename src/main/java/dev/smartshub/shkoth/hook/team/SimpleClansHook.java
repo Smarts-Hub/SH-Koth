@@ -87,6 +87,22 @@ public class SimpleClansHook implements TeamHook {
         return clan1.getName().equals(clan2.getName());
     }
 
+    @Override
+    public boolean validateTeamMembership(UUID playerId) {
+        return isTeamMember(playerId);
+    }
+
+    @Override
+    public Set<UUID> validateTeamMembers(Set<UUID> teamMembers) {
+        return teamMembers.stream().filter(this::isTeamMember).collect(java.util.stream.Collectors.toSet());
+    }
+
+    @Override
+    public boolean hasTeamChanged(UUID playerId, Set<UUID> lastKnownMembers) {
+        var currentMembers = getTeamMembers(playerId);
+        return !currentMembers.equals(lastKnownMembers);
+    }
+
     public Clan getClan(UUID anyTeamMember) {
         var clanPlayer = simpleClansAPI.getClanManager().getClanPlayer(anyTeamMember);
         if(clanPlayer == null) return null;

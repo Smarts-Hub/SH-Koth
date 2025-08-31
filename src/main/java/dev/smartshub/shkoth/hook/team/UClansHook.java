@@ -83,4 +83,26 @@ public class UClansHook implements TeamHook {
         if (clanOpt1.isEmpty() || clanOpt2.isEmpty()) return false;
         return clanOpt1.get().getId().equals(clanOpt2.get().getId());
     }
+
+    @Override
+    public boolean validateTeamMembership(UUID playerId) {
+        return playerAPI.getPlayerClan(playerId).isPresent();
+    }
+
+    @Override
+    public Set<UUID> validateTeamMembers(Set<UUID> teamMembers) {
+        Set<UUID> validMembers = new HashSet<>();
+        for (UUID memberId : teamMembers) {
+            if (validateTeamMembership(memberId)) {
+                validMembers.add(memberId);
+            }
+        }
+        return validMembers;
+    }
+
+    @Override
+    public boolean hasTeamChanged(UUID playerId, Set<UUID> lastKnownMembers) {
+        Set<UUID> currentMembers = getTeamMembers(playerId);
+        return !currentMembers.equals(lastKnownMembers);
+    }
 }

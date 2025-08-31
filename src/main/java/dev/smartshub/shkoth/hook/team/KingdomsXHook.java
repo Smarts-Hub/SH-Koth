@@ -80,4 +80,20 @@ public class KingdomsXHook implements TeamHook {
 
         return kingdom1.equals(kingdom2);
     }
+
+    @Override
+    public boolean validateTeamMembership(UUID playerId) {
+        return isTeamMember(playerId);
+    }
+
+    @Override
+    public Set<UUID> validateTeamMembers(Set<UUID> teamMembers) {
+        return teamMembers.stream().filter(this::isTeamMember).collect(java.util.stream.Collectors.toSet());
+    }
+
+    @Override
+    public boolean hasTeamChanged(UUID playerId, Set<UUID> lastKnownMembers) {
+        Set<UUID> currentMembers = getTeamMembers(playerId);
+        return !currentMembers.equals(lastKnownMembers);
+    }
 }
