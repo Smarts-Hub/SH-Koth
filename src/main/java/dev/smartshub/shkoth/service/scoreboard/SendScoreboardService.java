@@ -30,19 +30,22 @@ public final class SendScoreboardService {
     public void send(Player player, Koth koth, KothState state) {
         boards.computeIfAbsent(player.getUniqueId(),
                 uuid -> new FastBoard(player));
-        providers.computeIfAbsent(koth, k -> get(koth, state));
+
+        providers.put(koth, get(koth, state));
     }
+
 
     public void updateBoard(Player player, Koth koth, KothState state) {
         FastBoard board = boards.get(player.getUniqueId());
         if (board == null) return;
 
-        ScoreboardProvider provider = providers.computeIfAbsent(koth, k -> get(koth, state));
-        if(provider == null) return;
+        ScoreboardProvider provider = providers.put(koth, get(koth, state));
+        if (provider == null) return;
 
         board.updateTitle(parser.parseWithPlayer(provider.getTitle(), player));
         board.updateLines(parser.parseListWithPlayer(provider.getLines(), player));
     }
+
 
     public void updateAll(Koth koth, KothState state) {
         for (UUID uuid : boards.keySet()) {
