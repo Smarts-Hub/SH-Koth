@@ -82,6 +82,7 @@ physical-rewards:
 
 # Configuration for the scoreboards.
 scoreboard:
+  enabled: true
   running:
     title: "<gold><bold>King of the Hill"
     lines:

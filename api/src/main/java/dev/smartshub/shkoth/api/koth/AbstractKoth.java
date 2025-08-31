@@ -85,6 +85,7 @@ public abstract class AbstractKoth implements Koth {
         public abstract void playerEnter(Player player);
         public abstract void playerLeave(Player player);
         public abstract boolean canPlayerCapture(@NotNull Player player);
+        public abstract boolean isScoreboardEnabled();
 
         public abstract boolean isSolo();
 

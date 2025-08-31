@@ -43,6 +43,7 @@ public final class ScoreboardHandleService {
 
     public void handleAll() {
         for (Koth koth : kothRegistry.getRunning()) {
+            if(!koth.isScoreboardEnabled()) continue;
             handle(koth, koth.getState());
         }
     }

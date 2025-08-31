@@ -33,6 +33,7 @@ public class Koth extends AbstractKoth {
     private final TeamTracker teamTracker;
     private final Tally tally;
     private final boolean isSolo;
+    private final boolean isScoreboardEnabled;
     private final boolean denyEnterWithoutTeam;
     private final boolean createTeamIfNotExistsOnEnter;
 
@@ -41,12 +42,13 @@ public class Koth extends AbstractKoth {
 
     public Koth(TeamTracker teamTracker, String id, String displayName, int duration, int captureTime, Area area,
                 List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards,
-                boolean isSolo, boolean denyEnterWithoutTeam, boolean createTeamIfNotExistsOnEnter, KothType type) {
+                boolean isSolo, boolean isScoreboardEnabled,boolean denyEnterWithoutTeam, boolean createTeamIfNotExistsOnEnter, KothType type) {
         super(id, displayName, duration, captureTime, area, schedules, commands, physicalRewards);
 
         this.teamTracker = teamTracker;
         this.tally = TallyFactory.create(type, this);
         this.isSolo = isSolo;
+        this.isScoreboardEnabled = isScoreboardEnabled;
         this.denyEnterWithoutTeam = denyEnterWithoutTeam;
         this.createTeamIfNotExistsOnEnter = createTeamIfNotExistsOnEnter;
     }
@@ -249,4 +251,7 @@ public class Koth extends AbstractKoth {
         long elapsedTime = (System.currentTimeMillis() - captureStartTime) / 1000;
         return (int) Math.min(100, (elapsedTime * 100) / captureTime);
     }
+
+    @Override
+    public boolean isScoreboardEnabled() { return isScoreboardEnabled; }
 }

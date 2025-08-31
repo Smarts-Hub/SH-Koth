@@ -49,6 +49,7 @@ public interface Koth {
     boolean isCapturing();
     boolean isSolo();
     boolean isTeam();
+    boolean isScoreboardEnabled();
     void playerEnter(Player player);
     void playerLeave(Player player);
     void removePlayerDirectly(UUID playerUUID);
