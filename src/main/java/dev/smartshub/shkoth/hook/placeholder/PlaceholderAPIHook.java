@@ -12,11 +12,12 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
     private final KothRegistry kothRegistry;
     private final PlayerStatsCache playerStatsCache;
-    private final PlaceholderHelper placeholderHelper = new PlaceholderHelper();
+    private final PlaceholderHelper placeholderHelper;
 
     public PlaceholderAPIHook(KothRegistry kothRegistry, PlayerStatsCache playerStatsCache) {
         this.kothRegistry = kothRegistry;
         this.playerStatsCache = playerStatsCache;
+        this.placeholderHelper = new PlaceholderHelper(kothRegistry);
     }
 
     // Temp storage for contextual arguments, like player name or koth name in some messages

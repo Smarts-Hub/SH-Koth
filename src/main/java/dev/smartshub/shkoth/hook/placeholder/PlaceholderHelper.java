@@ -1,6 +1,15 @@
 package dev.smartshub.shkoth.hook.placeholder;
 
+import dev.smartshub.shkoth.api.koth.Koth;
+import dev.smartshub.shkoth.registry.KothRegistry;
+
 public class PlaceholderHelper {
+
+    private final KothRegistry kothRegistry;
+
+    public PlaceholderHelper(KothRegistry kothRegistry) {
+        this.kothRegistry = kothRegistry;
+    }
 
     public String extractKothName(String identifier) {
         if (identifier == null || identifier.isEmpty()) {
@@ -12,8 +21,16 @@ public class PlaceholderHelper {
             return null;
         }
 
-        return identifier.substring(0, firstUnderscoreIndex);
+        var kothID = identifier.substring(0, firstUnderscoreIndex);
+
+        return kothRegistry.getAll().stream()
+                .map(Koth::getId)
+                .filter(id -> id.equalsIgnoreCase(kothID))
+                .findFirst()
+                .orElse(null);
     }
+
+
 
     public String extractPlaceholderType(String identifier) {
         if (identifier == null || identifier.isEmpty()) {
