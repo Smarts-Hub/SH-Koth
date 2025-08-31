@@ -1,5 +1,6 @@
 package dev.smartshub.shkoth.team;
 
+import dev.smartshub.shkoth.api.event.dispatcher.TeamEventDispatcher;
 import dev.smartshub.shkoth.api.team.InternalKothTeam;
 import dev.smartshub.shkoth.api.team.KothTeam;
 import dev.smartshub.shkoth.api.team.handle.TeamHandler;
@@ -13,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InternalTeamHandler implements TeamHandler {
     private final Map<UUID, InternalKothTeam> teams = new ConcurrentHashMap<>();
     private final Map<UUID, UUID> playerToTeam = new ConcurrentHashMap<>();
+    private final TeamEventDispatcher eventDispatcher = new TeamEventDispatcher();
     
     @Override
     public KothTeam createTeam(UUID leader) {
@@ -35,9 +37,10 @@ public class InternalTeamHandler implements TeamHandler {
         if (team == null) return false;
         
         removeMemberFromTeam(member);
-        
+
         if (team.addMember(member)) {
             playerToTeam.put(member, team.getTeamId());
+            eventDispatcher.fireMemberJoinedTeamEvent(team, getTeam(member), member, teamLeader);
             return true;
         }
         return false;

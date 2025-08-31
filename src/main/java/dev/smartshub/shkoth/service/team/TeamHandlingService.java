@@ -100,14 +100,14 @@ public class TeamHandlingService {
 
         // Silent fail, as this command should not be available due to existing external team plugin
         if (!teamTracker.getActiveProvider().equals("Internal")) return;
-        
-        boolean success = teamTracker.getInternalHandler().disbandTeam(leaderId);
-        if(!success) {
-            notifyService.sendChat(leader, "team.cant-disband-team");
-            return;
-        }
 
         teamEventDispatcher.fireTeamDissolvedEvent(teamTracker.getInternalHandler().getTeam(leaderId), leaderId, reason);
+
+        boolean success = teamTracker.getInternalHandler().disbandTeam(leaderId);
+        if(success) return;
+
+        notifyService.sendChat(leader, "team.cant-disband-team");
+
     }
     
     public void kickMember(Player leader, String toKickName) {
