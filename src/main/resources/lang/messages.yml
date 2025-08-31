@@ -35,6 +35,7 @@ koth:
 # * %shkoth_aux_context% - The auxiliary player's name (other), is only valid at the moment of the message is sent
 # For "permanent valid" placeholders, use the mentioned at documentation:
 team:
+  chat-prefix: "<aqua>[Team Chat] "
   player-not-found: "<red>The specified player could not be found."
   not-team-leader: "<red>You are not the team leader."
   target-already-in-a-team: "<red>The target player is already in a team."

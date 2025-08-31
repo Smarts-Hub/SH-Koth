@@ -50,6 +50,12 @@ public class NotifyService {
         player.sendMessage(message);
     }
 
+    public void sendTeamMessage(Player player, String message) {
+        var finalMessage = parser.parse(repository.getMessage("team.chat-prefix"))
+                .append(Component.text(message));
+        player.sendMessage(finalMessage);
+    }
+
     public void sendRawMessage(CommandSender sender, String message) {
         sender.sendMessage(message);
     }

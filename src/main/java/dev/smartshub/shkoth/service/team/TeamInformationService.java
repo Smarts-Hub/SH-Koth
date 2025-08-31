@@ -21,7 +21,7 @@ public class TeamInformationService {
         }
 
         teamHandlingService.getPlayerTeam(player.getUniqueId()).getOnlineMembers().forEach(member -> {
-            notifyService.sendRawMessage(player, message);
+            notifyService.sendTeamMessage(player, message);
         });
     }
 
