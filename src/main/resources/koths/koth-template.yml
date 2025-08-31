@@ -87,13 +87,13 @@ scoreboard:
     title: "<gold><bold>King of the Hill"
     lines:
       - " "
-      - "<yellow>Time Left: <gold><time_left>"
+      - "<yellow>Time Left: <gold>%shkoth_<koth_id>_time_left%"
       - " "
   capturing:
     title: "<gold><bold>King of the Hill"
     lines:
       - " "
-      - "<yellow>Time Left: <gold><time_left>"
-      - "<yellow>Capturing: <gold><capturing_name>"
-      - "<yellow>Capture Progress: <gold><capture_progress>%"
+      - "<yellow>Time Left: <gold>%shkoth_<koth_id>_time_left%"
+      - "<yellow>Capturing: <gold>%shkoth_<koth_id>_capturing%"
+      - "<yellow>Capture Progress: <gold>%shkoth_<koth_id>_progress%"
       - " "
