@@ -108,6 +108,23 @@ public class InternalTeamHandler implements TeamHandler {
         InternalKothTeam team = getTeam(playerId);
         return team != null ? team.getDisplayName() : "No Team";
     }
+
+    @Override
+    public void updateTeams() {
+        teams.entrySet().removeIf(entry -> {
+            InternalKothTeam team = entry.getValue();
+            if (team.getMembers().isEmpty()) {
+                return true;
+            }
+            return false;
+        });
+
+        playerToTeam.entrySet().removeIf(entry -> {
+            UUID teamId = entry.getValue();
+            return !teams.containsKey(teamId);
+        });
+    }
+
     
     private InternalKothTeam getTeamByLeader(UUID leader) {
         return teams.values().stream()
@@ -115,7 +132,7 @@ public class InternalTeamHandler implements TeamHandler {
                 .findFirst()
                 .orElse(null);
     }
-    
+
     public Collection<InternalKothTeam> getAllTeams() {
         return teams.values();
     }

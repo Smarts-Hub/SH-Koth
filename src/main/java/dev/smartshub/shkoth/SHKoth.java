@@ -36,6 +36,7 @@ import dev.smartshub.shkoth.storage.cache.PlayerStatsCache;
 import dev.smartshub.shkoth.storage.database.connection.DatabaseConnection;
 import dev.smartshub.shkoth.storage.database.dao.PlayerStatsDAO;
 import dev.smartshub.shkoth.storage.database.table.SchemaCreator;
+import dev.smartshub.shkoth.task.AsyncJobTask;
 import dev.smartshub.shkoth.task.UpdateTask;
 import dev.smartshub.shkoth.team.ContextualTeamTracker;
 import revxrsal.commands.bukkit.BukkitLamp;
@@ -70,6 +71,7 @@ public class SHKoth extends ZapperJavaPlugin {
     private KothSchedulerService kothSchedulerService;
 
     private UpdateTask task;
+    private AsyncJobTask asyncJobTask;
 
     private ContextualTeamTracker teamTracker;
 
@@ -145,6 +147,9 @@ public class SHKoth extends ZapperJavaPlugin {
     private void setUpTasks() {
         task = new UpdateTask(kothTicker, refreshInsideKothService, kothSchedulerService, scoreboardHandleService);
         task.runTaskTimer(this, 20L, 20L);
+
+        asyncJobTask = new AsyncJobTask(scoreboardHandleService, teamTracker);
+        asyncJobTask.runTaskTimerAsynchronously(this, 20L, 20L);
     }
 
     private void registerCommands() {

@@ -16,4 +16,8 @@ public interface TeamHook {
     boolean isTeamMember(UUID uuid);
     boolean isTeamLeader(UUID uuid);
     boolean areTeammates(UUID player1, UUID player2);
+    boolean validateTeamMembership(UUID playerId);
+
+    Set<UUID> validateTeamMembers(Set<UUID> teamMembers);
+    boolean hasTeamChanged(UUID playerId, Set<UUID> lastKnownMembers);
 }

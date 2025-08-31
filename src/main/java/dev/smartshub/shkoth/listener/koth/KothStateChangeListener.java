@@ -16,6 +16,6 @@ public class KothStateChangeListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onKothStateChange(KothStateChangeEvent event) {
-        scoreboardHandleService.handleChange(event.getKoth());
+        scoreboardHandleService.handleChange(event.getKoth(), event.getNewState());
     }
 }

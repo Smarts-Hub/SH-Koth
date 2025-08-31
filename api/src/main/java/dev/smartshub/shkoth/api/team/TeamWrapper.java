@@ -8,10 +8,12 @@ import java.util.UUID;
 
 public class TeamWrapper implements KothTeam {
     private final UUID representativePlayer;
-    private final Set<UUID> members;
-    private final String displayName;
+    private Set<UUID> members;
+    private String displayName;
     private final boolean isInternal;
     private final boolean isSoloMode;
+    private long lastValidated;
+    private boolean needsValidation;
 
     public TeamWrapper(UUID representativePlayer, Set<UUID> members, String displayName, boolean isSoloMode) {
         this.representativePlayer = representativePlayer;
@@ -19,6 +21,8 @@ public class TeamWrapper implements KothTeam {
         this.displayName = displayName;
         this.isInternal = false;
         this.isSoloMode = isSoloMode;
+        this.lastValidated = System.currentTimeMillis();
+        this.needsValidation = false;
     }
 
     public TeamWrapper(KothTeam internalTeam, boolean isSoloMode) {
@@ -27,6 +31,8 @@ public class TeamWrapper implements KothTeam {
         this.displayName = internalTeam.getDisplayName();
         this.isInternal = true;
         this.isSoloMode = isSoloMode;
+        this.lastValidated = System.currentTimeMillis();
+        this.needsValidation = false;
     }
 
     @Override
@@ -55,6 +61,29 @@ public class TeamWrapper implements KothTeam {
 
     public boolean isSoloMode() {
         return isSoloMode;
+    }
+
+    public long getLastValidated() {
+        return lastValidated;
+    }
+
+    public boolean needsValidation() {
+        return needsValidation;
+    }
+
+    public void markForValidation() {
+        this.needsValidation = true;
+    }
+
+    public void updateMembers(Set<UUID> newMembers, String newDisplayName) {
+        this.members = new HashSet<>(newMembers);
+        this.displayName = newDisplayName;
+        this.lastValidated = System.currentTimeMillis();
+        this.needsValidation = false;
+    }
+
+    public boolean isValidationExpired(long validationInterval) {
+        return System.currentTimeMillis() - lastValidated > validationInterval;
     }
 
     @Override

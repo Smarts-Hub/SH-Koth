@@ -17,33 +17,33 @@ public final class ScoreboardHandleService {
         this.kothRegistry = kothRegistry;
     }
 
-    public void handleChange(Koth koth) {
+    public void handleChange(Koth koth, KothState newState) {
         World world = Bukkit.getWorld(koth.getArea().worldName());
         if (world == null) return;
-        this.handleChange(world, koth);
+        this.handleChange(world, koth, newState);
     }
 
-    public void handleChange(World world, Koth koth) {
+    public void handleChange(World world, Koth koth, KothState newState) {
         world.getPlayers().forEach(player -> {
-            this.handleChange(player, koth);
+            this.handleChange(player, koth, newState);
         });
     }
 
-    public void handleChange(Player player, Koth koth) {
-        if(koth.getState() == KothState.INACTIVE) {
+    public void handleChange(Player player, Koth koth, KothState state) {
+        if(state == KothState.INACTIVE) {
             service.remove(player);
         }
 
-        service.send(player, koth);
+        service.send(player, koth, state);
     }
 
-    public void handle(Koth koth) {
-        service.updateAll(koth);
+    public void handle(Koth koth, KothState state) {
+        service.updateAll(koth, state);
     }
 
     public void handleAll() {
         for (Koth koth : kothRegistry.getRunning()) {
-            handle(koth);
+            handle(koth, koth.getState());
         }
     }
 }

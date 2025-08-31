@@ -1,6 +1,7 @@
 package dev.smartshub.shkoth.service.scoreboard;
 
 import dev.smartshub.shkoth.api.koth.Koth;
+import dev.smartshub.shkoth.api.koth.guideline.KothState;
 import dev.smartshub.shkoth.message.MessageParser;
 import dev.smartshub.shkoth.registry.KothRegistry;
 import dev.smartshub.shkoth.service.config.ConfigService;
@@ -27,28 +28,28 @@ public final class SendScoreboardService {
         this.service = service;
     }
 
-    public void send(Player player, Koth koth) {
+    public void send(Player player, Koth koth, KothState state) {
         boards.computeIfAbsent(player.getUniqueId(),
                 uuid -> new FastBoard(player));
-        providers.computeIfAbsent(koth, k -> get(koth));
+        providers.computeIfAbsent(koth, k -> get(koth, state));
     }
 
-    public void updateBoard(Player player, Koth koth) {
+    public void updateBoard(Player player, Koth koth, KothState state) {
         FastBoard board = boards.get(player.getUniqueId());
         if (board == null) return;
 
-        ScoreboardProvider provider = providers.computeIfAbsent(koth, k -> get(koth));
+        ScoreboardProvider provider = providers.computeIfAbsent(koth, k -> get(koth, state));
         if(provider == null) return;
 
         board.updateTitle(parser.parseWithPlayer(provider.getTitle(), player));
         board.updateLines(parser.parseListWithPlayer(provider.getLines(), player));
     }
 
-    public void updateAll(Koth koth) {
+    public void updateAll(Koth koth, KothState state) {
         for (UUID uuid : boards.keySet()) {
             Player player = org.bukkit.Bukkit.getPlayer(uuid);
             if (player != null && player.isOnline()) {
-                updateBoard(player, koth);
+                updateBoard(player, koth, state);
             }
         }
     }
@@ -59,8 +60,8 @@ public final class SendScoreboardService {
         board.delete();
     }
 
-    private ScoreboardProvider get(Koth koth) {
-        return switch (koth.getState()) {
+    private ScoreboardProvider get(Koth koth, KothState state) {
+        return switch (state) {
             case RUNNING -> new RunningScoreboard(service, koth);
             case CAPTURING -> new CapturingScoreboard(service, koth);
             default -> null;

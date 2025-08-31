@@ -28,6 +28,5 @@ public class UpdateTask extends BukkitRunnable {
         capturedKothsHandler.handleTickForCapturedKoths();
         refreshInsideKothService.refreshInsideKoth();
         kothSchedulerService.processAllSchedulesAndExecute();
-        CompletableFuture.runAsync(scoreboardHandleService::handleAll);
     }
 }

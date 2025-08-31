@@ -21,4 +21,5 @@ public interface TeamHandler {
     boolean areTeammates(UUID player1, UUID player2);
     String getTeamDisplayName(UUID playerId);
     Collection<? extends KothTeam> getAllTeams();
+    void updateTeams();
 }
