@@ -5,6 +5,7 @@ import dev.smartshub.shkoth.message.MessageRepository;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -179,9 +180,10 @@ public class NotifyService {
         List<String> messages = repository.getBroadcastMessageList(path);
         if (messages == null || messages.isEmpty()) return;
 
-        List<Component> components = parser.parseList(messages);
-        for (Player player : org.bukkit.Bukkit.getOnlinePlayers()) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            List<Component> components = parser.parseListWithPlayer(messages, player);
             components.forEach(player::sendMessage);
         }
     }
+
 }
