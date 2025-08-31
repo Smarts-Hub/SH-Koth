@@ -20,8 +20,14 @@ public class MemberJoinedTeamListener implements Listener {
     public void onMemberJoinTeam(MemberJoinedTeamEvent event){
         PlaceholderAPIHook.pushArgs("", event.getAddedPlayer().getName());
         notifyService.sendChat(event.getAddedPlayer(), "team.added-to-team");
+        notifyService.sendTitle(event.getAddedPlayer(), "team.added-to-team.title", "team.added-to-team.subtitle");
+        notifyService.sendActionBar(event.getAddedPlayer(), "team.added-to-team");
+        notifyService.playSound(event.getAddedPlayer(), "team.added-to-team");
         for(Player player : event.getOldTeam().getOnlineMembers()){
             notifyService.sendChat(player, "team.new-member-joined");
+            notifyService.sendTitle(player, "team.new-member-joined.title", "team.new-member-joined.subtitle");
+            notifyService.sendActionBar(player, "team.new-member-joined");
+            notifyService.playSound(player, "team.new-member-joined");
         }
     }
 

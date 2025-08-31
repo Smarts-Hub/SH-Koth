@@ -19,8 +19,14 @@ public class MemberLeavedTeamListener implements Listener {
     public void onMemberLeaveTeam(MemberLeavedTeamEvent event){
         PlaceholderAPIHook.pushArgs("", event.getRemovedPlayer().getName());
         notifyService.sendChat(event.getRemovedPlayer(), "team.removed-from-team");
+        notifyService.sendTitle(event.getRemovedPlayer(), "team.removed.title", "team.removed.subtitle");
+        notifyService.sendActionBar(event.getRemovedPlayer(), "team.removed");
+        notifyService.playSound(event.getRemovedPlayer(), "team.removed");
         for (var player : event.getNewTeam().getOnlineMembers()) {
             notifyService.sendChat(player, "team.member-removed");
+            notifyService.sendTitle(player, "team.member-removed.title", "team.member-removed.subtitle");
+            notifyService.sendActionBar(player, "team.member-removed");
+            notifyService.playSound(player, "team.member-removed");
         }
 
     }

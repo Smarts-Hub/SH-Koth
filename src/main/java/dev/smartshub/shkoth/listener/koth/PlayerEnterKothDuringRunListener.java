@@ -19,6 +19,9 @@ public class PlayerEnterKothDuringRunListener implements Listener {
     public void onPlayerEnterKoth(PlayerEnterKothDuringRunEvent event) {
         PlaceholderAPIHook.pushArgs(event.getKoth().getDisplayName());
         notifyService.sendChat(event.getPlayer(), "koth.enter");
+        notifyService.sendTitle(event.getPlayer(), "koth.enter.title", "koth.enter.subtitle");
+        notifyService.sendActionBar(event.getPlayer(), "koth.enter");
+        notifyService.playSound(event.getPlayer(), "koth.enter");
     }
 
 }

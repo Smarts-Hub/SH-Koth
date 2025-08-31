@@ -22,6 +22,7 @@ import dev.smartshub.shkoth.registry.KothRegistry;
 import dev.smartshub.shkoth.api.koth.tally.TallyFactory;
 import dev.smartshub.shkoth.koth.tally.capture.CaptureTally;
 import dev.smartshub.shkoth.koth.tally.score.ScoreTally;
+import dev.smartshub.shkoth.service.bossbar.AdventureBossbarService;
 import dev.smartshub.shkoth.service.config.ConfigService;
 import dev.smartshub.shkoth.service.koth.RefreshInsideKothService;
 import dev.smartshub.shkoth.service.notify.NotifyService;
@@ -60,6 +61,8 @@ public class SHKoth extends ZapperJavaPlugin {
 
     private SendScoreboardService sendScoreboardService;
     private ScoreboardHandleService scoreboardHandleService;
+
+    private AdventureBossbarService adventureBossbarService;
 
     private TeamHandlingService teamHandlingService;
     private TeamHookHelpService teamHookHelpService;
@@ -132,6 +135,8 @@ public class SHKoth extends ZapperJavaPlugin {
 
         refreshInsideKothService = new RefreshInsideKothService(kothRegistry);
         kothSchedulerService = new KothSchedulerService(kothRegistry);
+
+        adventureBossbarService = new AdventureBossbarService(configService.provide(ConfigType.BOSSBAR), messageParser);
     }
 
     private void initTracker() {
@@ -148,7 +153,7 @@ public class SHKoth extends ZapperJavaPlugin {
         task = new UpdateTask(kothTicker, refreshInsideKothService, kothSchedulerService, scoreboardHandleService);
         task.runTaskTimer(this, 20L, 20L);
 
-        asyncJobTask = new AsyncJobTask(scoreboardHandleService, teamTracker);
+        asyncJobTask = new AsyncJobTask(scoreboardHandleService, teamTracker, adventureBossbarService);
         asyncJobTask.runTaskTimerAsynchronously(this, 20L, 20L);
     }
 
@@ -172,7 +177,7 @@ public class SHKoth extends ZapperJavaPlugin {
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new KothEndListener(notifyService, playerStatsDAO), this);
         getServer().getPluginManager().registerEvents(new KothStartListener(notifyService), this);
-        getServer().getPluginManager().registerEvents(new KothStateChangeListener(scoreboardHandleService), this);
+        getServer().getPluginManager().registerEvents(new KothStateChangeListener(scoreboardHandleService, adventureBossbarService), this);
         getServer().getPluginManager().registerEvents(new PlayerEnterKothDuringRunListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new PlayerLeavekothDuringRunListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new PlayerStartKothCaptureListener(notifyService) , this);

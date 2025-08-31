@@ -1,0 +1,36 @@
+#  _____                       _
+# / ____|                     | |
+#| (___   ___  _   _ _ __   __| |
+# \___ \ / _ \| | | | '_ \ / _` |
+# ____) | (_) | |_| | | | | (_| |
+#|_____/ \___/ \__,_|_| |_|\__,_|
+#
+# Sound configuration file
+# * PlaceholderAPI is supported in every message
+# * If you want to disable the sound, simply replace titles with empty: ""
+# * Sound list: https://minecraftsounds.com/
+# Support: https://discord.smartshub.dev/
+
+koth:
+  start: "minecraft:entity.experience_orb.pickup"
+  end: "minecraft:block.note_block.bass"
+  end-by-timeout: "minecraft:block.note_block.bass"
+  start-capturing: "minecraft:entity.player.levelup"
+  stop-capturing: "minecraft:block.note_block.bass"
+  enter: "minecraft:entity.villager.yes"
+  leave: "minecraft:block.note_block.bass"
+
+team:
+  created: "minecraft:entity.experience_orb.pickup"
+  disband: "minecraft:block.note_block.bass"
+  kicked: "minecraft:block.note_block.bass"
+  member-kicked: "minecraft:entity.player.levelup"
+  removed: "minecraft:block.note_block.bass"
+  member-removed: "minecraft:block.note_block.bass"
+  new-leader: "minecraft:entity.experience_orb.pickup"
+  added-to-team: "minecraft:entity.player.levelup"
+  new-member-joined: "minecraft:entity.villager.yes"
+
+
+# DO NOT TOUCH THIS!
+config-version: 1

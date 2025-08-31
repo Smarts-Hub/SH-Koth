@@ -3,6 +3,8 @@ package dev.smartshub.shkoth.service.notify;
 import dev.smartshub.shkoth.message.MessageParser;
 import dev.smartshub.shkoth.message.MessageRepository;
 
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
@@ -10,7 +12,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
-import java.util.Collection;
 import java.util.List;
 
 public class NotifyService {
@@ -85,8 +86,8 @@ public class NotifyService {
     public void sendTitle(Player player, String titlePath, String subtitlePath) {
         if (player == null) return;
 
-        String titleText = repository.getMessage(titlePath);
-        String subtitleText = repository.getMessage(subtitlePath);
+        String titleText = repository.getTitle(titlePath);
+        String subtitleText = repository.getSubtittle(subtitlePath);
 
         Component titleComp = (titleText != null && !titleText.trim().isEmpty())
                 ? parser.parseWithPlayer(titleText, player)
@@ -101,84 +102,26 @@ public class NotifyService {
         player.showTitle(title);
     }
 
-    public void sendTitle(Player player, String titlePath, String subtitlePath,
-                          Duration fadeIn, Duration stay, Duration fadeOut) {
-        if (player == null) return;
-
-        String titleText = repository.getMessage(titlePath);
-        String subtitleText = repository.getMessage(subtitlePath);
-
-        Component titleComp = (titleText != null && !titleText.trim().isEmpty())
-                ? parser.parseWithPlayer(titleText, player)
-                : Component.empty();
-
-        Component subtitleComp = (subtitleText != null && !subtitleText.trim().isEmpty())
-                ? parser.parseWithPlayer(subtitleText, player)
-                : Component.empty();
-
-        Title title = Title.title(titleComp, subtitleComp,
-                Title.Times.times(fadeIn, stay, fadeOut));
-        player.showTitle(title);
-    }
 
     public void sendActionBar(Player player, String path) {
         if (player == null) return;
-        String message = repository.getMessage(path);
+        String message = repository.getActionbar(path);
         if (message == null || message.trim().isEmpty()) return;
 
         Component component = parser.parseWithPlayer(message, player);
         player.sendActionBar(component);
     }
 
-    public void sendMultipleLines(Player player, String path) {
+    public void playSound(Player player, String path) {
         if (player == null) return;
-        List<String> lines = repository.getBroadcastMessageList(path);
-        if (lines == null || lines.isEmpty()) return;
+        String soundString = repository.getSound(path);
+        if (soundString == null || soundString.trim().isEmpty()) return;
 
-        List<Component> components = parser.parseListWithPlayer(lines, player);
-        components.forEach(player::sendMessage);
-    }
-
-    public void sendMultipleLines(CommandSender sender, String path) {
-        if (sender == null) return;
-        List<String> lines = repository.getBroadcastMessageList(path);
-        if (lines == null || lines.isEmpty()) return;
-
-        List<Component> components = parser.parseList(lines);
-        components.forEach(sender::sendMessage);
-    }
-
-    public void sendBroadcast(String path, Collection<Player> players) {
-        if (players == null || players.isEmpty()) return;
-        String message = repository.getBroadcastMessage(path);
-        if (message == null || message.trim().isEmpty()) return;
-
-        Component component = parser.parse(message);
-        for (Player player : players) {
-            if (player == null || !player.isOnline()) continue;
-            player.sendMessage(component);
-        }
-    }
-
-    public void sendBroadcastList(String path, Collection<Player> players) {
-        if (players == null || players.isEmpty()) return;
-        List<String> messages = repository.getBroadcastMessageList(path);
-        if (messages == null || messages.isEmpty()) return;
-
-        List<Component> components = parser.parseList(messages);
-        for (Player player : players) {
-            if (player == null || !player.isOnline()) continue;
-            components.forEach(player::sendMessage);
-        }
-    }
-
-    public void sendBroadcastToOnlinePlayers(String path) {
-        String message = repository.getBroadcastMessage(path);
-        if (message == null || message.trim().isEmpty()) return;
-
-        Component component = parser.parse(message);
-        for (Player player : org.bukkit.Bukkit.getOnlinePlayers()) {
-            player.sendMessage(component);
+        try {
+            Sound sound = Sound.sound(Key.key(soundString), Sound.Source.PLAYER, 1.0f, 1.0f);
+            player.playSound(sound);
+        } catch (IllegalArgumentException e) {
+            // Invalid sound, do nothing
         }
     }
 

@@ -17,6 +17,9 @@ public class PlayerLeavekothDuringRunListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerLeaveKoth(PlayerLeaveKothDuringRunEvent event) {
         notifyService.sendChat(event.getPlayer(), "koth.leave");
+        notifyService.sendTitle(event.getPlayer(), "koth.leave.title", "koth.leave.subtitle");
+        notifyService.sendActionBar(event.getPlayer(), "koth.leave");
+        notifyService.playSound(event.getPlayer(), "koth.leave");
     }
 
 }

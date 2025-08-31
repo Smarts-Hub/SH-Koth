@@ -19,8 +19,14 @@ public class MemberKickedFromTeamListener implements Listener {
     public void onMemberKickedFromTeam(MemberKickedFromTeamEvent event) {
         PlaceholderAPIHook.pushArgs("", event.getKickedPlayer().getName());
         notifyService.sendChat(event.getKickedPlayer(), "team.kicked-from-team");
+        notifyService.sendTitle(event.getKickedPlayer(), "team.kicked.title", "team.kicked.subtitle");
+        notifyService.sendActionBar(event.getKickedPlayer(), "team.kicked");
+        notifyService.playSound(event.getKickedPlayer(), "team.kicked");
         for (var player : event.getOldTeam().getOnlineMembers()) {
             notifyService.sendChat(player, "team.member-kicked");
+            notifyService.sendTitle(player, "team.kicked.title", "team.kicked.subtitle");
+            notifyService.sendActionBar(player, "team.member-kicked");
+            notifyService.playSound(player, "team.member-kicked");
         }
         notifyService.sendChat(event.getKickerPlayer(), "team.kick-member-success");
     }

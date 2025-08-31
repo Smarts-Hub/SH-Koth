@@ -1,0 +1,36 @@
+#             _   _             _
+#   /\       | | (_)           | |
+#  /  \   ___| |_ _  ___  _ __ | |__   __ _ _ __
+# / /\ \ / __| __| |/ _ \| '_ \| '_ \ / _` | '__|
+# / ____ \ (__| |_| | (_) | | | | |_) | (_| | |
+#/_/    \_\___|\__|_|\___/|_| |_|_.__/ \__,_|_|
+#
+# Actionbar and subtitle configuration file
+# * Formatting: MiniMessage (https://docs.advntr.dev/minimessage/format)
+# * PlaceholderAPI is supported in every message
+# * If you want to disable the action-bar, simply replace titles with empty: ""
+# Support: https://discord.smartshub.dev/
+
+koth:
+  start: "<green>The KOTH %shkoth_koth_context% has started!"
+  end: "<red>The KOTH %shkoth_koth_context% has ended!"
+  end-by-timeout: "<red>The KOTH %shkoth_koth_context% has ended!"
+  start-capturing: "<red>The KOTH %shkoth_koth_context% has ended!"
+  stop-capturing: "<red>The KOTH %shkoth_koth_context% capture has been stopped!"
+  enter: "<green>You have entered the KOTH %shkoth_koth_context%."
+  leave: "<red>You have left the KOTH %shkoth_koth_context%."
+
+team:
+  created: "<green>Team created successfully."
+  disband: "<red>The team has been dissolved by %shkoth_player_context%"
+  kicked: "<red>You have been kicked from your team."
+  member-kicked: "<green>%shkoth_player_context% has been kicked from your team."
+  removed: "<red>You have been removed from your team."
+  member-removed: "<green>%shkoth_player_context% has been removed from your team."
+  new-leader: "<light_purple>You have changed the team leader. The new one is %shkoth_player_context%."
+  added-to-team: "<green>You have been added to a team."
+  new-member-joined: "<green>%shkoth_player_context% has joined your team."
+
+
+# DO NOT TOUCH THIS!
+config-version: 1

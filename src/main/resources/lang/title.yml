@@ -1,0 +1,68 @@
+# _______ _ _   _
+#|__   __(_) | | |
+#   | |   _| |_| | ___
+#   | |  | | __| |/ _ \
+#   | |  | | |_| |  __/
+#   |_|  |_|\__|_|\___|
+#
+# Title and subtitle configuration file
+# * Formatting: MiniMessage (https://docs.advntr.dev/minimessage/format)
+# * PlaceholderAPI is supported in every message
+# * If you want to disable the boss-bar, simply replace titles with empty: ""
+# Support: https://discord.smartshub.dev/
+
+koth:
+  start:
+    title: "<green>The KOTH %shkoth_koth_context% has started!"
+    subtitle: "<yellow>Capture the KOTH to win amazing rewards!"
+  end:
+    title: "<red>The KOTH %shkoth_koth_context% has ended!"
+    subtitle: "<light_purple>Congratulations to the winners!"
+  end-by-timeout:
+    title: "<red>The KOTH %shkoth_koth_context% has ended!"
+    subtitle: "<light_purple>Nobody captured it in time!"
+  start-capturing:
+    title: "<green>The KOTH %shkoth_koth_context% is being captured by %shkoth_player_contextual%!"
+    subtitle: "<green>Try to reclaim it before it's too late!"
+  stop-capturing:
+    title: "<red>The KOTH %shkoth_koth_context% capture has been stopped!"
+    subtitle: "<blue>The battle continues!"
+  enter:
+    title: "<green>You have entered the KOTH %shkoth_koth_context%."
+    subtitle: ""
+  leave:
+    title: "<red>You have left the KOTH %shkoth_koth_context%."
+    subtitle: ""
+
+team:
+  created:
+    title: "<green>Team created successfully."
+    subtitle: ""
+  disband:
+    title: "<red>The team has been dissolved by %shkoth_player_context%"
+    subtitle: ""
+  kicked:
+    title: "<red>You have been kicked from your team."
+    subtitle: ""
+  member-kicked:
+    title: "<green>%shkoth_player_context% has been kicked from your team."
+    subtitle: ""
+  removed:
+    title: "<red>You have been removed from your team."
+    subtitle: ""
+  member-removed:
+    title: "<green>%shkoth_player_context% has been removed from your team."
+    subtitle: ""
+  new-leader:
+    title: "<light_purple>You have changed the team leader. The new one is %shkoth_player_context%."
+    subtitle: ""
+  added-to-team:
+    title: "<green>You have been added to a team."
+    subtitle: ""
+  new-member-joined:
+    title: "<green>%shkoth_player_context% has joined your team."
+    subtitle: ""
+
+
+# DO NOT TOUCH THIS!
+config-version: 1

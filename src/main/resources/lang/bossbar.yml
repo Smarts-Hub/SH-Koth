@@ -1,19 +1,31 @@
+#____                _
+#|  _ \              | |
+#| |_) | ___  ___ ___| |__   __ _ _ __
+#|  _ < / _ \/ __/ __| '_ \ / _` | '__|
+#| |_) | (_) \__ \__ \ |_) | (_| | |
+#|____/ \___/|___/___/_.__/ \__,_|_|
+#
+# Bossbar configuration file
+# * Formatting: MiniMessage (https://docs.advntr.dev/minimessage/format)
+# * PlaceholderAPI is supported in every message
+# * If you want to disable the boss-bar, simply replace titles with empty: ""
+# Support: https://discord.smartshub.dev/
 
 
 # Displayed when a player is capturing the KOTH
-capturing-title: ""
+capturing-title: "<red>Capturing koth!"
 
 # While no one is capturing the KOTH
-waiting-title: ""
+waiting-title: "<green>No one is capturing!"
 
-# Player scope for the bossbar
+# Player scope for the boss-bar
 # Available options:
 # * "all" (whole server players)
 # * "world" (players at koth's world)
 # * "area" (only players inside the koth area)
 player-scope: "world"
 
-# Bossbar colors
+# Boss-bar colors
 # Options:
 # * "auto" (change by progress: 0-30% red, 30-70% yellow, 70-100% red)
 # * "red"
@@ -24,3 +36,8 @@ player-scope: "world"
 # * "purple"
 # * "white"
 color-by-progress: "auto"
+
+
+
+# DO NOT TOUCH THIS!
+config-version: 1

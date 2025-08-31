@@ -20,6 +20,7 @@ public class TeamDissolvedListener implements Listener {
         notifyService.sendChat(event.getDissolverPlayer(), "team.disbanded-team-success");
         for(Player player : event.getTeam().getOnlineMembers()){
             notifyService.sendChat(player, "team.dissolved");
+            notifyService.sendTitle(player, "team.disband.title", "team.disband.subtitle");
         }
     }
 
