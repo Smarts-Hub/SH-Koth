@@ -78,7 +78,7 @@ public class KothCommand {
         });
     }
 
-    @Subcommand("reload koths")
+    @Subcommand("reload")
     public void reload(BukkitCommandActor actor) {
         kothRegistry.reloadKoths();
         configService.reloadAll();
