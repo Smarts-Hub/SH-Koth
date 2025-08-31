@@ -13,6 +13,7 @@ public class PlayerStatsCache {
 
     private final PlayerStatsDAO dao;
     private final ConcurrentHashMap<String, CachedValue> cache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, CompletableFuture<Integer>> pendingRequests = new ConcurrentHashMap<>();
     private final long ttl = TimeUnit.SECONDS.toMillis(30);
 
     public PlayerStatsCache(PlayerStatsDAO dao) {
@@ -20,33 +21,6 @@ public class PlayerStatsCache {
     }
 
     public String getStat(Player player, StatType type) {
-        return getCachedStat(player, type, getFutureFor(type, player.getUniqueId()));
-    }
-
-    public void preload(Player player) {
-        dao.getPlayerStats(player.getUniqueId()).thenAccept(optStats -> {
-            optStats.ifPresent(stats -> {
-                UUID id = player.getUniqueId();
-                long now = System.currentTimeMillis();
-
-                cache.put(key(id, StatType.TOTAL), new CachedValue(stats.getTotalWins(), now));
-                cache.put(key(id, StatType.SOLO), new CachedValue(stats.soloWins(), now));
-                cache.put(key(id, StatType.TEAM), new CachedValue(stats.teamWins(), now));
-            });
-        });
-    }
-
-    public void invalidate(UUID playerId) {
-        for (StatType type : StatType.values()) {
-            cache.remove(key(playerId, type));
-        }
-    }
-
-    public void clear() {
-        cache.clear();
-    }
-
-    private String getCachedStat(Player player, StatType type, CompletableFuture<Integer> future) {
         String key = key(player.getUniqueId(), type);
         CachedValue cached = cache.get(key);
 
@@ -54,12 +28,99 @@ public class PlayerStatsCache {
             return String.valueOf(cached.value);
         }
 
+        CompletableFuture<Integer> pending = pendingRequests.get(key);
+        if (pending != null && !pending.isDone()) {
+            return cached != null ? String.valueOf(cached.value) : "0";
+        }
+
+        CompletableFuture<Integer> future = getFutureFor(type, player.getUniqueId());
+        pendingRequests.put(key, future);
+
         future.thenAccept(value -> {
             System.out.println("[SHKoth] Caching " + type.name() + " wins for player " + player.getName() + ": " + value);
             cache.put(key, new CachedValue(value, System.currentTimeMillis()));
+            pendingRequests.remove(key);
+        }).exceptionally(throwable -> {
+            System.err.println("[SHKoth] Error caching stats for " + player.getName() + ": " + throwable.getMessage());
+            pendingRequests.remove(key);
+            return null;
         });
 
         return cached != null ? String.valueOf(cached.value) : "0";
+    }
+
+
+    public void preload(Player player) {
+        dao.getPlayerStats(player.getUniqueId()).thenAccept(optStats -> {
+            if (optStats.isPresent()) {
+                UUID id = player.getUniqueId();
+                long now = System.currentTimeMillis();
+                var stats = optStats.get();
+
+                System.out.println("[SHKoth] Preloading stats for " + player.getName() +
+                        " - Solo: " + stats.soloWins() + ", Team: " + stats.teamWins() +
+                        ", Total: " + (stats.soloWins() + stats.teamWins()));
+
+                cache.put(key(id, StatType.TOTAL), new CachedValue(stats.soloWins() + stats.teamWins(), now));
+                cache.put(key(id, StatType.SOLO), new CachedValue(stats.soloWins(), now));
+                cache.put(key(id, StatType.TEAM), new CachedValue(stats.teamWins(), now));
+            } else {
+                System.out.println("[SHKoth] No stats found for " + player.getName() + " during preload");
+                UUID id = player.getUniqueId();
+                long now = System.currentTimeMillis();
+                cache.put(key(id, StatType.TOTAL), new CachedValue(0, now));
+                cache.put(key(id, StatType.SOLO), new CachedValue(0, now));
+                cache.put(key(id, StatType.TEAM), new CachedValue(0, now));
+            }
+        }).exceptionally(throwable -> {
+            System.err.println("[SHKoth] Error preloading stats for " + player.getName() + ": " + throwable.getMessage());
+            return null;
+        });
+    }
+
+    public void invalidate(UUID playerId) {
+        for (StatType type : StatType.values()) {
+            String key = key(playerId, type);
+            cache.remove(key);
+            CompletableFuture<Integer> pending = pendingRequests.remove(key);
+            if (pending != null && !pending.isDone()) {
+                pending.cancel(false);
+            }
+        }
+        System.out.println("[SHKoth] Cache invalidated for player " + playerId);
+    }
+
+    public void clear() {
+        cache.clear();
+        pendingRequests.values().forEach(future -> {
+            if (!future.isDone()) {
+                future.cancel(false);
+            }
+        });
+        pendingRequests.clear();
+        System.out.println("[SHKoth] Full cache cleared");
+    }
+
+    public void debugCache(UUID playerId) {
+        System.out.println("[SHKoth] Cache debug for " + playerId + ":");
+        for (StatType type : StatType.values()) {
+            String key = key(playerId, type);
+            CachedValue cached = cache.get(key);
+            if (cached != null) {
+                System.out.println("  " + type + ": " + cached.value +
+                        " (expired: " + cached.isExpired() + ")");
+            } else {
+                System.out.println("  " + type + ": NOT CACHED");
+            }
+        }
+    }
+
+    public void refreshPlayer(UUID playerId) {
+        invalidate(playerId);
+        org.bukkit.Bukkit.getPlayer(playerId);
+        if (org.bukkit.Bukkit.getPlayer(playerId) != null) {
+            preload(org.bukkit.Bukkit.getPlayer(playerId));
+        }
     }
 
     private CompletableFuture<Integer> getFutureFor(StatType type, UUID playerId) {
