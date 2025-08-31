@@ -1,0 +1,26 @@
+
+
+# Displayed when a player is capturing the KOTH
+capturing-title: ""
+
+# While no one is capturing the KOTH
+waiting-title: ""
+
+# Player scope for the bossbar
+# Available options:
+# * "all" (whole server players)
+# * "world" (players at koth's world)
+# * "area" (only players inside the koth area)
+player-scope: "world"
+
+# Bossbar colors
+# Options:
+# * "auto" (change by progress: 0-30% red, 30-70% yellow, 70-100% red)
+# * "red"
+# * "green"
+# * "blue"
+# * "yellow"
+# * "pink"
+# * "purple"
+# * "white"
+color-by-progress: "auto"
