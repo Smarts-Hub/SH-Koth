@@ -2,6 +2,7 @@ package dev.smartshub.shkoth.service.team;
 
 import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.service.notify.NotifyService;
+import dev.smartshub.shkoth.storage.cache.PushStackCache;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -49,7 +50,7 @@ public class TeamInviteService {
         TeamInvitation invitation = new TeamInvitation(leaderId, targetId);
         pendingInvitations.put(targetId, invitation);
 
-        PlaceholderAPIHook.pushArgs(leader.getName(), "", target.getName());
+        PushStackCache.pushArgs(leader.getName(), "", target.getName());
         notifyService.sendChat(target, "team.invitation-received");
         notifyService.sendChat(leader, "team.invitation-sent");
     }
@@ -85,7 +86,7 @@ public class TeamInviteService {
         
         Player leader = Bukkit.getPlayer(invitation.getLeaderId());
         if (leader != null) {
-            PlaceholderAPIHook.pushArgs(player.getName());
+            PushStackCache.pushArgs(player.getName());
             notifyService.sendChat(leader, "team.invitation-declined");
         }
 

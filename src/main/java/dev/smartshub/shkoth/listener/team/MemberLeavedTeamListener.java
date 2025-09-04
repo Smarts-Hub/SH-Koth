@@ -3,6 +3,7 @@ package dev.smartshub.shkoth.listener.team;
 import dev.smartshub.shkoth.api.event.team.MemberLeavedTeamEvent;
 import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.service.notify.NotifyService;
+import dev.smartshub.shkoth.storage.cache.PushStackCache;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -17,7 +18,7 @@ public class MemberLeavedTeamListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMemberLeaveTeam(MemberLeavedTeamEvent event){
-        PlaceholderAPIHook.pushArgs("", event.getRemovedPlayer().getName());
+        PushStackCache.pushArgs("", event.getRemovedPlayer().getName());
         notifyService.sendChat(event.getRemovedPlayer(), "team.removed-from-team");
         notifyService.sendTitle(event.getRemovedPlayer(), "team.removed.title", "team.removed.subtitle");
         notifyService.sendActionBar(event.getRemovedPlayer(), "team.removed");

@@ -35,7 +35,9 @@ public class RefreshInsideKothService {
             return;
         }
 
-        worldPlayers.forEach(player -> processPlayer(koth, player, currentPlayersInside));
+        worldPlayers.forEach(player -> {
+            processPlayer(koth, player, currentPlayersInside);
+        });
         removeOfflinePlayers(koth, worldPlayers, currentPlayersInside);
     }
 

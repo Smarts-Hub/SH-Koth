@@ -73,8 +73,8 @@ commands-perform:
   # These commands will be executed when a player wins the KoTH,
   # these means: one time if this koth is solo, or for each player if this koth is team.
   to-winners:
-    - "say Congratulations, %player_name%!"
-    - "give %player_name% diamond 5"
+    - "say Congratulations, %player%!"
+    - "minecraft:give %player_name% minecraft:diamond 5"
 
 # This must be added by commands in game, taken the item in ur main hand.
 # You can add as many items as u want.

@@ -3,6 +3,7 @@ package dev.smartshub.shkoth.listener.team;
 import dev.smartshub.shkoth.api.event.team.TeamChangeLeaderEvent;
 import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.service.notify.NotifyService;
+import dev.smartshub.shkoth.storage.cache.PushStackCache;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,7 +19,7 @@ public class TeamChangeLeaderListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onTeamChangeLeader(TeamChangeLeaderEvent event){
-        PlaceholderAPIHook.pushArgs("", event.getNewLeaderPlayer().getName());
+        PushStackCache.pushArgs("", event.getNewLeaderPlayer().getName());
         for(Player player : event.getTeam().getOnlineMembers()){
             notifyService.sendChat(player, "team.change-leader");
             notifyService.sendTitle(player, "team.new-leader.title", "team.new-leader.subtitle");

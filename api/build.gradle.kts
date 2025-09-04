@@ -11,8 +11,10 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/") {
         name = "papermc-repo"
     }
+    maven("https://repo.triumphteam.dev/snapshots/")
 }
 
 dependencies {
     paperweight.paperDevBundle("1.21.7-R0.1-SNAPSHOT")
-    }
+    implementation("dev.triumphteam:triumph-gui:3.1.13-SNAPSHOT")
+}

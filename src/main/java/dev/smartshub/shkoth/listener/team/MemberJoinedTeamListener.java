@@ -3,6 +3,7 @@ package dev.smartshub.shkoth.listener.team;
 import dev.smartshub.shkoth.api.event.team.MemberJoinedTeamEvent;
 import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.service.notify.NotifyService;
+import dev.smartshub.shkoth.storage.cache.PushStackCache;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,7 +19,7 @@ public class MemberJoinedTeamListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMemberJoinTeam(MemberJoinedTeamEvent event){
-        PlaceholderAPIHook.pushArgs("", event.getAddedPlayer().getName());
+        PushStackCache.pushArgs("", event.getAddedPlayer().getName());
         notifyService.sendChat(event.getAddedPlayer(), "team.added-to-team");
         notifyService.sendTitle(event.getAddedPlayer(), "team.added-to-team.title", "team.added-to-team.subtitle");
         notifyService.sendActionBar(event.getAddedPlayer(), "team.added-to-team");

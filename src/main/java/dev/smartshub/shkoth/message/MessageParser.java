@@ -1,7 +1,9 @@
 package dev.smartshub.shkoth.message;
 
+import dev.smartshub.shkoth.storage.cache.PushStackCache;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -15,7 +17,9 @@ public class MessageParser {
     private final boolean placeholderAPIAvailable;
 
     public MessageParser() {
-        this.miniMessage = MiniMessage.miniMessage();
+        this.miniMessage = MiniMessage.builder()
+                .postProcessor(component -> component.decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE))
+                .build();
         this.placeholderAPIAvailable = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
 
         if (!placeholderAPIAvailable) {
@@ -28,9 +32,13 @@ public class MessageParser {
             return Component.empty();
         }
 
+        var replaced = message.replace("%shkoth_koth_context%", PushStackCache.getArg1() == null ? "" : PushStackCache.getArg1())
+                .replace("%shkoth_winner_context%", PushStackCache.getArg2() == null ? "" : PushStackCache.getArg2())
+                .replace("%shkoth_aux_context%", PushStackCache.getArg3() == null ? "" : PushStackCache.getArg3());
+
         String processedMessage = placeholderAPIAvailable
-                ? PlaceholderAPI.setPlaceholders(player, message)
-                : message;
+                ? PlaceholderAPI.setPlaceholders(player, replaced)
+                : replaced;
         return miniMessage.deserialize(processedMessage);
     }
 
@@ -39,7 +47,11 @@ public class MessageParser {
             return Component.empty();
         }
 
-        return miniMessage.deserialize(message);
+        var replaced = message.replace("%shkoth_koth_context%", PushStackCache.getArg1() == null ? "" : PushStackCache.getArg1())
+                .replace("%shkoth_winner_context%", PushStackCache.getArg2() == null ? "" : PushStackCache.getArg2())
+                .replace("%shkoth_aux_context%", PushStackCache.getArg3() == null ? "" : PushStackCache.getArg3());
+
+        return miniMessage.deserialize(replaced);
     }
 
     public List<Component> parseListWithPlayer(List<String> messages, Player player) {
@@ -62,5 +74,12 @@ public class MessageParser {
                 .filter(message -> message != null && !message.trim().isEmpty())
                 .map(this::parse)
                 .collect(Collectors.toList());
+    }
+
+    public String toString(Component component) {
+        if (component == null) {
+            return "";
+        }
+        return miniMessage.serialize(component);
     }
 }

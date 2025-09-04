@@ -88,6 +88,16 @@ public class KothRegistry {
         return false;
     }
 
+    public Duration getRemainingScheduleTime(String kothId) {
+        Koth koth = get(kothId);
+
+        if (koth != null && koth.isRunning()) {
+            return Duration.ofSeconds(koth.getRemainingTime());
+        }
+
+        return scheduler.getTimeUntilScheduleEnds(kothId);
+    }
+
     public KothSchedulerService getScheduler() {
         return scheduler;
     }
@@ -122,10 +132,6 @@ public class KothRegistry {
 
     public boolean hasSchedule(String kothId) {
         return scheduler.hasSchedule(kothId);
-    }
-
-    public Duration getRemainingScheduleTime(String kothId) {
-        return scheduler.getTimeUntilScheduleEnds(kothId);
     }
 
     public Duration getTimeUntilNext(String kothId) {

@@ -3,6 +3,7 @@ package dev.smartshub.shkoth.listener.team;
 import dev.smartshub.shkoth.api.event.team.MemberKickedFromTeamEvent;
 import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.service.notify.NotifyService;
+import dev.smartshub.shkoth.storage.cache.PushStackCache;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -17,7 +18,7 @@ public class MemberKickedFromTeamListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMemberKickedFromTeam(MemberKickedFromTeamEvent event) {
-        PlaceholderAPIHook.pushArgs("", event.getKickedPlayer().getName());
+        PushStackCache.pushArgs("", event.getKickedPlayer().getName());
         notifyService.sendChat(event.getKickedPlayer(), "team.kicked-from-team");
         notifyService.sendTitle(event.getKickedPlayer(), "team.kicked.title", "team.kicked.subtitle");
         notifyService.sendActionBar(event.getKickedPlayer(), "team.kicked");

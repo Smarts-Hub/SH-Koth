@@ -9,10 +9,15 @@ import dev.smartshub.shkoth.command.handler.parameter.KothParameterType;
 import dev.smartshub.shkoth.command.handler.parameter.NumberParameterType;
 import dev.smartshub.shkoth.command.koth.KothCommand;
 import dev.smartshub.shkoth.command.team.TeamCommand;
+import dev.smartshub.shkoth.gui.AddPhysicalRewardGui;
+import dev.smartshub.shkoth.gui.CommandGui;
+import dev.smartshub.shkoth.gui.CreateSchedulerGui;
 import dev.smartshub.shkoth.hook.bstats.Metrics;
 import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.koth.ticking.KothTicker;
 import dev.smartshub.shkoth.listener.koth.*;
+import dev.smartshub.shkoth.listener.player.AsyncChatListener;
+import dev.smartshub.shkoth.listener.player.PlayerInteractListener;
 import dev.smartshub.shkoth.listener.player.PlayerJoinListener;
 import dev.smartshub.shkoth.listener.player.PlayerQuitListener;
 import dev.smartshub.shkoth.listener.team.*;
@@ -24,6 +29,10 @@ import dev.smartshub.shkoth.koth.tally.capture.CaptureTally;
 import dev.smartshub.shkoth.koth.tally.score.ScoreTally;
 import dev.smartshub.shkoth.service.bossbar.AdventureBossbarService;
 import dev.smartshub.shkoth.service.config.ConfigService;
+import dev.smartshub.shkoth.service.gui.GuiService;
+import dev.smartshub.shkoth.gui.CreateKothGui;
+import dev.smartshub.shkoth.service.koth.KothRegistrationFromTempDataService;
+import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
 import dev.smartshub.shkoth.service.koth.RefreshInsideKothService;
 import dev.smartshub.shkoth.service.notify.NotifyService;
 import dev.smartshub.shkoth.service.schedule.KothSchedulerService;
@@ -33,6 +42,7 @@ import dev.smartshub.shkoth.service.team.TeamHandlingService;
 import dev.smartshub.shkoth.service.team.TeamHookHelpService;
 import dev.smartshub.shkoth.service.team.TeamInformationService;
 import dev.smartshub.shkoth.service.team.TeamInviteService;
+import dev.smartshub.shkoth.service.wand.WandService;
 import dev.smartshub.shkoth.storage.cache.PlayerStatsCache;
 import dev.smartshub.shkoth.storage.database.connection.DatabaseConnection;
 import dev.smartshub.shkoth.storage.database.dao.PlayerStatsDAO;
@@ -40,12 +50,13 @@ import dev.smartshub.shkoth.storage.database.table.SchemaCreator;
 import dev.smartshub.shkoth.task.AsyncJobTask;
 import dev.smartshub.shkoth.task.UpdateTask;
 import dev.smartshub.shkoth.team.ContextualTeamTracker;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 import revxrsal.commands.bukkit.BukkitLamp;
-import revxrsal.zapper.ZapperJavaPlugin;
 
 import java.util.concurrent.CompletableFuture;
 
-public class SHKoth extends ZapperJavaPlugin {
+public class SHKoth extends JavaPlugin {
 
     private KothRegistry kothRegistry;
     private KothAPIImpl kothAPI;
@@ -56,6 +67,7 @@ public class SHKoth extends ZapperJavaPlugin {
     private MessageParser messageParser;
     private MessageRepository messageRepository;
     private ConfigService configService;
+
 
     private NotifyService notifyService;
 
@@ -68,6 +80,15 @@ public class SHKoth extends ZapperJavaPlugin {
     private TeamHookHelpService teamHookHelpService;
     private TeamInformationService teamInformationService;
     private TeamInviteService teamInviteService;
+
+    private WandService wandService;
+
+    private GuiService guiService;
+    private KothToRegisterCache kothToRegisterCache = new KothToRegisterCache();
+    private CreateKothGui createKothGui;
+    private AddPhysicalRewardGui addPhysicalRewardGui;
+    private CreateSchedulerGui createSchedulerGui;
+    private CommandGui commandGui;
 
     private KothTicker kothTicker;
     private RefreshInsideKothService refreshInsideKothService;
@@ -87,6 +108,7 @@ public class SHKoth extends ZapperJavaPlugin {
         initTracker();
         initAPI();
         initServices();
+        guis();
         initTicking();
         setUpTasks();
         registerCommands();
@@ -138,6 +160,34 @@ public class SHKoth extends ZapperJavaPlugin {
         kothSchedulerService = new KothSchedulerService(kothRegistry);
 
         adventureBossbarService = new AdventureBossbarService(kothRegistry, configService.provide(ConfigType.BOSSBAR), messageParser);
+        wandService = new WandService(this, messageParser);
+    }
+
+    // What a mess
+    public void guis(){
+        kothToRegisterCache = new KothToRegisterCache();
+
+        addPhysicalRewardGui = new AddPhysicalRewardGui(kothToRegisterCache, messageParser);
+        createSchedulerGui = new CreateSchedulerGui(kothToRegisterCache, messageParser);
+        commandGui = new CommandGui(kothToRegisterCache, messageParser);
+        createKothGui = new CreateKothGui(messageParser, kothToRegisterCache, wandService);
+        guiService = new GuiService(createKothGui, createSchedulerGui, addPhysicalRewardGui, commandGui);
+
+        kothToRegisterCache.setGuiService(guiService);
+        createSchedulerGui.setGuiService(guiService);
+        commandGui.setGuiService(guiService);
+        addPhysicalRewardGui.setGuiService(guiService);
+        createKothGui.setGuiService(guiService);
+
+        KothRegistrationFromTempDataService registrationService = new KothRegistrationFromTempDataService(
+                kothToRegisterCache,
+                configService,
+                kothRegistry,
+                teamTracker,
+                "plugins/SHKoth/koths" 
+        );
+
+        kothToRegisterCache.setRegistrationService(registrationService);
     }
 
     private void initTracker() {
@@ -171,7 +221,7 @@ public class SHKoth extends ZapperJavaPlugin {
                 .build();
 
         lamp.register(
-                new KothCommand(kothRegistry, notifyService, configService),
+                new KothCommand(kothRegistry, notifyService, configService, guiService),
                 new TeamCommand(teamHandlingService, teamInviteService, teamInformationService));
     }
 
@@ -193,11 +243,13 @@ public class SHKoth extends ZapperJavaPlugin {
 
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(playerStatsCache), this);
         getServer().getPluginManager().registerEvents(new PlayerQuitListener(playerStatsCache), this);
+        getServer().getPluginManager().registerEvents(new AsyncChatListener(this, kothToRegisterCache, messageParser, guiService), this);
+        getServer().getPluginManager().registerEvents(new PlayerInteractListener(kothToRegisterCache, guiService, messageParser, wandService), this);
     }
 
     private void registerHooks(){
         //PlaceholderAPI
-        if(getServer().getPluginManager().getPlugin("PlaceholderAPI") != null){
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
             new PlaceholderAPIHook(kothRegistry, playerStatsCache).register();
         }
 

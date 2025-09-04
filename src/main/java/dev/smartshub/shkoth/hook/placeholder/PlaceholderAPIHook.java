@@ -20,17 +20,6 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
         this.placeholderHelper = new PlaceholderHelper(kothRegistry);
     }
 
-    // Temp storage for contextual arguments, like player name or koth name in some messages
-    private static volatile String tempArg1;
-    private static volatile String tempArg2;
-    private static volatile String tempArg3;
-
-    public static void pushArgs(String... args) {
-        tempArg1 = args.length > 0 ? args[0] : null;
-        tempArg2 = args.length > 1 ? args[1] : null;
-        tempArg3 = args.length > 2 ? args[2] : null;
-    }
-
     @Override
     public @NotNull String getIdentifier() {
         return "shkoth";
@@ -54,9 +43,6 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
 
         if(kothName == null){
             return String.valueOf(switch (identifier) {
-                case "player_context" -> tempArg1 != null ? tempArg1 : "";
-                case "koth_context" -> tempArg2 != null ? tempArg2 : "";
-                case "aux_context" -> tempArg3 != null ? tempArg3 : "";
                 case "total_wins" -> playerStatsCache.getStat(player, StatType.TOTAL);
                 case "solo_wins" -> playerStatsCache.getStat(player, StatType.SOLO);
                 case "team_wins" -> playerStatsCache.getStat(player, StatType.TEAM);
