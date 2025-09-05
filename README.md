@@ -1,8 +1,8 @@
 # SH-KoTH
 
-[![BuiltByBit](https://img.shields.io/badge/BBB-Profile-00bfff?logo=bit&logoColor=white)]([https://builtbybit.com/resources/XXXX](https://builtbybit.com/resources/sh-koth.76419/)
+[![BuiltByBit](https://img.shields.io/badge/BBB-Profile-00bfff?logo=bit&logoColor=white)](https://builtbybit.com/resources/sh-koth.76419/)
 [![Modrinth](https://img.shields.io/badge/Modrinth-Download-1bd96a?logo=modrinth&logoColor=white)](https://modrinth.com/plugin/sh-koth)
-[![Documentation](https://img.shields.io/badge/Docs-Available-blue?logo=gitbook)]([https://docs.smartshub.dev/sh-koth](https://docs.smartshub.dev/sh-koth/intro/introduction/)
+[![Documentation](https://img.shields.io/badge/Docs-Available-blue?logo=gitbook)](https://docs.smartshub.dev/sh-koth/intro/introduction/)
 [![Support](https://img.shields.io/badge/Support-Discord-5865f2?logo=discord&logoColor=white)](https://discord.smartshub.dev/)
 
 ---
