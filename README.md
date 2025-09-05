@@ -1,20 +1,22 @@
 # SH-KoTH
 
-[![BuiltByBit](https://img.shields.io/badge/BBB-Profile-00bfff?logo=bit&logoColor=white)](https://builtbybit.com/resources/XXXX)
+[![BuiltByBit](https://img.shields.io/badge/BBB-Profile-00bfff?logo=bit&logoColor=white)]([https://builtbybit.com/resources/XXXX](https://builtbybit.com/resources/sh-koth.76419/))
 [![Modrinth](https://img.shields.io/badge/Modrinth-Download-1bd96a?logo=modrinth&logoColor=white)](https://modrinth.com/plugin/sh-koth)
-[![Documentation](https://img.shields.io/badge/Docs-Available-blue?logo=gitbook)](https://docs.smartshub.dev/sh-koth)
-[![Support](https://img.shields.io/badge/Support-Discord-5865f2?logo=discord&logoColor=white)](https://discord.gg/XXXX)
+[![Documentation](https://img.shields.io/badge/Docs-Available-blue?logo=gitbook)]([https://docs.smartshub.dev/sh-koth](https://docs.smartshub.dev/sh-koth/intro/introduction/))
+[![Support](https://img.shields.io/badge/Support-Discord-5865f2?logo=discord&logoColor=white)](https://discord.smartshub.dev/)
 
 ---
 
 ## 📖 About
-**SH-KoTH** is a fully customizable **King of the Hill** plugin designed for competitive Minecraft servers.  
-It provides limitless customization, advanced performance optimizations, cross-server support, and an extensive API.
+**SH-Koth** is a free and open-source KoTH plugin. It is designed to be simple to use, yet powerful in action. It provides a smarter way to manage your King of the Hill events,
+with features that enhance gameplay and improve server management.
+
+The main purpose of SH-Koth is to offer a reliable and efficient solution for hosting KoTH events on your server.
 
 ---
 
 ## 🚀 Quick Links
-- 📥 [Download on Modrinth](https://modrinth.com/plugin/sh-koth)  [
+- 📥 [Download on Modrinth](https://modrinth.com/plugin/sh-koth)
 - 🛒 [Download/Donate on BuiltByBit](](https://builtbybit.com/resources/sh-koth.76419/)https://builtbybit.com/resources/XXXX)  
 - 📚 [Read the Documentation]([https://docs.smartshub.dev/sh-koth](https://docs.smartshub.dev/sh-koth/intro/introduction/))  
 - 💬 [Get Support on Discord](https://discord.smarsthub.dev/)  
