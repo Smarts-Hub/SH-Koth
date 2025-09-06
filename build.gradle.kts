@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.smartshub"
-version = "1.0.0-BETA"
+version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()

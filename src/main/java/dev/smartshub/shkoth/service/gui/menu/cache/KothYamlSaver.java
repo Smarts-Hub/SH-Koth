@@ -17,7 +17,6 @@ import java.util.Map;
  * The code is awful and needs to be refactored at some point.
  */
 public class KothYamlSaver {
-//TODO
     private final ConfigService configService;
     private final String kothsFolderPath;
 

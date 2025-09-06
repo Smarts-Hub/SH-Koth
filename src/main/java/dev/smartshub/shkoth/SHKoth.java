@@ -184,7 +184,7 @@ public class SHKoth extends JavaPlugin {
                 configService,
                 kothRegistry,
                 teamTracker,
-                "plugins/SHKoth/koths" 
+                "plugins/SH-Koth/koths"
         );
 
         kothToRegisterCache.setRegistrationService(registrationService);
