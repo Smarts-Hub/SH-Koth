@@ -33,7 +33,7 @@ public class MessageParser {
         }
 
         var replaced = message.replace("%shkoth_koth_context%", PushStackCache.getArg1() == null ? "" : PushStackCache.getArg1())
-                .replace("%shkoth_winner_context%", PushStackCache.getArg2() == null ? "" : PushStackCache.getArg2())
+                .replace("%shkoth_player_context%", PushStackCache.getArg2() == null ? "" : PushStackCache.getArg2())
                 .replace("%shkoth_aux_context%", PushStackCache.getArg3() == null ? "" : PushStackCache.getArg3());
 
         String processedMessage = placeholderAPIAvailable

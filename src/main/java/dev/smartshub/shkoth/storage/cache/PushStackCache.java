@@ -7,10 +7,16 @@ public class PushStackCache {
     private static volatile String Arg2;
     private static volatile String Arg3;
 
-    public static void pushArgs(String... args) {
-        Arg1 = args.length > 0 ? args[0] : null;
-        Arg2 = args.length > 1 ? args[1] : null;
-        Arg3 = args.length > 2 ? args[2] : null;
+    public static void pushArg1(String arg1){
+        Arg1 = arg1;
+    }
+
+    public static void pushArg2(String arg2){
+        Arg2 = arg2;
+    }
+
+    public static void pushArg3(String arg3){
+        Arg3 = arg3;
     }
 
     public static String getArg1(){

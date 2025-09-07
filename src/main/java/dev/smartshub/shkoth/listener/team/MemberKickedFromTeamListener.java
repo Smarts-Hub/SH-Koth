@@ -18,7 +18,7 @@ public class MemberKickedFromTeamListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMemberKickedFromTeam(MemberKickedFromTeamEvent event) {
-        PushStackCache.pushArgs("", event.getKickedPlayer().getName());
+        PushStackCache.pushArg2(event.getKickedPlayer().getName());
         notifyService.sendChat(event.getKickedPlayer(), "team.kicked-from-team");
         notifyService.sendTitle(event.getKickedPlayer(), "team.kicked.title", "team.kicked.subtitle");
         notifyService.sendActionBar(event.getKickedPlayer(), "team.kicked");

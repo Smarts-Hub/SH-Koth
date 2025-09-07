@@ -50,7 +50,8 @@ public class TeamInviteService {
         TeamInvitation invitation = new TeamInvitation(leaderId, targetId);
         pendingInvitations.put(targetId, invitation);
 
-        PushStackCache.pushArgs(leader.getName(), "", target.getName());
+        PushStackCache.pushArg1(leader.getName());
+        PushStackCache.pushArg3(targetName);
         notifyService.sendChat(target, "team.invitation-received");
         notifyService.sendChat(leader, "team.invitation-sent");
     }
@@ -86,7 +87,7 @@ public class TeamInviteService {
         
         Player leader = Bukkit.getPlayer(invitation.getLeaderId());
         if (leader != null) {
-            PushStackCache.pushArgs(player.getName());
+            PushStackCache.pushArg1(player.getName());
             notifyService.sendChat(leader, "team.invitation-declined");
         }
 

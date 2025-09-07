@@ -19,7 +19,7 @@ public class KothStartListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onKothStart(KothStartEvent event) {
-        PushStackCache.pushArgs(event.getKoth().getDisplayName());
+        PushStackCache.pushArg1(event.getKoth().getDisplayName());
         notifyService.sendBroadcastListToOnlinePlayers("koth.start");
         Bukkit.getOnlinePlayers().forEach(player -> {
             notifyService.sendTitle(player, "koth.start.title", "koth.start.subtitle");

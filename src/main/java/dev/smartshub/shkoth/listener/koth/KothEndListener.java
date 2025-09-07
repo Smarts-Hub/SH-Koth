@@ -22,7 +22,7 @@ public class KothEndListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onKothEnd(KothEndEvent event) {
-        PushStackCache.pushArgs(event.getKoth().getDisplayName());
+        PushStackCache.pushArg1(event.getKoth().getDisplayName());
         notifyService.sendBroadcastListToOnlinePlayers("koth.end");
 
         if(event.getReason() != KothEndEvent.EndReason.CAPTURE_COMPLETED) {

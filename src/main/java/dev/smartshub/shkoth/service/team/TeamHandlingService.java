@@ -142,7 +142,7 @@ public class TeamHandlingService {
         boolean success = teamTracker.getInternalHandler().removeMemberFromTeam(memberToKick);
 
         if(!success){
-            PushStackCache.pushArgs("", toKick.getName());
+            PushStackCache.pushArg2(toKick.getName());
             notifyService.sendChat(leader, "team.cant-kick-member");
             return;
         }

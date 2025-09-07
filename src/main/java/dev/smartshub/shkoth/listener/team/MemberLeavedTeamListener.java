@@ -18,7 +18,7 @@ public class MemberLeavedTeamListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMemberLeaveTeam(MemberLeavedTeamEvent event){
-        PushStackCache.pushArgs("", event.getRemovedPlayer().getName());
+        PushStackCache.pushArg2(event.getRemovedPlayer().getName());
         notifyService.sendChat(event.getRemovedPlayer(), "team.removed-from-team");
         notifyService.sendTitle(event.getRemovedPlayer(), "team.removed.title", "team.removed.subtitle");
         notifyService.sendActionBar(event.getRemovedPlayer(), "team.removed");

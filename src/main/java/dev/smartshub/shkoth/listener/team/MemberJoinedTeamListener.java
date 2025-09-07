@@ -19,7 +19,7 @@ public class MemberJoinedTeamListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onMemberJoinTeam(MemberJoinedTeamEvent event){
-        PushStackCache.pushArgs("", event.getAddedPlayer().getName());
+        PushStackCache.pushArg2(event.getAddedPlayer().getName());
         notifyService.sendChat(event.getAddedPlayer(), "team.added-to-team");
         notifyService.sendTitle(event.getAddedPlayer(), "team.added-to-team.title", "team.added-to-team.subtitle");
         notifyService.sendActionBar(event.getAddedPlayer(), "team.added-to-team");
