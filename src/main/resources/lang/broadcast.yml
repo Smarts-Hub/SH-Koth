@@ -50,7 +50,7 @@ koth:
   capture:
     start:
       - "<dark_green>--------------------------------------------------"
-      - "<green>The KOTH %shkoth_koth_context% is being captured by %shkoth_player_contextual%!"
+      - "<green>The KOTH %shkoth_koth_context% is being captured by %shkoth_player_context%!"
       - "     <green>Try to reclaim it before it's too late!"
       - "<dark_green>--------------------------------------------------"
 

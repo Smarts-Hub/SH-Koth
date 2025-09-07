@@ -23,7 +23,7 @@ koth:
     title: "<red>The KOTH %shkoth_koth_context% has ended!"
     subtitle: "<light_purple>Nobody captured it in time!"
   start-capturing:
-    title: "<green>The KOTH %shkoth_koth_context% is being captured by %shkoth_player_contextual%!"
+    title: "<green>The KOTH %shkoth_koth_context% is being captured by %shkoth_player_context%!"
     subtitle: "<green>Try to reclaim it before it's too late!"
   stop-capturing:
     title: "<red>The KOTH %shkoth_koth_context% capture has been stopped!"
