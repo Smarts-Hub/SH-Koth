@@ -25,7 +25,7 @@ public class MemberKickedFromTeamListener implements Listener {
         notifyService.playSound(event.getKickedPlayer(), "team.kicked");
         for (var player : event.getOldTeam().getOnlineMembers()) {
             notifyService.sendChat(player, "team.member-kicked");
-            notifyService.sendTitle(player, "team.kicked.title", "team.kicked.subtitle");
+            notifyService.sendTitle(player, "team.member-kicked.title", "team.member-kicked.subtitle");
             notifyService.sendActionBar(player, "team.member-kicked");
             notifyService.playSound(player, "team.member-kicked");
         }

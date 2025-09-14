@@ -20,6 +20,7 @@ public class PlayerStartKothCaptureListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerStartKothCapture(PlayerStartKothCaptureEvent event) {
         PushStackCache.pushArg1(event.getKoth().getDisplayName());
+        PushStackCache.pushArg2(event.getPlayer().getName());
         notifyService.sendChat(event.getPlayer(), "koth.capture.start");
         notifyService.sendBroadcastListToOnlinePlayers("koth.capture.start");
         Bukkit.getOnlinePlayers().forEach(player -> {

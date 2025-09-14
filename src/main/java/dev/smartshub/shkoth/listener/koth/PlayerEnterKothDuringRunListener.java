@@ -19,6 +19,7 @@ public class PlayerEnterKothDuringRunListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerEnterKoth(PlayerEnterKothDuringRunEvent event) {
         PushStackCache.pushArg1(event.getKoth().getDisplayName());
+        PushStackCache.pushArg2(event.getPlayer().getName());
         notifyService.sendChat(event.getPlayer(), "koth.enter");
         notifyService.sendTitle(event.getPlayer(), "koth.enter.title", "koth.enter.subtitle");
         notifyService.sendActionBar(event.getPlayer(), "koth.enter");

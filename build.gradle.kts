@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.smartshub"
-version = "1.0.1-SNAPSHOT"
+version = "1.0.2-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -25,6 +25,14 @@ repositories {
     maven {
         name = "glaremasters repo"
         url = uri("https://repo.glaremasters.me/repository/towny/")
+    }
+    maven {
+        name = "codemc-public"
+        url = uri("https://repo.codemc.io/repository/maven-public/")
+    }
+    maven {
+        name = "bentoboxworld"
+        url = uri("https://repo.codemc.org/repository/bentoboxworld/")
     }
     exclusiveContent {
         forRepository {
@@ -56,6 +64,7 @@ dependencies {
     compileOnly(files("libs/KingdomsX-1.17.16-BETA.jar"))
     compileOnly("dev.kitteh:factions:4.0.0")
     compileOnly("com.palmergames.bukkit.towny:towny:0.101.2.0")
+    compileOnly("world.bentobox:bentobox:3.7.3-SNAPSHOT")
 }
 
 tasks.register<Copy>("copyDeps") {
