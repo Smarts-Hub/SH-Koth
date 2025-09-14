@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.service.gui.menu.aux;
+package dev.smartshub.shkoth.service.gui.menu.other;
 
 import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
 import dev.smartshub.shkoth.message.MessageParser;

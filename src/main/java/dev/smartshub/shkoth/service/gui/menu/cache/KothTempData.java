@@ -7,7 +7,7 @@ import dev.smartshub.shkoth.api.location.Corner;
 import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
 import dev.smartshub.shkoth.service.gui.GuiService;
-import dev.smartshub.shkoth.service.gui.menu.aux.WaitingToFill;
+import dev.smartshub.shkoth.service.gui.menu.other.WaitingToFill;
 import org.bukkit.Bukkit;
 
 import java.time.DayOfWeek;

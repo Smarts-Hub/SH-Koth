@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.service.gui.menu.aux;
+package dev.smartshub.shkoth.service.gui.menu.other;
 
 public enum WaitingToFill {
     ID,

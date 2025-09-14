@@ -2,7 +2,7 @@ package dev.smartshub.shkoth.service.gui.menu.cache;
 
 import dev.smartshub.shkoth.service.gui.GuiService;
 import dev.smartshub.shkoth.service.gui.menu.cache.KothValidation.ValidationResult;
-import dev.smartshub.shkoth.service.gui.menu.aux.WaitingToFill;
+import dev.smartshub.shkoth.service.gui.menu.other.WaitingToFill;
 import dev.smartshub.shkoth.service.koth.KothRegistrationFromTempDataService;
 import dev.smartshub.shkoth.service.koth.KothRegistrationFromTempDataService.RegistrationResult;
 

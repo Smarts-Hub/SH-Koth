@@ -3,7 +3,7 @@ package dev.smartshub.shkoth.gui;
 import dev.smartshub.shkoth.api.gui.BaseUpdatableGui;
 import dev.smartshub.shkoth.api.koth.command.Commands;
 import dev.smartshub.shkoth.service.gui.GuiService;
-import dev.smartshub.shkoth.service.gui.menu.aux.WaitingToFill;
+import dev.smartshub.shkoth.service.gui.menu.other.WaitingToFill;
 import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
 import dev.smartshub.shkoth.message.MessageParser;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
