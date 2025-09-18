@@ -51,6 +51,8 @@ dependencies {
     implementation("io.github.revxrsal:lamp.common:4.0.0-rc.12")
     implementation("io.github.revxrsal:lamp.bukkit:4.0.0-rc.12")
 
+    implementation("dev.dejvokep:boosted-yaml:1.3.6")
+
     implementation("fr.mrmicky:fastboard:2.1.5")
     implementation("com.h2database:h2:2.1.214")
     implementation("dev.triumphteam:triumph-gui:3.1.13-SNAPSHOT")
@@ -82,6 +84,7 @@ tasks.shadowJar {
     relocate("revxrsal.commands", "dev.smartshub.libs.lamp")
     relocate("fr.mrmick", "dev.smartshub.libs.fastboard")
     relocate("com.saicone.rtag", "dev.smartshub.libs.rtag")
+    relocate("dev.dejvokep.boostedyaml", "dev.smartshub.libs.boostedyaml")
 
     mergeServiceFiles()
 
