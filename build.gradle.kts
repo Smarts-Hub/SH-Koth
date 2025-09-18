@@ -17,6 +17,7 @@ repositories {
     maven { url = uri("https://repo.codemc.io/repository/maven-releases/") }
     maven { url = uri("https://repo.codemc.io/repository/maven-snapshots/") }
     maven { url = uri("https://jitpack.io") }
+    maven { url = uri("https://repo.bg-software.com/repository/api/") }
     maven("https://repo.triumphteam.dev/snapshots/")
     maven {
         name = "roinujnosde-repo"
@@ -65,6 +66,7 @@ dependencies {
     compileOnly("dev.kitteh:factions:4.0.0")
     compileOnly("com.palmergames.bukkit.towny:towny:0.101.2.0")
     compileOnly("world.bentobox:bentobox:3.7.3-SNAPSHOT")
+    compileOnly("com.bgsoftware:SuperiorSkyblockAPI:2025.1")
 }
 
 tasks.register<Copy>("copyDeps") {
