@@ -35,6 +35,7 @@ public class ContextualTeamTracker implements TeamTracker {
         registerHook(new TownyHook(teamHookHelpService));
         registerHook(new KingdomsXHook(teamHookHelpService));
         registerHook(new UClansHook(teamHookHelpService));
+        registerHook(new SuperiorSkyblockHook(teamHookHelpService));
     }
 
     public void registerHook(TeamHook hook) {
