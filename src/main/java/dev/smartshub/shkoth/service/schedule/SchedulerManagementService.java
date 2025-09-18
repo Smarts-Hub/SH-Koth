@@ -58,8 +58,9 @@ public class SchedulerManagementService {
         return ScheduleStatus.NO_CHANGE;
     }
 
+
     public Duration getTimeUntilNext() {
-        if (!koth.isRunning()) return Duration.ZERO;
+        if (koth.isRunning()) return Duration.ZERO;
 
         LocalDateTime now = timeService.getCurrentDateTime();
         Schedule nextSchedule = findNextSchedule(now);
