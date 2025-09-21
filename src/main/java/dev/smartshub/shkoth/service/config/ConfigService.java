@@ -1,6 +1,5 @@
 package dev.smartshub.shkoth.service.config;
 
-import dev.dejvokep.boostedyaml.dvs.Pattern;
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning;
 import dev.smartshub.shkoth.SHKoth;
 import dev.smartshub.shkoth.api.config.ConfigContainer;
@@ -47,25 +46,29 @@ public class ConfigService {
     private void updateConfigsIfNeeded() {
         plugin.getDataFolder().mkdirs();
 
-        updateConfigFile("config.yml");
-        updateConfigFile("database.yml");
-        updateConfigFile("messages.yml");
-        updateConfigFile("broadcast.yml");
-        updateConfigFile("hook.yml");
-        updateConfigFile("actionbar.yml");
-        updateConfigFile("title.yml");
-        updateConfigFile("sound.yml");
-        updateConfigFile("bossbar.yml");
+        for (ConfigType configType : ConfigType.values()) {
+            if (!configType.isFolder()) {
+                updateConfigFileFromType(configType);
+            }
+        }
+
     }
 
-    private void updateConfigFile(String fileName) {
+    private void updateConfigFileFromType(ConfigType configType) {
+        if (configType.isFolder()) {
+            return;
+        }
+
         try {
+            String resourcePath = configType.getDefaultPath();
+            String fileName = configType.getResourceName();
+
             File configFile = new File(plugin.getDataFolder(), fileName);
-            InputStream defaultResource = plugin.getResource(fileName);
+            InputStream defaultResource = plugin.getResource(resourcePath);
 
             if (defaultResource == null) {
                 if (!configFile.exists()) {
-                    plugin.getLogger().warning("Can't found default file for: " + fileName);
+                    plugin.getLogger().warning("Can't found default file for: " + resourcePath);
                 }
                 return;
             }
@@ -93,9 +96,9 @@ public class ConfigService {
             }
 
         } catch (IOException e) {
-            plugin.getLogger().log(Level.SEVERE, "Error updating config: " + fileName, e);
+            plugin.getLogger().log(Level.SEVERE, "Error updating config: " + configType.getResourceName(), e);
         } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Error processing: " + fileName, e);
+            plugin.getLogger().log(Level.WARNING, "Error processing: " + configType.getResourceName(), e);
         }
     }
 
