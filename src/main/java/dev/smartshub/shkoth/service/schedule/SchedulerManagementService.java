@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-
 public class SchedulerManagementService {
 
     private final Koth koth;
@@ -43,7 +42,7 @@ public class SchedulerManagementService {
     }
 
     public ScheduleStatus checkStatusChange() {
-        boolean nowActive = koth.isRunning();
+        boolean nowActive = isActiveTime();
 
         if (!wasActiveTime && nowActive) {
             wasActiveTime = true;
@@ -58,9 +57,8 @@ public class SchedulerManagementService {
         return ScheduleStatus.NO_CHANGE;
     }
 
-
     public Duration getTimeUntilNext() {
-        if (koth.isRunning()) return Duration.ZERO;
+        if (isActiveTime()) return Duration.ZERO;
 
         LocalDateTime now = timeService.getCurrentDateTime();
         Schedule nextSchedule = findNextSchedule(now);
@@ -72,12 +70,12 @@ public class SchedulerManagementService {
     }
 
     public Duration getTimeUntilEnds() {
-        if (!koth.isRunning()) return Duration.ZERO;
+        if (!isActiveTime()) return Duration.ZERO;
         return duration.minus(getTimeSinceStarted());
     }
 
     public Duration getTimeSinceStarted() {
-        if (!koth.isRunning()) return Duration.ZERO;
+        if (!isActiveTime()) return Duration.ZERO;
 
         LocalDateTime now = timeService.getCurrentDateTime();
         Schedule currentSchedule = findCurrentSchedule(now);
@@ -98,15 +96,13 @@ public class SchedulerManagementService {
         DayOfWeek currentDay = now.getDayOfWeek();
         LocalTime currentTime = now.toLocalTime();
 
-        // The schedule for today
         for (Schedule schedule : schedules) {
             if (schedule.day().equals(currentDay) && currentTime.isBefore(schedule.time())) {
                 return schedule;
             }
         }
 
-        // Schedules for the next 7 days
-        for (int i = 1; i <= 7; i++) {
+        for (int i = 1; i <= 6; i++) {
             DayOfWeek targetDay = currentDay.plus(i);
             for (Schedule schedule : schedules) {
                 if (schedule.day().equals(targetDay)) {
@@ -115,7 +111,7 @@ public class SchedulerManagementService {
             }
         }
 
-        return null;
+        return schedules.isEmpty() ? null : schedules.getFirst();
     }
 
     private Schedule findCurrentSchedule(LocalDateTime now) {
@@ -134,9 +130,21 @@ public class SchedulerManagementService {
     private LocalDateTime calculateNextDateTime(Schedule schedule, LocalDateTime from) {
         DayOfWeek targetDay = schedule.day();
         DayOfWeek currentDay = from.getDayOfWeek();
+        LocalTime currentTime = from.toLocalTime();
+
+        if (targetDay.equals(currentDay)) {
+            if (currentTime.isBefore(schedule.time())) {
+                return from.toLocalDate().atTime(schedule.time());
+            }
+            else {
+                return from.toLocalDate().plusWeeks(1).atTime(schedule.time());
+            }
+        }
 
         int daysUntil = targetDay.getValue() - currentDay.getValue();
-        if (daysUntil <= 0) daysUntil += 7;
+        if (daysUntil < 0) {
+            daysUntil += 7;
+        }
 
         return from.toLocalDate().plusDays(daysUntil).atTime(schedule.time());
     }
@@ -162,5 +170,3 @@ public class SchedulerManagementService {
         return duration;
     }
 }
-
-
