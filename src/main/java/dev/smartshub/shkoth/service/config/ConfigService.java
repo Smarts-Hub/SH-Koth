@@ -36,6 +36,7 @@ public class ConfigService {
 
         provide(ConfigType.DATABASE);
         provide(ConfigType.MESSAGES);
+        provide(ConfigType.SCHEDULERS);
         provide(ConfigType.BROADCAST);
         provide(ConfigType.HOOKS);
         provide(ConfigType.ACTIONBAR);
@@ -55,15 +56,16 @@ public class ConfigService {
     }
 
     private void updateConfigFileFromType(ConfigType configType) {
-        if (configType.isFolder()) {
-            return;
-        }
+        if (configType.isFolder()) return;
 
         try {
             String resourcePath = configType.getDefaultPath();
             String fileName = configType.getResourceName();
 
-            File configFile = new File(plugin.getDataFolder(), fileName);
+            File folder = new File(plugin.getDataFolder(), configType.getParentFolder());
+            if (!folder.exists()) folder.mkdirs();
+
+            File configFile = new File(folder, fileName);
             InputStream defaultResource = plugin.getResource(resourcePath);
 
             if (defaultResource == null) {
@@ -101,6 +103,7 @@ public class ConfigService {
             plugin.getLogger().log(Level.WARNING, "Error processing: " + configType.getResourceName(), e);
         }
     }
+
 
     public ConfigContainer provide(ConfigType type) {
         if (type.isFolder()) {
@@ -177,6 +180,7 @@ public class ConfigService {
         updateConfigsIfNeeded();
 
         reload(ConfigType.DATABASE);
+        reload(ConfigType.SCHEDULERS);
         reload(ConfigType.MESSAGES);
         reload(ConfigType.BROADCAST);
         reload(ConfigType.HOOKS);
