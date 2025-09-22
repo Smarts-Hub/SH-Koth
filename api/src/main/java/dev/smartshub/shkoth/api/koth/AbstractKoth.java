@@ -8,7 +8,6 @@ import dev.smartshub.shkoth.api.koth.command.Commands;
 import dev.smartshub.shkoth.api.koth.guideline.KothState;
 import dev.smartshub.shkoth.api.location.Area;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
-import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import dev.smartshub.shkoth.api.team.KothTeam;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +21,6 @@ public abstract class AbstractKoth implements Koth {
         protected final int duration;
         protected final int captureTime;
         protected final Area area;
-        protected final List<Schedule> schedules;
         protected final Commands commands;
         protected final List<PhysicalReward> physicalRewards;
 
@@ -37,14 +35,12 @@ public abstract class AbstractKoth implements Koth {
         protected int remainingTime;
 
         public AbstractKoth(String id, String displayName, int duration, int captureTime, Area area,
-                            List<Schedule> schedules, Commands commands,
-                            List<PhysicalReward> physicalRewards) {
+                            Commands commands, List<PhysicalReward> physicalRewards) {
                 this.id = id;
                 this.displayName = displayName;
                 this.duration = duration;
                 this.captureTime = captureTime;
                 this.area = area;
-                this.schedules = List.copyOf(schedules);
                 this.commands = commands;
                 this.physicalRewards = new ArrayList<>(physicalRewards);
                 this.remainingTime = duration;
@@ -62,7 +58,6 @@ public abstract class AbstractKoth implements Koth {
         public int getDuration() { return duration; }
         public int getCaptureTime() { return captureTime; }
         public @NotNull Area getArea() { return area; }
-        public @NotNull List<Schedule> getSchedules() { return schedules; }
         public @NotNull Commands getCommands() { return commands; }
         public @NotNull List<PhysicalReward> getPhysicalRewards() { return physicalRewards; }
 

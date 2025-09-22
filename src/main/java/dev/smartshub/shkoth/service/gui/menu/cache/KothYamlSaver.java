@@ -1,7 +1,6 @@
 package dev.smartshub.shkoth.service.gui.menu.cache;
 
 import dev.smartshub.shkoth.api.koth.command.Commands;
-import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
 import dev.smartshub.shkoth.service.config.ConfigService;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -60,7 +59,6 @@ public class KothYamlSaver {
                 yaml.set("corner-2.z", tempData.getCorner2().z());
             }
 
-            saveSchedules(yaml, tempData.getSchedules());
             saveCommands(yaml, tempData.getCommands());
             savePhysicalRewards(yaml, tempData.getPhysicalRewards());
             saveScoreboard(yaml, tempData);
@@ -75,24 +73,6 @@ public class KothYamlSaver {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    private void saveSchedules(YamlConfiguration yaml, List<Schedule> schedules) {
-
-        if (schedules.isEmpty()) {
-            return;
-        }
-
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-
-        for (int i = 0; i < schedules.size(); i++) {
-            Schedule schedule = schedules.get(i);
-            String scheduleKey = "schedule." + (i + 1);
-
-            yaml.set(scheduleKey + ".day", schedule.day().name().toLowerCase());
-            yaml.set(scheduleKey + ".hour", schedule.time().format(timeFormatter));
-
         }
     }
 

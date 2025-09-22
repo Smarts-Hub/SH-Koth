@@ -27,7 +27,7 @@ public class UpdateTask extends BukkitRunnable {
     public void run() {
         capturedKothsHandler.handleTickForCapturedKoths();
         refreshInsideKothService.refreshInsideKoth();
-        kothSchedulerService.processAllSchedulesAndExecute();
+        kothSchedulerService.processAllSchedulersAndExecute();
     }
 }
 

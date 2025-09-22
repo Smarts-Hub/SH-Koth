@@ -2,7 +2,6 @@ package dev.smartshub.shkoth.command.koth;
 
 import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
 import dev.smartshub.shkoth.api.koth.Koth;
-import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.koth.reward.PhysicalRewardAdder;
 import dev.smartshub.shkoth.koth.reward.PhysicalRewardAdderFactory;
 import dev.smartshub.shkoth.registry.KothRegistry;

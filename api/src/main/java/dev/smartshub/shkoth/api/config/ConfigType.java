@@ -4,6 +4,7 @@ public enum ConfigType {
 
     DATABASE("configuration/database.yml", "database.yml", "configuration"),
     HOOKS("configuration/hooks.yml", "hooks.yml", "configuration"),
+    SCHEDULERS("configuration/schedulers.yml", "schedulers.yml", "configuration"),
     MESSAGES("lang/messages.yml", "messages.yml", "lang"),
     BROADCAST("lang/broadcast.yml", "broadcast.yml", "lang"),
     BOSSBAR("lang/bossbar.yml", "bossbar.yml", "lang"),

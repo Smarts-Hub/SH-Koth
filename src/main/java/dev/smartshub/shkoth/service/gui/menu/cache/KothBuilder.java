@@ -3,7 +3,6 @@ package dev.smartshub.shkoth.service.gui.menu.cache;
 import dev.smartshub.shkoth.api.koth.command.Commands;
 import dev.smartshub.shkoth.api.koth.guideline.KothType;
 import dev.smartshub.shkoth.api.location.Area;
-import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
 
 import java.util.List;
@@ -23,7 +22,6 @@ public class KothBuilder {
             tempData.isDenyEnterWithoutTeam(),
             tempData.isCreateTeamIfNotExistsOnEnter(),
             tempData.getPhysicalRewards(),
-            tempData.getSchedules(),
             tempData.getCommands(),
             tempData.isScoreboardEnabled(),
             tempData.getScoreboardCapturingTitle(),
@@ -45,7 +43,6 @@ public class KothBuilder {
         boolean denyEnterWithoutTeam,
         boolean createTeamIfNotExistsOnEnter,
         List<PhysicalReward> physicalRewards,
-        List<Schedule> schedules,
         List<Commands> commands,
         boolean isScoreboardEnabled,
         String scoreboardCapturingTitle,

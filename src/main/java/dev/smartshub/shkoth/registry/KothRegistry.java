@@ -16,7 +16,7 @@ public class KothRegistry {
 
     private final ConfigService configService;
     private final KothLoader kothLoader;
-    private final KothSchedulerService scheduler = new KothSchedulerService(this);
+    private final KothSchedulerService scheduler;
 
     private final Set<Koth> koths;
 
@@ -24,7 +24,7 @@ public class KothRegistry {
         this.configService = configService;
         this.kothLoader = new KothLoader(configService, teamHandler);
         this.koths = kothLoader.load();
-        scheduler.initializeFromKoths(koths);
+        scheduler = new KothSchedulerService(this, configService);
     }
 
     public void register(Koth koth) {
@@ -95,7 +95,7 @@ public class KothRegistry {
             return Duration.ofSeconds(koth.getRemainingTime());
         }
 
-        return scheduler.getTimeUntilScheduleEnds(kothId);
+        return scheduler.getTimeUntilNextSchedule(kothId);
     }
 
     public KothSchedulerService getScheduler() {
@@ -126,13 +126,6 @@ public class KothRegistry {
         return scheduler.getFormattedTimeUntilEnds(kothId);
     }
 
-    public String getNextScheduleTime(String kothId) {
-        return scheduler.getFormattedNextScheduleTime(kothId);
-    }
-
-    public boolean hasSchedule(String kothId) {
-        return scheduler.hasSchedule(kothId);
-    }
 
     public Duration getTimeUntilNext(String kothId) {
         return scheduler.getTimeUntilNextSchedule(kothId);

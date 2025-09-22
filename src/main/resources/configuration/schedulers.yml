@@ -1,0 +1,47 @@
+#   _____      _              _       _
+#  / ____|    | |            | |     | |
+# | (___   ___| |__   ___  __| |_   _| | ___ _ __ ___
+#  \___ \ / __| '_ \ / _ \/ _` | | | | |/ _ \ '__/ __|
+#  ____) | (__| | | |  __/ (_| | |_| | |  __/ |  \__ \
+# |_____/ \___|_| |_|\___|\__,_|\__,_|_|\___|_|  |___/
+#
+# Schedulers configuration file
+# Support: https://discord.smartshub.dev/
+# Documentation: https://docs.smartshub.dev/sh-koth/intro/introduction/
+
+# server -> local machine time, also supports values like "UTC", "America/New_York", etc.
+# Some values: https://docs.oracle.com/javase/8/docs/api/java/time/ZoneId.html
+time-zone: "server"
+
+# Schedulers use the cron format to define the times when the koths will be started.
+# You can add to the list as many times as you want, with the same or different koths.
+# Cron format: minute hour day-of-month month day-of-week
+# Interactive web to create cron expressions: https://crontab.guru/
+# Examples:
+schedulers:
+  evening_event:
+    times:
+    # Every day at 18:00 and every Friday at 20:30
+      - "0 18 * * *"
+      - "30 20 * * 5"
+
+    # random: if true, only one koth from the list will be chosen randomly
+    # if false, all koths from the list will be started
+    random: false
+
+    # List of koths to start at the specified times (ids defined in koths folder)
+    koths:
+      - "arena1"
+      - "arena2"
+
+  # Every day at midnight, one random koth from the list
+  midnight_random:
+    times:
+      - "0 0 * * *"
+    random: true
+    koths:
+      - "castle"
+      - "desert"
+      - "volcano"
+
+config-version: 1

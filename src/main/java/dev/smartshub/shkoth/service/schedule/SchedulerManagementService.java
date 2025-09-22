@@ -1,172 +1,127 @@
 package dev.smartshub.shkoth.service.schedule;
 
-import dev.smartshub.shkoth.api.koth.Koth;
-import dev.smartshub.shkoth.api.location.schedule.Schedule;
-import dev.smartshub.shkoth.api.location.schedule.ScheduleStatus;
+import dev.smartshub.shkoth.api.schedule.ScheduleStatus;
+import dev.smartshub.shkoth.api.schedule.SchedulerConfig;
+import dev.smartshub.shkoth.registry.KothRegistry;
+import it.sauronsoftware.cron4j.Predictor;
+import it.sauronsoftware.cron4j.SchedulingPattern;
 
-import java.time.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class SchedulerManagementService {
 
-    private final Koth koth;
-    private final List<Schedule> schedules;
-    private final Duration duration;
-    private final TimeService timeService;
+    private final SchedulerConfig config;
+    private final List<SchedulingPattern> patterns;
     private boolean wasActiveTime = false;
 
-    public SchedulerManagementService(Koth koth, List<Schedule> schedules, Duration duration, TimeService timeService) {
-        this.koth = koth;
-        this.schedules = new ArrayList<>(schedules);
-        this.duration = duration;
-        this.timeService = timeService;
-        sortSchedules();
+    private String activeRandomKoth = null;
+
+    public SchedulerManagementService(SchedulerConfig config) {
+        this.config = config;
+        this.patterns = config.cronExpressions().stream()
+                .map(SchedulingPattern::new)
+                .toList();
     }
 
-    private void sortSchedules() {
-        schedules.sort(Comparator.comparing(Schedule::day).thenComparing(Schedule::time));
+    public boolean isActiveTime(KothRegistry kothRegistry) {
+        long currentTime = System.currentTimeMillis();
+        long lastExecution = getLastMatchingTimeFromAll();
+        return config.kothIds().stream().anyMatch(kothId -> {
+            long kothDurationMillis = kothRegistry.get(kothId).getDuration();
+            return currentTime >= lastExecution && currentTime < (lastExecution + kothDurationMillis);
+        });
     }
 
-    public boolean isActiveTime() {
-        LocalDateTime now = timeService.getCurrentDateTime();
-        DayOfWeek currentDay = now.getDayOfWeek();
-        LocalTime currentTime = now.toLocalTime();
-
-        return schedules.stream().anyMatch(schedule ->
-                schedule.day().equals(currentDay) &&
-                        !currentTime.isBefore(schedule.time()) &&
-                        currentTime.isBefore(schedule.time().plus(duration))
-        );
-    }
-
-    public ScheduleStatus checkStatusChange() {
-        boolean nowActive = isActiveTime();
-
+    public ScheduleStatus checkStatusChange(KothRegistry kothRegistry) {
+        boolean nowActive = isActiveTime(kothRegistry);
         if (!wasActiveTime && nowActive) {
             wasActiveTime = true;
             return ScheduleStatus.STARTED;
         }
-
         if (wasActiveTime && !nowActive) {
             wasActiveTime = false;
+            resetRandomSelection();
             return ScheduleStatus.ENDED;
         }
-
         return ScheduleStatus.NO_CHANGE;
     }
 
     public Duration getTimeUntilNext() {
-        if (isActiveTime()) return Duration.ZERO;
-
-        LocalDateTime now = timeService.getCurrentDateTime();
-        Schedule nextSchedule = findNextSchedule(now);
-
-        if (nextSchedule == null) return Duration.ZERO;
-
-        LocalDateTime nextDateTime = calculateNextDateTime(nextSchedule, now);
-        return Duration.between(now, nextDateTime);
-    }
-
-    public Duration getTimeUntilEnds() {
-        if (!isActiveTime()) return Duration.ZERO;
-        return duration.minus(getTimeSinceStarted());
-    }
-
-    public Duration getTimeSinceStarted() {
-        if (!isActiveTime()) return Duration.ZERO;
-
-        LocalDateTime now = timeService.getCurrentDateTime();
-        Schedule currentSchedule = findCurrentSchedule(now);
-
-        if (currentSchedule == null) return Duration.ZERO;
-
-        LocalDateTime scheduleStart = calculateScheduleDateTime(currentSchedule, now);
-        return Duration.between(scheduleStart, now);
+        long currentTime = System.currentTimeMillis();
+        long nextExecution = getNextMatchingTimeFromAll();
+        if (nextExecution <= currentTime) return Duration.ZERO;
+        return Duration.ofMillis(nextExecution - currentTime);
     }
 
     public LocalTime getNextScheduleTime() {
-        LocalDateTime now = timeService.getCurrentDateTime();
-        Schedule nextSchedule = findNextSchedule(now);
-        return nextSchedule != null ? nextSchedule.time() : null;
+        long nextTime = getNextMatchingTimeFromAll();
+        if (nextTime <= 0) return null;
+        return Instant.ofEpochMilli(nextTime).atZone(config.timeZone().toZoneId()).toLocalTime();
     }
 
-    private Schedule findNextSchedule(LocalDateTime now) {
-        DayOfWeek currentDay = now.getDayOfWeek();
-        LocalTime currentTime = now.toLocalTime();
+    public List<String> getKothsToExecute() {
+        if (config.random() && !config.kothIds().isEmpty()) {
+            if (activeRandomKoth == null) {
+                int index = ThreadLocalRandom.current().nextInt(config.kothIds().size());
+                activeRandomKoth = config.kothIds().get(index);
+            }
+            return List.of(activeRandomKoth);
+        }
+        return config.kothIds();
+    }
 
-        for (Schedule schedule : schedules) {
-            if (schedule.day().equals(currentDay) && currentTime.isBefore(schedule.time())) {
-                return schedule;
+    public void resetRandomSelection() {
+        activeRandomKoth = null;
+    }
+
+    private long getNextMatchingTime(String cronExpression) {
+        Predictor predictor = new Predictor(cronExpression);
+        predictor.setTimeZone(config.timeZone());
+        return predictor.nextMatchingTime() * 1000L;
+    }
+
+    private long getLastMatchingTime(SchedulingPattern pattern) {
+        long current = System.currentTimeMillis();
+        long step = 60 * 1000;
+        for (long time = current; time > current - (24 * 60 * 60 * 1000); time -= step) {
+            if (pattern.match(time)) {
+                return findExactMatch(pattern, time, time + step);
             }
         }
+        return 0;
+    }
 
-        for (int i = 1; i <= 6; i++) {
-            DayOfWeek targetDay = currentDay.plus(i);
-            for (Schedule schedule : schedules) {
-                if (schedule.day().equals(targetDay)) {
-                    return schedule;
-                }
+    private long findExactMatch(SchedulingPattern pattern, long start, long end) {
+        while (end - start > 1000) {
+            long mid = (start + end) / 2;
+            if (pattern.match(mid)) {
+                start = mid;
+            } else {
+                end = mid;
             }
         }
-
-        return schedules.isEmpty() ? null : schedules.getFirst();
+        return start;
     }
 
-    private Schedule findCurrentSchedule(LocalDateTime now) {
-        DayOfWeek currentDay = now.getDayOfWeek();
-        LocalTime currentTime = now.toLocalTime();
-
-        return schedules.stream()
-                .filter(schedule ->
-                        schedule.day().equals(currentDay) &&
-                                !currentTime.isBefore(schedule.time()) &&
-                                currentTime.isBefore(schedule.time().plus(duration)))
-                .findFirst()
-                .orElse(null);
+    private long getNextMatchingTimeFromAll() {
+        return config.cronExpressions().stream()
+                .mapToLong(this::getNextMatchingTime)
+                .min()
+                .orElse(0L);
     }
 
-    private LocalDateTime calculateNextDateTime(Schedule schedule, LocalDateTime from) {
-        DayOfWeek targetDay = schedule.day();
-        DayOfWeek currentDay = from.getDayOfWeek();
-        LocalTime currentTime = from.toLocalTime();
-
-        if (targetDay.equals(currentDay)) {
-            if (currentTime.isBefore(schedule.time())) {
-                return from.toLocalDate().atTime(schedule.time());
-            }
-            else {
-                return from.toLocalDate().plusWeeks(1).atTime(schedule.time());
-            }
-        }
-
-        int daysUntil = targetDay.getValue() - currentDay.getValue();
-        if (daysUntil < 0) {
-            daysUntil += 7;
-        }
-
-        return from.toLocalDate().plusDays(daysUntil).atTime(schedule.time());
+    private long getLastMatchingTimeFromAll() {
+        return patterns.stream()
+                .mapToLong(this::getLastMatchingTime)
+                .max()
+                .orElse(0L);
     }
 
-    private LocalDateTime calculateScheduleDateTime(Schedule schedule, LocalDateTime reference) {
-        DayOfWeek targetDay = schedule.day();
-        LocalDate targetDate = reference.toLocalDate();
-
-        if (reference.getDayOfWeek() != targetDay) {
-            int daysBack = reference.getDayOfWeek().getValue() - targetDay.getValue();
-            if (daysBack < 0) daysBack += 7;
-            targetDate = targetDate.minusDays(daysBack);
-        }
-
-        return targetDate.atTime(schedule.time());
-    }
-
-    public List<Schedule> getSchedules() {
-        return List.copyOf(schedules);
-    }
-
-    public Duration getDuration() {
-        return duration;
+    public SchedulerConfig getConfig() {
+        return config;
     }
 }

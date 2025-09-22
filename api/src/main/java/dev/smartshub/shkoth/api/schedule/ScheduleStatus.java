@@ -1,4 +1,4 @@
-package dev.smartshub.shkoth.api.location.schedule;
+package dev.smartshub.shkoth.api.schedule;
 
 public enum ScheduleStatus {
     STARTED,

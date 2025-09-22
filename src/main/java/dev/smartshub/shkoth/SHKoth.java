@@ -157,7 +157,7 @@ public class SHKoth extends JavaPlugin {
         teamInviteService = new TeamInviteService(teamHandlingService, notifyService);
 
         refreshInsideKothService = new RefreshInsideKothService(kothRegistry);
-        kothSchedulerService = new KothSchedulerService(kothRegistry);
+        kothSchedulerService = new KothSchedulerService(kothRegistry, configService);
 
         adventureBossbarService = new AdventureBossbarService(kothRegistry, configService.provide(ConfigType.BOSSBAR), messageParser);
         wandService = new WandService(this, messageParser);

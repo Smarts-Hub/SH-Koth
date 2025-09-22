@@ -2,7 +2,6 @@ package dev.smartshub.shkoth.gui;
 
 import dev.smartshub.shkoth.api.gui.BaseUpdatableGui;
 import dev.smartshub.shkoth.api.gui.item.ItemUpdater;
-import dev.smartshub.shkoth.api.location.schedule.Schedule;
 
 import dev.smartshub.shkoth.service.gui.GuiService;
 import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
@@ -66,8 +65,8 @@ public class CreateSchedulerGui extends BaseUpdatableGui {
         registerItemUpdater(4, this::createHourItem);
         registerItemUpdater(5, this::createMinuteItem);
         registerItemUpdater(9, this::createBackItem);
-        registerItemUpdater(16, this::createClearItem);
-        registerItemUpdater(17, this::createSaveItem);
+        //registerItemUpdater(16, this::createClearItem);
+        //registerItemUpdater(17, this::createSaveItem);
     }
 
     private GuiItem createDayItem(Player player, Gui gui) {
@@ -152,58 +151,58 @@ public class CreateSchedulerGui extends BaseUpdatableGui {
                 });
     }
 
-    private GuiItem createClearItem(Player player, Gui gui) {
-        List<Component> schedules = getCurrentSchedulesLore(player);
+//    private GuiItem createClearItem(Player player, Gui gui) {
+//        List<Component> schedules = getCurrentSchedulesLore(player);
+//
+//        return ItemBuilder.from(Material.BARRIER)
+//                .name(parser.parse("<dark_red>Clear All Schedulers"))
+//                .lore(schedules)
+//                .asGuiItem(event -> {
+//                    event.setCancelled(true);
+//                    kothToRegisterCache.getKothToRegister(player.getUniqueId()).getSchedules().clear();
+//                    updateItem(gui, player, 16);
+//                    updateItem(gui, player, 17);
+//                });
+//    }
 
-        return ItemBuilder.from(Material.BARRIER)
-                .name(parser.parse("<dark_red>Clear All Schedulers"))
-                .lore(schedules)
-                .asGuiItem(event -> {
-                    event.setCancelled(true);
-                    kothToRegisterCache.getKothToRegister(player.getUniqueId()).getSchedules().clear();
-                    updateItem(gui, player, 16);
-                    updateItem(gui, player, 17);
-                });
-    }
-
-    private GuiItem createSaveItem(Player player, Gui gui) {
-        return ItemBuilder.from(Material.EMERALD_BLOCK)
-                .name(parser.parse("<green>Save Scheduler"))
-                .asGuiItem(event -> {
-                    event.setCancelled(true);
-                    var kothData = kothToRegisterCache.getKothToRegister(player.getUniqueId());
-
-                    Schedule newSchedule = new Schedule(
-                            kothData.getTempDay(),
-                            LocalTime.of(kothData.getHour(), kothData.getMinute())
-                    );
-
-                    kothData.addSchedule(newSchedule);
-
-                    updateItem(gui, player, 16);
-
-                    player.sendMessage(parser.parse("<green>Schedule saved successfully!"));
-                });
-    }
-
-    private List<Component> getCurrentSchedulesLore(Player player) {
-        List<Component> schedules = new ArrayList<>();
-        schedules.add(parser.parse("<gray>Current Schedules:"));
-
-        var currentSchedules = kothToRegisterCache.getKothToRegister(player.getUniqueId()).getSchedules();
-
-        if (currentSchedules.isEmpty()) {
-            schedules.add(parser.parse("<gray>- <dark_gray>No schedules created yet"));
-        } else {
-            currentSchedules.forEach(schedule -> {
-                var dayName = schedule.day().name();
-                var hourName = schedule.time().toString();
-                schedules.add(parser.parse("<gray>- <yellow>" + dayName + " <dark_gray>| <aqua>" + hourName));
-            });
-        }
-
-        return schedules;
-    }
+//    private GuiItem createSaveItem(Player player, Gui gui) {
+//        return ItemBuilder.from(Material.EMERALD_BLOCK)
+//                .name(parser.parse("<green>Save Scheduler"))
+//                .asGuiItem(event -> {
+//                    event.setCancelled(true);
+//                    var kothData = kothToRegisterCache.getKothToRegister(player.getUniqueId());
+//
+//                    Schedule newSchedule = new Schedule(
+//                            kothData.getTempDay(),
+//                            LocalTime.of(kothData.getHour(), kothData.getMinute())
+//                    );
+//
+//                    kothData.addSchedule(newSchedule);
+//
+//                    updateItem(gui, player, 16);
+//
+//                    player.sendMessage(parser.parse("<green>Schedule saved successfully!"));
+//                });
+//    }
+//
+//    private List<Component> getCurrentSchedulesLore(Player player) {
+//        List<Component> schedules = new ArrayList<>();
+//        schedules.add(parser.parse("<gray>Current Schedules:"));
+//
+//        var currentSchedules = kothToRegisterCache.getKothToRegister(player.getUniqueId()).getSchedules();
+//
+//        if (currentSchedules.isEmpty()) {
+//            schedules.add(parser.parse("<gray>- <dark_gray>No schedules created yet"));
+//        } else {
+//            currentSchedules.forEach(schedule -> {
+//                var dayName = schedule.day().name();
+//                var hourName = schedule.time().toString();
+//                schedules.add(parser.parse("<gray>- <yellow>" + dayName + " <dark_gray>| <aqua>" + hourName));
+//            });
+//        }
+//
+//        return schedules;
+//    }
 
     public void setGuiService(GuiService guiService) {
         this.guiService = guiService;

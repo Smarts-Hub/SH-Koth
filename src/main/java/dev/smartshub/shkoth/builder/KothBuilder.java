@@ -8,10 +8,8 @@ import dev.smartshub.shkoth.api.koth.guideline.KothType;
 import dev.smartshub.shkoth.api.location.Area;
 import dev.smartshub.shkoth.api.location.Corner;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
-import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import dev.smartshub.shkoth.api.team.track.TeamTracker;
 import dev.smartshub.shkoth.builder.mapper.PhysicalRewardsMapper;
-import dev.smartshub.shkoth.builder.mapper.SchedulesMapper;
 
 import java.util.List;
 
@@ -19,7 +17,6 @@ import java.util.List;
 public class KothBuilder implements Builder<Koth, ConfigContainer> {
 
     private final TeamTracker teamTracker;
-    private final SchedulesMapper schedulesMapper = new SchedulesMapper();
     private final PhysicalRewardsMapper physicalRewardsMapper = new PhysicalRewardsMapper();
 
     public KothBuilder(TeamTracker teamTracker) {
@@ -54,7 +51,6 @@ public class KothBuilder implements Builder<Koth, ConfigContainer> {
         final boolean isScoreboardEnabled = config.getBoolean("scoreboard.enabled", true);
 
         // Load schedules and rewards code is "dirty", doing it in a separate class to maintain clean code
-        List<Schedule> schedules = schedulesMapper.map(config);
         List<PhysicalReward> physicalRewards = physicalRewardsMapper.map(config);
 
 
@@ -69,7 +65,7 @@ public class KothBuilder implements Builder<Koth, ConfigContainer> {
         boolean createTeamIfNotExistsOnEnter = config.getBoolean("create-team-if-not-exists-on-enter", true);
 
 
-        return new dev.smartshub.shkoth.koth.Koth(teamTracker, id, displayName, maxDuration, captureTime,area, schedules, commands,
+        return new dev.smartshub.shkoth.koth.Koth(teamTracker, id, displayName, maxDuration, captureTime,area, commands,
                 physicalRewards, isSolo, isScoreboardEnabled, denyEnterWithoutTeam, createTeamIfNotExistsOnEnter, kothType);
     }
 }

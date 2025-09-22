@@ -32,10 +32,6 @@ public class KothValidation {
             errors.add("KOTH type must be set");
         }
         
-        if(tempData.getSchedules().isEmpty()) {
-            errors.add("At least one schedule must be configured");
-        }
-        
         return new ValidationResult(errors.isEmpty(), errors);
     }
     

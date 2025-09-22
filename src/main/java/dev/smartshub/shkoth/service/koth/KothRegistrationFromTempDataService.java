@@ -102,7 +102,7 @@ public class KothRegistrationFromTempDataService {
                 tempData.getMaxTime(),
                 tempData.getCaptureTime(),
                 tempData.getWorldName(),
-                tempData.getSchedules().size(),
+                0,
                 validation.valid(),
                 validation.errors()
         );

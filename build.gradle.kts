@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "dev.smartshub"
-version = "1.1.1-SNAPSHOT"
+version = "1.2.0-BETA"
 
 repositories {
     mavenCentral()
@@ -59,6 +59,8 @@ dependencies {
 
     implementation("com.saicone.rtag:rtag:1.5.11")
     implementation("com.saicone.rtag:rtag-item:1.5.11")
+
+    implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
 
     compileOnly ("me.clip:placeholderapi:2.11.6")
     compileOnly("com.github.UlrichBR:UClans-API:8.4.0")

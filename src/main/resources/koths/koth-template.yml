@@ -51,17 +51,6 @@ create-team-if-not-exists: true
 # This parameter is only relevant if the KoTH is played in team mode, in solo mode it is ignored.
 deny-entry-if-not-in-team: false
 
-# List of schedules for this koth.
-# Each schedule defines a day and time when the KoTH will be active.
-# You can define multiple schedules at same day, but be sure to don't overlap them.
-schedule:
-  '1':
-    day: "monday"
-    hour: "20:00"
-  '2':
-    day: "tuesday"
-    hour: "20:00"
-
 # List of commands to perform at different stages of the KoTH.
 commands-perform:
   # These commands will be executed when the KoTH starts (one time).

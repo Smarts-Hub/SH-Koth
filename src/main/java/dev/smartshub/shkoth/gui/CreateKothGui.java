@@ -57,20 +57,21 @@ public class CreateKothGui extends BaseUpdatableGui {
 
     @Override
     protected void registerAllUpdaters() {
-        registerItemUpdater(10, this::createCreateKothItem);
-        registerItemUpdater(11, this::createIdItem);
-        registerItemUpdater(12, this::createDisplayNameItem);
-        registerItemUpdater(13, this::createMaxTimeItem);
-        registerItemUpdater(14, this::createCaptureTimeItem);
-        registerItemUpdater(15, this::createWandItem);
-        registerItemUpdater(16, this::createTypeItem);
-        registerItemUpdater(19, this::createRewardsItem);
-        registerItemUpdater(20, this::createSchedulesItem);
-        registerItemUpdater(21, this::createCommandsItem);
-        registerItemUpdater(22, this::createCapturingBoardTitleItem);
-        registerItemUpdater(23, this::createCapturingBoardLinesItem);
-        registerItemUpdater(24, this::createWaitingBoardTitleItem);
-        registerItemUpdater(25, this::createWaitingBoardLinesItem);
+
+        registerItemUpdater(10, this::createIdItem);
+        registerItemUpdater(11, this::createDisplayNameItem);
+        registerItemUpdater(12, this::createMaxTimeItem);
+        registerItemUpdater(13, this::createCaptureTimeItem);
+        registerItemUpdater(14, this::createWandItem);
+        registerItemUpdater(15, this::createTypeItem);
+        registerItemUpdater(16, this::createRewardsItem);
+        registerItemUpdater(19, this::createDenyEnterItem);
+        registerItemUpdater(20, this::createCommandsItem);
+        registerItemUpdater(21, this::createCapturingBoardTitleItem);
+        registerItemUpdater(22, this::createCapturingBoardLinesItem);
+        registerItemUpdater(23, this::createWaitingBoardTitleItem);
+        registerItemUpdater(24, this::createWaitingBoardLinesItem);
+        registerItemUpdater(25, this::createCreateKothItem);
         registerItemUpdater(29, this::createSoloItem);
         registerItemUpdater(30, this::createBossbarItem);
         registerItemUpdater(31, this::createDenyEnterItem);
@@ -210,16 +211,6 @@ public class CreateKothGui extends BaseUpdatableGui {
                 .asGuiItem(event -> {
                     event.setCancelled(true);
                     guiService.openAddPhysicalRewardGui(player);
-                });
-    }
-
-    private GuiItem createSchedulesItem(Player player, Gui gui) {
-        return ItemBuilder.from(Material.LECTERN)
-                .name(parser.parse("<yellow>Koth schedules"))
-                .lore(parser.parse("<gray>Open the gui to manage schedules"))
-                .asGuiItem(event -> {
-                    event.setCancelled(true);
-                    guiService.openCreateSchedulerGui(player);
                 });
     }
 

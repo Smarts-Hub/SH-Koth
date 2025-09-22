@@ -12,7 +12,6 @@ import dev.smartshub.shkoth.api.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.team.KothTeam;
 import dev.smartshub.shkoth.api.team.TeamWrapper;
 import dev.smartshub.shkoth.api.team.track.TeamTracker;
-import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import dev.smartshub.shkoth.api.koth.tally.TallyFactory;
 import dev.smartshub.shkoth.service.koth.KothRewardService;
 import dev.smartshub.shkoth.team.ContextualTeamTracker;
@@ -41,9 +40,9 @@ public class Koth extends AbstractKoth {
     private long captureStartTime;
 
     public Koth(TeamTracker teamTracker, String id, String displayName, int duration, int captureTime, Area area,
-                List<Schedule> schedules, Commands commands, List<PhysicalReward> physicalRewards,
+                Commands commands, List<PhysicalReward> physicalRewards,
                 boolean isSolo, boolean isScoreboardEnabled,boolean denyEnterWithoutTeam, boolean createTeamIfNotExistsOnEnter, KothType type) {
-        super(id, displayName, duration, captureTime, area, schedules, commands, physicalRewards);
+        super(id, displayName, duration, captureTime, area, commands, physicalRewards);
 
         this.teamTracker = teamTracker;
         this.tally = TallyFactory.create(type, this);

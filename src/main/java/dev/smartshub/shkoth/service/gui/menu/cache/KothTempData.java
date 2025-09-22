@@ -4,7 +4,6 @@ import dev.smartshub.shkoth.api.koth.command.Commands;
 import dev.smartshub.shkoth.api.koth.guideline.KothType;
 import dev.smartshub.shkoth.api.location.Area;
 import dev.smartshub.shkoth.api.location.Corner;
-import dev.smartshub.shkoth.api.location.schedule.Schedule;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
 import dev.smartshub.shkoth.service.gui.GuiService;
 import dev.smartshub.shkoth.service.gui.menu.other.WaitingToFill;
@@ -44,7 +43,6 @@ public class KothTempData {
     private boolean denyEnterWithoutTeam = false;
     private boolean createTeamIfNotExistsOnEnter = true;
     private List<PhysicalReward> physicalRewards = new ArrayList<>();
-    private List<Schedule> schedules = new ArrayList<>();
     private DayOfWeek tempDay = DayOfWeek.FRIDAY;
     private int hour = 20;
     private int minute = 30;
@@ -58,7 +56,6 @@ public class KothTempData {
     private List<String> scoreboardCapturingContent = new ArrayList<>();
     private List<String> scoreboardWaitingContent = new ArrayList<>();
 
-    private Schedule tempSchedule = null;
 
     public void fillChatInput(String input){
         if(!waitingToChat) return;
@@ -66,29 +63,6 @@ public class KothTempData {
             switch (waitingToFill){
                 case ID -> setId(input);
                 case DISPLAYNAME -> setDisplayName(input);
-                case SCHEDULE_HOUR -> {
-                    int hour = Integer.parseInt(input);
-                    if(hour >= 0 && hour <= 23) {
-                        if(tempSchedule == null) {
-                            tempSchedule = new Schedule(DayOfWeek.MONDAY, LocalTime.of(hour, 0));
-                        } else {
-                            tempSchedule = new Schedule(tempSchedule.day(), LocalTime.of(hour, tempSchedule.time().getMinute()));
-                        }
-                    }
-                }
-                case SCHDULE_DAY -> {
-                    int dayNum = Integer.parseInt(input);
-                    if(dayNum >= 1 && dayNum <= 7) {
-                        DayOfWeek day = DayOfWeek.of(dayNum);
-                        if(tempSchedule == null) {
-                            tempSchedule = new Schedule(day, LocalTime.of(12, 0));
-                        } else {
-                            tempSchedule = new Schedule(day, tempSchedule.time());
-                        }
-                        addSchedule(tempSchedule);
-                        tempSchedule = null;
-                    }
-                }
                 case WIN_COMMAND -> {
                     winnersCommands.add(input);
                     guiService.openCommandGui(Bukkit.getPlayer(creatorUUID));
@@ -153,20 +127,6 @@ public class KothTempData {
 
     public void confirmWaitingLines() {
         scoreboardWaitingContent = new ArrayList<>(scoreboardWaitingContent);
-    }
-
-    public void addSchedule(Schedule schedule) {
-        schedules.add(schedule);
-    }
-
-    public void removeLastSchedule() {
-        if(!schedules.isEmpty()) {
-            schedules.remove(schedules.size() - 1);
-        }
-    }
-
-    public void clearSchedules() {
-        schedules.clear();
     }
 
     public void setTempDay(DayOfWeek day) {
@@ -401,14 +361,6 @@ public class KothTempData {
 
     public void setPhysicalRewards(List<PhysicalReward> physicalRewards) {
         this.physicalRewards = physicalRewards;
-    }
-
-    public List<Schedule> getSchedules() {
-        return schedules;
-    }
-
-    public void setSchedules(List<Schedule> schedules) {
-        this.schedules = schedules;
     }
 
     public List<Commands> getCommands() {

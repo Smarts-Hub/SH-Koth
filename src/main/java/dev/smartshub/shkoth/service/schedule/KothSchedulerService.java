@@ -1,213 +1,133 @@
 package dev.smartshub.shkoth.service.schedule;
 
-import dev.smartshub.shkoth.api.koth.Koth;
-import dev.smartshub.shkoth.api.location.schedule.Schedule;
-import dev.smartshub.shkoth.api.location.schedule.ScheduleStatus;
+import dev.smartshub.shkoth.api.schedule.ScheduleStatus;
+import dev.smartshub.shkoth.api.schedule.SchedulerConfig;
+import dev.smartshub.shkoth.loader.scheduler.SchedulerLoader;
 import dev.smartshub.shkoth.registry.KothRegistry;
+import dev.smartshub.shkoth.service.config.ConfigService;
 
 import java.time.Duration;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class KothSchedulerService {
 
-    private final Map<String, SchedulerManagementService> scheduleManagers;
-    private final TimeService timeService;
+    private final List<SchedulerManagementService> schedulerManagers;
     private final KothRegistry kothRegistry;
+    private final SchedulerLoader schedulerLoader;
+    private final TimeService timeService = new TimeService();
 
-    public KothSchedulerService(TimeService timeService, KothRegistry kothRegistry) {
-        this.timeService = timeService;
+    public KothSchedulerService(KothRegistry kothRegistry, ConfigService configService) {
         this.kothRegistry = kothRegistry;
-        this.scheduleManagers = new ConcurrentHashMap<>();
+        this.schedulerLoader = new SchedulerLoader(configService);
+        this.schedulerManagers = new ArrayList<>();
+        initializeSchedulers();
     }
 
-    public KothSchedulerService(KothRegistry kothRegistry) {
-        this(new TimeService(), kothRegistry);
+    private void initializeSchedulers() {
+        List<SchedulerConfig> configs = schedulerLoader.load();
+        for (SchedulerConfig config : configs) {
+            schedulerManagers.add(new SchedulerManagementService(config));
+        }
     }
 
-    public void initializeFromKoths(Set<Koth> koths) {
-        scheduleManagers.clear();
+    public boolean isKothTime(String kothId) {
+        return schedulerManagers.stream()
+                .anyMatch(manager -> manager.getConfig().kothIds().contains(kothId) && manager.isActiveTime(kothRegistry));
+    }
 
-        for (Koth koth : koths) {
-            List<Schedule> schedules = koth.getSchedules();
-            if (!schedules.isEmpty()) {
-                Duration duration = Duration.ofSeconds(koth.getDuration());
-                addKothSchedule(koth.getId(), schedules, duration);
+    public Duration getTimeUntilNextSchedule(String kothId) {
+        return schedulerManagers.stream()
+                .filter(manager -> manager.getConfig().kothIds().contains(kothId))
+                .map(SchedulerManagementService::getTimeUntilNext)
+                .min(Duration::compareTo)
+                .orElse(Duration.ZERO);
+    }
+
+    public void processAllSchedulersAndExecute() {
+        for (SchedulerManagementService manager : schedulerManagers) {
+            ScheduleStatus status = manager.checkStatusChange(kothRegistry);
+            switch (status) {
+                case STARTED -> handleSchedulerStart(manager);
+                case ENDED -> handleSchedulerEnd(manager);
+                case NO_CHANGE -> {}
             }
         }
     }
 
-    public void addKothSchedule(String kothId, List<Schedule> schedules, Duration duration) {
-        if (schedules == null || schedules.isEmpty()) return;
-
-        SchedulerManagementService manager = new SchedulerManagementService(kothRegistry.get(kothId), schedules, duration, timeService);
-        scheduleManagers.put(kothId, manager);
-    }
-
-    public void removeKothSchedule(String kothId) {
-        scheduleManagers.remove(kothId);
-    }
-
-    public boolean isKothTime(String kothId) {
-        Koth koth = kothRegistry.get(kothId);
-        if (koth != null && koth.isRunning()) {
-            return true;
+    private void handleSchedulerStart(SchedulerManagementService manager) {
+        List<String> kothsToStart = manager.getKothsToExecute();
+        for (String kothId : kothsToStart) {
+            kothRegistry.startKoth(kothId);
         }
-
-        SchedulerManagementService manager = scheduleManagers.get(kothId);
-        return manager != null && manager.isActiveTime();
     }
 
-    public ScheduleStatus updateAndCheckStatusChange(String kothId) {
-        SchedulerManagementService manager = scheduleManagers.get(kothId);
-        return manager != null ? manager.checkStatusChange() : ScheduleStatus.NO_CHANGE;
-    }
+    private void handleSchedulerEnd(SchedulerManagementService manager) {
+        List<String> kothsToStop = manager.getConfig().kothIds().stream()
+                .filter(kothId -> kothRegistry.getRunning().stream()
+                        .anyMatch(koth -> koth.getId().equals(kothId)))
+                .toList();
 
-    public Duration getTimeUntilNextSchedule(String kothId) {
-        Koth koth = kothRegistry.get(kothId);
-        if (koth != null && koth.isRunning()) {
-            return Duration.ZERO;
+        for (String kothId : kothsToStop) {
+            kothRegistry.stopKoth(kothId);
         }
-
-        SchedulerManagementService manager = scheduleManagers.get(kothId);
-        return manager != null ? manager.getTimeUntilNext() : Duration.ZERO;
-    }
-
-    public Duration getTimeUntilScheduleEnds(String kothId) {
-        Koth koth = kothRegistry.get(kothId);
-
-        if (koth != null && koth.isRunning()) {
-            return Duration.ofSeconds(koth.getRemainingTime());
-        }
-
-        SchedulerManagementService manager = scheduleManagers.get(kothId);
-        if (manager != null && manager.isActiveTime()) {
-            return manager.getTimeUntilEnds();
-        }
-
-        return Duration.ZERO;
-    }
-
-    public Duration getTimeSinceScheduleStarted(String kothId) {
-        SchedulerManagementService manager = scheduleManagers.get(kothId);
-        return manager != null ? manager.getTimeSinceStarted() : Duration.ZERO;
-    }
-
-    public LocalTime getNextScheduleTime(String kothId) {
-        Koth koth = kothRegistry.get(kothId);
-        if (koth != null && koth.isRunning()) {
-            return null;
-        }
-
-        SchedulerManagementService manager = scheduleManagers.get(kothId);
-        return manager != null ? manager.getNextScheduleTime() : null;
     }
 
     public String getFormattedTimeUntilNext(String kothId) {
         return timeService.formatDuration(getTimeUntilNextSchedule(kothId));
     }
 
-    public String getFormattedTimeUntilEnds(String kothId) {
-        Koth koth = kothRegistry.get(kothId);
-
-        if (koth != null && koth.isRunning()) {
-            Duration remaining = Duration.ofSeconds(koth.getRemainingTime());
-            return timeService.formatDuration(remaining);
-        }
-
-        SchedulerManagementService manager = scheduleManagers.get(kothId);
-        if (manager != null && manager.isActiveTime()) {
-            return timeService.formatDuration(manager.getTimeUntilEnds());
-        }
-
-        return "";
-    }
-
-    public String getFormattedNextScheduleTime(String kothId) {
-        LocalTime nextTime = getNextScheduleTime(kothId);
-        return nextTime != null ? timeService.formatTime(nextTime) : "";
-    }
-
-    public Set<String> getAllScheduledKoths() {
-        return Set.copyOf(scheduleManagers.keySet());
-    }
-
     public Set<String> getActiveKoths() {
-        Set<String> activeKoths = scheduleManagers.entrySet().stream()
-                .filter(entry -> entry.getValue().isActiveTime())
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet());
+        Set<String> activeKoths = new HashSet<>();
+
+        schedulerManagers.stream()
+                .filter(manager -> manager.isActiveTime(kothRegistry))
+                .flatMap(manager -> manager.getConfig().kothIds().stream())
+                .forEach(activeKoths::add);
 
         kothRegistry.getRunning().forEach(koth -> activeKoths.add(koth.getId()));
 
         return activeKoths;
     }
 
-    public void processAllSchedulesAndExecute() {
-        for (Map.Entry<String, SchedulerManagementService> entry : scheduleManagers.entrySet()) {
-            String kothId = entry.getKey();
-            ScheduleStatus status = entry.getValue().checkStatusChange();
+    public boolean hasScheduleForKoth(String kothId) {
+        return schedulerManagers.stream()
+                .anyMatch(manager -> manager.getConfig().kothIds().contains(kothId));
+    }
 
-            switch (status) {
-                case STARTED -> handleKothStart(kothId);
-                case ENDED -> handleKothEnd(kothId);
-                case NO_CHANGE -> {}
-            }
+    public List<SchedulerConfig> getSchedulerConfigs() {
+        List<SchedulerConfig> configs = new ArrayList<>();
+        for (SchedulerManagementService manager : schedulerManagers) {
+            configs.add(manager.getConfig());
         }
+        return configs;
     }
 
-    public String getNextKothToRun() {
-        return scheduleManagers.entrySet().stream()
-                .filter(entry -> {
-                    String kothId = entry.getKey();
-                    Koth koth = kothRegistry.get(kothId);
-
-                    if (koth != null && koth.isRunning()) {
-                        return false;
-                    }
-
-                    SchedulerManagementService manager = entry.getValue();
-                    return !manager.isActiveTime();
+    public String getNextKothToRun(){
+        return schedulerManagers.stream()
+                .map(manager -> {
+                    Duration timeUntilNext = manager.getTimeUntilNext();
+                    return new AbstractMap.SimpleEntry<>(manager.getConfig().kothIds(), timeUntilNext);
                 })
-                .min((e1, e2) -> {
-                    Duration d1 = e1.getValue().getTimeUntilNext();
-                    Duration d2 = e2.getValue().getTimeUntilNext();
-                    return d1.compareTo(d2);
-                })
-                .map(Map.Entry::getKey)
-                .orElse(null);
+                .filter(entry -> !entry.getValue().isZero())
+                .min(Comparator.comparing(AbstractMap.SimpleEntry::getValue))
+                .map(AbstractMap.SimpleEntry::getKey)
+                .flatMap(kothIds -> kothIds.stream().findFirst())
+                .orElse("N/A");
     }
 
-    public long getSecondsUntilNextKothRuns() {
-        String nextKothId = getNextKothToRun();
-        if (nextKothId == null) {
-            return -1;
-        }
-        Duration untilNext = getTimeUntilNextSchedule(nextKothId);
-        return untilNext.getSeconds();
+    public long getSecondsUntilNextKothRuns(){
+        return schedulerManagers.stream()
+                .map(SchedulerManagementService::getTimeUntilNext)
+                .min(Duration::compareTo)
+                .orElse(Duration.ZERO)
+                .getSeconds();
     }
 
-    private void handleKothStart(String kothId) {
-        kothRegistry.startKoth(kothId);
+    public long getTimeUntilKothEnds(String kothId) {
+        return kothRegistry.getRemainingScheduleTime(kothId).getSeconds();
     }
 
-    private void handleKothEnd(String kothId) {
-        kothRegistry.stopKoth(kothId);
-    }
-
-    public boolean hasSchedule(String kothId) {
-        return scheduleManagers.containsKey(kothId);
-    }
-
-    public SchedulerManagementService getScheduleManager(String kothId) {
-        return scheduleManagers.get(kothId);
-    }
-
-    public TimeService getTimeService() {
-        return timeService;
+    public String getFormattedTimeUntilEnds(String kothId) {
+        return timeService.formatDuration(kothRegistry.getRemainingScheduleTime(kothId));
     }
 }
