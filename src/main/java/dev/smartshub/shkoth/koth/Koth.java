@@ -57,7 +57,6 @@ public class Koth extends AbstractKoth {
         KothStartEvent event = eventDispatcher.fireKothStartEvent(this);
         if (event.isCancelled()) return;
 
-        eventDispatcher.fireKothStateChangeEvent(this, getState(), KothState.RUNNING);
         setState(KothState.RUNNING);
         this.remainingTime = duration;
         this.inside.clear();
@@ -68,7 +67,6 @@ public class Koth extends AbstractKoth {
     @Override
     public void stop(KothEndEvent.EndReason reason) {
         eventDispatcher.fireKothEndEvent(this, reason);
-        eventDispatcher.fireKothStateChangeEvent(this, getState(), KothState.INACTIVE);
         setState(KothState.INACTIVE);
         this.inside.clear();
         resetCapture();
@@ -97,7 +95,6 @@ public class Koth extends AbstractKoth {
                 this, representativePlayer, currentCapturingTeam != null ? currentCapturingTeam.getLeader() : null);
         if (event.isCancelled()) return;
 
-        eventDispatcher.fireKothStateChangeEvent(this, getState(), KothState.CAPTURING);
         setState(KothState.CAPTURING);
 
         this.currentCapturingTeam = team;
@@ -111,7 +108,6 @@ public class Koth extends AbstractKoth {
         long elapsedTime = (System.currentTimeMillis() - captureStartTime) / 1000;
 
         eventDispatcher.firePlayerStopKothCaptureEvent(this, previousCapturer, elapsedTime, reason);
-        eventDispatcher.fireKothStateChangeEvent(this, getState(), KothState.RUNNING);
         setState(KothState.RUNNING);
 
         resetCapture();
