@@ -5,7 +5,7 @@ import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.team.track.TeamTracker;
 import dev.smartshub.shkoth.loader.koth.KothLoader;
 import dev.smartshub.shkoth.service.config.ConfigService;
-import dev.smartshub.shkoth.service.schedule.KothSchedulerService;
+import dev.smartshub.shkoth.service.schedule.KothScheduler;
 
 import java.time.Duration;
 import java.util.Set;
@@ -14,17 +14,15 @@ import java.util.stream.Collectors;
 
 public class KothRegistry {
 
-    private final ConfigService configService;
     private final KothLoader kothLoader;
-    private final KothSchedulerService scheduler;
+    private final KothScheduler scheduler;
 
     private final Set<Koth> koths;
 
     public KothRegistry(ConfigService configService, TeamTracker teamHandler) {
-        this.configService = configService;
         this.kothLoader = new KothLoader(configService, teamHandler);
         this.koths = kothLoader.load();
-        scheduler = new KothSchedulerService(this, configService);
+        scheduler = new KothScheduler(this, configService);
     }
 
     public void register(Koth koth) {
@@ -98,9 +96,6 @@ public class KothRegistry {
         return scheduler.getTimeUntilNextSchedule(kothId);
     }
 
-    public KothSchedulerService getScheduler() {
-        return scheduler;
-    }
 
     public String getNextKothToRun() {
         return scheduler.getNextKothToRun();
@@ -111,7 +106,7 @@ public class KothRegistry {
     }
 
     public boolean isKothScheduledNow(String kothId) {
-        return scheduler.isKothTime(kothId);
+        return get(kothId).isRunning();
     }
 
     public long getTimeUntilNextSchedule(String kothId) {
@@ -121,11 +116,6 @@ public class KothRegistry {
     public String getTimeUntilNextScheduleFormatted(String kothId) {
         return scheduler.getFormattedTimeUntilNext(kothId);
     }
-
-    public String getTimeUntilScheduleEnds(String kothId) {
-        return scheduler.getFormattedTimeUntilEnds(kothId);
-    }
-
 
     public Duration getTimeUntilNext(String kothId) {
         return scheduler.getTimeUntilNextSchedule(kothId);

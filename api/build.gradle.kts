@@ -17,4 +17,5 @@ repositories {
 dependencies {
     paperweight.paperDevBundle("1.21.7-R0.1-SNAPSHOT")
     implementation("dev.triumphteam:triumph-gui:3.1.13-SNAPSHOT")
+    implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
 }

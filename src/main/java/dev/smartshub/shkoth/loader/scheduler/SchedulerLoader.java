@@ -2,13 +2,13 @@ package dev.smartshub.shkoth.loader.scheduler;
 
 import dev.smartshub.shkoth.api.config.ConfigType;
 import dev.smartshub.shkoth.api.loader.Loader;
-import dev.smartshub.shkoth.api.schedule.SchedulerConfig;
+import dev.smartshub.shkoth.api.schedule.Scheduler;
 import dev.smartshub.shkoth.builder.mapper.SchedulerConfigMapper;
 import dev.smartshub.shkoth.service.config.ConfigService;
 
 import java.util.List;
 
-public class SchedulerLoader implements Loader<List<SchedulerConfig>> {
+public class SchedulerLoader implements Loader<List<Scheduler>> {
 
     private final ConfigService configService;
     private final SchedulerConfigMapper schedulerMapper;
@@ -19,7 +19,7 @@ public class SchedulerLoader implements Loader<List<SchedulerConfig>> {
     }
 
     @Override
-    public List<SchedulerConfig> load() {
+    public List<Scheduler> load() {
         return schedulerMapper.map(configService.provide(ConfigType.SCHEDULERS));
     }
 }

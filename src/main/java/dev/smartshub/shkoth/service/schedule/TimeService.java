@@ -5,18 +5,6 @@ import java.time.format.DateTimeFormatter;
 
 public class TimeService {
 
-    public LocalTime getCurrentTime() {
-        return LocalTime.now(ZoneId.systemDefault());
-    }
-
-    public LocalDateTime getCurrentDateTime() {
-        return LocalDateTime.now(ZoneId.systemDefault());
-    }
-
-    public DayOfWeek getCurrentDay() {
-        return getCurrentDateTime().getDayOfWeek();
-    }
-
     public String formatDuration(Duration duration) {
         long hours = duration.toHours();
         long minutes = duration.toMinutesPart();

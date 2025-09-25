@@ -2,17 +2,19 @@ package dev.smartshub.shkoth.builder.mapper;
 
 import dev.smartshub.shkoth.api.builder.mapper.Mapper;
 import dev.smartshub.shkoth.api.config.ConfigContainer;
-import dev.smartshub.shkoth.api.schedule.SchedulerConfig;
+import dev.smartshub.shkoth.api.schedule.Scheduler;
+import it.sauronsoftware.cron4j.Predictor;
 
 import java.util.*;
 
-public class SchedulerConfigMapper implements Mapper<List<SchedulerConfig>, ConfigContainer> {
+public class SchedulerConfigMapper implements Mapper<List<Scheduler>, ConfigContainer> {
 
     @Override
-    public List<SchedulerConfig> map(ConfigContainer config) {
+    public List<Scheduler> map(ConfigContainer config) {
         String tz = config.getString("time-zone", "server");
+        TimeZone timeZone = TimeZone.getTimeZone(tz);
         Set<String> schedulerIds = config.getKeys("schedulers");
-        List<SchedulerConfig> result = new ArrayList<>();
+        List<Scheduler> result = new ArrayList<>();
 
         for (String schedulerId : schedulerIds) {
             String base = "schedulers." + schedulerId;
@@ -31,7 +33,14 @@ public class SchedulerConfigMapper implements Mapper<List<SchedulerConfig>, Conf
 
             boolean random = config.getBoolean(base + ".random", false);
 
-            result.add(SchedulerConfig.of(schedulerId, validTimes, tz, random, koths));
+            List<Predictor> predictors = new ArrayList<>();
+            for (String time : validTimes) {
+                Predictor predictor = new Predictor(time);
+                predictor.setTimeZone(timeZone);
+                predictors.add(predictor);
+            }
+
+            result.add(new Scheduler(predictors, random, koths));
         }
 
         return result;

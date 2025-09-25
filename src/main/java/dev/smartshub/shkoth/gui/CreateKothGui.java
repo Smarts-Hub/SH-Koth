@@ -64,19 +64,27 @@ public class CreateKothGui extends BaseUpdatableGui {
         registerItemUpdater(13, this::createCaptureTimeItem);
         registerItemUpdater(14, this::createWandItem);
         registerItemUpdater(15, this::createTypeItem);
-        registerItemUpdater(16, this::createRewardsItem);
-        registerItemUpdater(19, this::createDenyEnterItem);
+        registerItemUpdater(19, this::createRewardsItem);
         registerItemUpdater(20, this::createCommandsItem);
         registerItemUpdater(21, this::createCapturingBoardTitleItem);
         registerItemUpdater(22, this::createCapturingBoardLinesItem);
         registerItemUpdater(23, this::createWaitingBoardTitleItem);
         registerItemUpdater(24, this::createWaitingBoardLinesItem);
-        registerItemUpdater(25, this::createCreateKothItem);
-        registerItemUpdater(29, this::createSoloItem);
-        registerItemUpdater(30, this::createBossbarItem);
-        registerItemUpdater(31, this::createDenyEnterItem);
-        registerItemUpdater(32, this::createTeamItem);
-        registerItemUpdater(33, this::createScoreboardItem);
+        registerItemUpdater(28, this::createSoloItem);
+        registerItemUpdater(29, this::createBossbarItem);
+        registerItemUpdater(30, this::createDenyEnterItem);
+        registerItemUpdater(31, this::createTeamItem);
+        registerItemUpdater(32, this::createScoreboardItem);
+        registerItemUpdater(33, this::createCreateKothItem);
+        registerItemUpdater(16, this::createAuxFiller);
+        registerItemUpdater(25, this::createAuxFiller);
+        registerItemUpdater(34, this::createAuxFiller);
+    }
+
+    private GuiItem createAuxFiller(Player player, Gui gui) {
+        return ItemBuilder.from(Material.ORANGE_STAINED_GLASS_PANE)
+                .name(parser.parse(""))
+                .asGuiItem(event -> event.setCancelled(true));
     }
 
     private GuiItem createCreateKothItem(Player player, Gui gui) {

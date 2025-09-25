@@ -31,8 +31,7 @@ schedulers:
 
     # List of koths to start at the specified times (ids defined in koths folder)
     koths:
-      - "arena1"
-      - "arena2"
+      - ""
 
   # Every day at midnight, one random koth from the list
   midnight_random:
@@ -40,8 +39,6 @@ schedulers:
       - "0 0 * * *"
     random: true
     koths:
-      - "castle"
-      - "desert"
-      - "volcano"
+      - ""
 
 config-version: 1

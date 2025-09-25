@@ -35,7 +35,7 @@ import dev.smartshub.shkoth.service.koth.KothRegistrationFromTempDataService;
 import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
 import dev.smartshub.shkoth.service.koth.RefreshInsideKothService;
 import dev.smartshub.shkoth.service.notify.NotifyService;
-import dev.smartshub.shkoth.service.schedule.KothSchedulerService;
+import dev.smartshub.shkoth.service.schedule.KothScheduler;
 import dev.smartshub.shkoth.service.scoreboard.ScoreboardHandleService;
 import dev.smartshub.shkoth.service.scoreboard.SendScoreboardService;
 import dev.smartshub.shkoth.service.team.TeamHandlingService;
@@ -92,7 +92,7 @@ public class SHKoth extends JavaPlugin {
 
     private KothTicker kothTicker;
     private RefreshInsideKothService refreshInsideKothService;
-    private KothSchedulerService kothSchedulerService;
+    private KothScheduler kothSchedulerService;
 
     private UpdateTask task;
     private AsyncJobTask asyncJobTask;
@@ -157,7 +157,7 @@ public class SHKoth extends JavaPlugin {
         teamInviteService = new TeamInviteService(teamHandlingService, notifyService);
 
         refreshInsideKothService = new RefreshInsideKothService(kothRegistry);
-        kothSchedulerService = new KothSchedulerService(kothRegistry, configService);
+        kothSchedulerService = new KothScheduler(kothRegistry, configService);
 
         adventureBossbarService = new AdventureBossbarService(kothRegistry, configService.provide(ConfigType.BOSSBAR), messageParser);
         wandService = new WandService(this, messageParser);
