@@ -30,6 +30,10 @@ schedulers:
     random: false
 
     # List of koths to start at the specified times (ids defined in koths folder)
+    # Do not forget to use the correct koth id, not the display name. Also use "".
+    # Example:
+    # koths:
+    #  - "koth1"
     koths:
       - ""
 
