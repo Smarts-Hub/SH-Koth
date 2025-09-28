@@ -69,7 +69,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
             case "z" -> kothRegistry.get(kothName).getArea().getCenter().getBlockZ();
             case "is_running" -> kothRegistry.get(kothName).isRunning();
             case "is_capturing" -> kothRegistry.get(kothName).isCapturing();
-            case "capturer" -> kothRegistry.get(kothName).getCurrentCapturerPlayer().getName();
+            case "capturer" -> (kothRegistry.get(kothName).getCurrentCapturerPlayer() == null) ? "" : kothRegistry.get(kothName).getCurrentCapturerPlayer().getName();
             case "captured" -> kothRegistry.get(kothName).getCaptureTime();
             case "captured_formatted" -> placeholderHelper.formatTime(kothRegistry.get(kothName).getCaptureTime());
             case "max_time" -> kothRegistry.get(kothName).getDuration();
