@@ -27,7 +27,8 @@ public class KothScheduler {
 
         for (Scheduler scheduler : schedulers) {
             if (scheduler.kothIds().contains(kothId)) {
-                for (var predictor : scheduler.cronExpressions()) {
+                for (String cronExpression : scheduler.cronExpressions()) {
+                    var predictor = scheduler.createPredictor(cronExpression);
                     long nextTime = predictor.nextMatchingTime();
                     Duration duration = Duration.ofMillis(nextTime - currentTime);
 
@@ -49,7 +50,8 @@ public class KothScheduler {
         long currentTime = System.currentTimeMillis();
 
         for (Scheduler scheduler : schedulers) {
-            for (var predictor : scheduler.cronExpressions()) {
+            for (String cronExpression : scheduler.cronExpressions()) {
+                var predictor = scheduler.createPredictor(cronExpression);
                 long nextTime = predictor.nextMatchingTime();
 
                 if (nextTime <= currentTime) continue;
@@ -74,7 +76,8 @@ public class KothScheduler {
         long currentTime = System.currentTimeMillis();
 
         for (Scheduler scheduler : schedulers) {
-            for (var predictor : scheduler.cronExpressions()) {
+            for (String cronExpression : scheduler.cronExpressions()) {
+                var predictor = scheduler.createPredictor(cronExpression);
                 long nextTime = predictor.nextMatchingTime();
 
                 if (nextTime <= currentTime) continue;
@@ -100,7 +103,8 @@ public class KothScheduler {
         long currentTime = System.currentTimeMillis();
 
         for (Scheduler scheduler : schedulers) {
-            for (var predictor : scheduler.cronExpressions()) {
+            for (String cronExpression : scheduler.cronExpressions()) {
+                var predictor = scheduler.createPredictor(cronExpression);
                 long nextTime = predictor.nextMatchingTime();
 
                 if (Math.abs(nextTime - currentTime) > 60000) continue;
@@ -115,5 +119,4 @@ public class KothScheduler {
             }
         }
     }
-
 }

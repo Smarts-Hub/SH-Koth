@@ -3,7 +3,6 @@ package dev.smartshub.shkoth.builder.mapper;
 import dev.smartshub.shkoth.api.builder.mapper.Mapper;
 import dev.smartshub.shkoth.api.config.ConfigContainer;
 import dev.smartshub.shkoth.api.schedule.Scheduler;
-import it.sauronsoftware.cron4j.Predictor;
 
 import java.util.*;
 
@@ -20,7 +19,7 @@ public class SchedulerConfigMapper implements Mapper<List<Scheduler>, ConfigCont
             String base = "schedulers." + schedulerId;
             List<String> times = config.getStringList(base + ".times", Collections.emptyList());
             if (times == null || times.isEmpty()) continue;
-            
+
             List<String> validTimes = times.stream()
                     .filter(Objects::nonNull)
                     .map(String::trim)
@@ -33,14 +32,7 @@ public class SchedulerConfigMapper implements Mapper<List<Scheduler>, ConfigCont
 
             boolean random = config.getBoolean(base + ".random", false);
 
-            List<Predictor> predictors = new ArrayList<>();
-            for (String time : validTimes) {
-                Predictor predictor = new Predictor(time);
-                predictor.setTimeZone(timeZone);
-                predictors.add(predictor);
-            }
-
-            result.add(new Scheduler(predictors, random, koths));
+            result.add(new Scheduler(validTimes, timeZone, random, koths));
         }
 
         return result;
