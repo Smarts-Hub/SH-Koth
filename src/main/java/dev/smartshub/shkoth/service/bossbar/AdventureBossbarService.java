@@ -2,6 +2,7 @@ package dev.smartshub.shkoth.service.bossbar;
 
 import dev.smartshub.shkoth.api.config.ConfigContainer;
 import dev.smartshub.shkoth.api.koth.Koth;
+import dev.smartshub.shkoth.api.koth.guideline.KothState;
 import dev.smartshub.shkoth.message.MessageParser;
 import dev.smartshub.shkoth.registry.KothRegistry;
 import net.kyori.adventure.bossbar.BossBar;
@@ -40,7 +41,19 @@ public class AdventureBossbarService {
         this.parser = parser;
     }
 
-    public void startBossbars(Koth koth) {
+    public void handleStateChange(Koth koth, KothState newState) {
+        if (koth == null) return;
+
+        boolean willBeRunning = newState == KothState.RUNNING || newState == KothState.CAPTURING;
+
+        if (willBeRunning) {
+            startBossbars(koth);
+        } else {
+            stopBossbars(koth);
+        }
+    }
+
+    private void startBossbars(Koth koth) {
         if (koth == null || !koth.isRunning()) {
             return;
         }
@@ -49,7 +62,7 @@ public class AdventureBossbarService {
         updateBossbarsForKoth(koth);
     }
 
-    public void stopBossbars(Koth koth) {
+    private void stopBossbars(Koth koth) {
         if (koth == null) {
             return;
         }

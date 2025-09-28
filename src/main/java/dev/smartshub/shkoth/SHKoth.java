@@ -201,7 +201,7 @@ public class SHKoth extends JavaPlugin {
     }
 
     private void setUpTasks() {
-        task = new UpdateTask(kothTicker, refreshInsideKothService, kothSchedulerService, scoreboardHandleService);
+        task = new UpdateTask(kothTicker, refreshInsideKothService, kothSchedulerService);
         task.runTaskTimer(this, 20L, 20L);
 
         asyncJobTask = new AsyncJobTask(scoreboardHandleService, teamTracker, adventureBossbarService);

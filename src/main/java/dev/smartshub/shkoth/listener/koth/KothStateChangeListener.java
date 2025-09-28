@@ -1,7 +1,6 @@
 package dev.smartshub.shkoth.listener.koth;
 
 import dev.smartshub.shkoth.api.event.koth.KothStateChangeEvent;
-import dev.smartshub.shkoth.api.koth.guideline.KothState;
 import dev.smartshub.shkoth.service.bossbar.AdventureBossbarService;
 import dev.smartshub.shkoth.service.scoreboard.ScoreboardHandleService;
 import org.bukkit.event.EventHandler;
@@ -21,15 +20,12 @@ public class KothStateChangeListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onKothStateChange(KothStateChangeEvent event) {
-        if(event.isCancelled() || !event.getKoth().isScoreboardEnabled()) return;
-        scoreboardHandleService.handleChange(event.getKoth(), event.getNewState());
+        if(event.isCancelled()) return;
 
-        if(event.getNewState() == KothState.RUNNING){
-            adventureBossbarService.startBossbars(event.getKoth());
+        if(event.getKoth().isScoreboardEnabled()) {
+            scoreboardHandleService.handleChange(event.getKoth(), event.getNewState());
         }
 
-        if(event.getNewState() == KothState.INACTIVE){
-            adventureBossbarService.stopBossbars(event.getKoth());
-        }
+        adventureBossbarService.handleStateChange(event.getKoth(), event.getNewState());
     }
 }
