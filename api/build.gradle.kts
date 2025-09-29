@@ -20,6 +20,7 @@ publishing {
         create<MavenPublication>("mavenJava") {
             from(components["java"])
             groupId = group.toString()
+            version = project.version.toString()
             artifactId = "sh-koth-api"
             version = project.version.toString()
         }
