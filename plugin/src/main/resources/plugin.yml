@@ -1,7 +1,7 @@
 name: SH-Koth
 main: dev.smartshub.shkoth.SHKoth
-version: 1.2.0
+version: $version
 api-version: 1.21
-authors: [hhitt, SmartsHub]
+authors: [ hhitt, SmartsHub ]
 description: "Simple to use, powerful in action. A smarter KOTH solution."
-soft-depend: [PlaceholderAPI, MultiverseCore, BetterTeams, FactionsUUID, Towny, KingdomsX, UltimateClans, SimpleClans, BentoBox]
+soft-depend: [ PlaceholderAPI, MultiverseCore, BetterTeams, FactionsUUID, Towny, KingdomsX, UltimateClans, SimpleClans, BentoBox ]
