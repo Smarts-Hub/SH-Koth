@@ -11,6 +11,7 @@ public enum ConfigType {
     ACTIONBAR("lang/actionbar.yml", "actionbar.yml", "lang"),
     SOUND("lang/sound.yml", "sound.yml", "lang"),
     TITLE("lang/title.yml", "title.yml", "lang"),
+    DISCORD("lang/discord-webhook.yml", "discord-webhook.yml", "lang"),
 
     KOTH_DEFINITION("koths/", null, "koths");
 

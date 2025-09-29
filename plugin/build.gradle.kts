@@ -18,6 +18,8 @@ dependencies {
     implementation("com.saicone.rtag:rtag-item:1.5.11")
     implementation("it.sauronsoftware.cron4j:cron4j:2.2.5")
 
+    implementation("io.github.4drian3d:jdwebhooks:1.1.0")
+
     compileOnly("net.kyori:adventure-api:4.17.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.4.1")
     compileOnly("net.kyori:adventure-text-minimessage:4.17.0")

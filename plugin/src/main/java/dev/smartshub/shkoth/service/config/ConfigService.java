@@ -43,6 +43,7 @@ public class ConfigService {
         provide(ConfigType.TITLE);
         provide(ConfigType.SOUND);
         provide(ConfigType.BOSSBAR);
+        provide(ConfigType.DISCORD);
     }
     private void updateConfigsIfNeeded() {
         plugin.getDataFolder().mkdirs();
@@ -188,5 +189,6 @@ public class ConfigService {
         reload(ConfigType.TITLE);
         reload(ConfigType.SOUND);
         reload(ConfigType.BOSSBAR);
+        provide(ConfigType.DISCORD);
     }
 }

@@ -13,6 +13,7 @@ import dev.smartshub.shkoth.gui.AddPhysicalRewardGui;
 import dev.smartshub.shkoth.gui.CommandGui;
 import dev.smartshub.shkoth.gui.CreateSchedulerGui;
 import dev.smartshub.shkoth.hook.bstats.Metrics;
+import dev.smartshub.shkoth.hook.discord.DiscordWebHookSender;
 import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.koth.ticking.KothTicker;
 import dev.smartshub.shkoth.listener.koth.*;
@@ -68,7 +69,6 @@ public class SHKoth extends JavaPlugin {
     private MessageRepository messageRepository;
     private ConfigService configService;
 
-
     private NotifyService notifyService;
 
     private SendScoreboardService sendScoreboardService;
@@ -99,6 +99,8 @@ public class SHKoth extends JavaPlugin {
 
     private ContextualTeamTracker teamTracker;
 
+    private DiscordWebHookSender discordWebHookSender;
+
     @Override
     public void onEnable() {
         getLogger().info("SHKoth has been enabled!");
@@ -111,9 +113,9 @@ public class SHKoth extends JavaPlugin {
         guis();
         initTicking();
         setUpTasks();
+        registerHooks();
         registerCommands();
         registerListeners();
-        registerHooks();
     }
 
     @Override
@@ -208,6 +210,19 @@ public class SHKoth extends JavaPlugin {
         asyncJobTask.runTaskTimerAsynchronously(this, 20L, 20L);
     }
 
+    private void registerHooks(){
+        //PlaceholderAPI
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
+            new PlaceholderAPIHook(kothRegistry, playerStatsCache).register();
+        }
+
+        // BStats
+        Metrics metrics = new Metrics(this, 27090);
+
+        // Discord WebHook
+        discordWebHookSender = new DiscordWebHookSender(configService.provide(ConfigType.DISCORD));
+    }
+
     private void registerCommands() {
 
         final var exceptionHandler = new ExceptionHandler(notifyService);
@@ -226,13 +241,13 @@ public class SHKoth extends JavaPlugin {
     }
 
     private void registerListeners() {
-        getServer().getPluginManager().registerEvents(new KothEndListener(notifyService, playerStatsDAO), this);
-        getServer().getPluginManager().registerEvents(new KothStartListener(notifyService), this);
-        getServer().getPluginManager().registerEvents(new KothStateChangeListener(scoreboardHandleService, adventureBossbarService), this);
-        getServer().getPluginManager().registerEvents(new PlayerEnterKothDuringRunListener(notifyService), this);
-        getServer().getPluginManager().registerEvents(new PlayerLeavekothDuringRunListener(notifyService), this);
-        getServer().getPluginManager().registerEvents(new PlayerStartKothCaptureListener(notifyService) , this);
-        getServer().getPluginManager().registerEvents(new PlayerStopKothCaptureListener(notifyService) , this);
+        getServer().getPluginManager().registerEvents(new KothEndListener(notifyService, playerStatsDAO, discordWebHookSender), this);
+        getServer().getPluginManager().registerEvents(new KothStartListener(notifyService, discordWebHookSender), this);
+        getServer().getPluginManager().registerEvents(new KothStateChangeListener(scoreboardHandleService, adventureBossbarService, discordWebHookSender), this);
+        getServer().getPluginManager().registerEvents(new PlayerEnterKothDuringRunListener(notifyService, discordWebHookSender), this);
+        getServer().getPluginManager().registerEvents(new PlayerLeavekothDuringRunListener(notifyService, discordWebHookSender), this);
+        getServer().getPluginManager().registerEvents(new PlayerStartKothCaptureListener(notifyService, discordWebHookSender) , this);
+        getServer().getPluginManager().registerEvents(new PlayerStopKothCaptureListener(notifyService, discordWebHookSender) , this);
 
         getServer().getPluginManager().registerEvents(new TeamChangeLeaderListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new TeamCreatedListener(notifyService), this);
@@ -245,16 +260,6 @@ public class SHKoth extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerQuitListener(playerStatsCache), this);
         getServer().getPluginManager().registerEvents(new AsyncChatListener(this, kothToRegisterCache, messageParser, guiService), this);
         getServer().getPluginManager().registerEvents(new PlayerInteractListener(kothToRegisterCache, guiService, messageParser, wandService), this);
-    }
-
-    private void registerHooks(){
-        //PlaceholderAPI
-        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
-            new PlaceholderAPIHook(kothRegistry, playerStatsCache).register();
-        }
-
-        // BStats
-        Metrics metrics = new Metrics(this, 27090);
     }
 
 }

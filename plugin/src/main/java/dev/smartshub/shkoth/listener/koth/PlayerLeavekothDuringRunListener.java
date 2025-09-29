@@ -1,6 +1,7 @@
 package dev.smartshub.shkoth.listener.koth;
 
 import dev.smartshub.shkoth.api.event.koth.PlayerLeaveKothDuringRunEvent;
+import dev.smartshub.shkoth.hook.discord.DiscordWebHookSender;
 import dev.smartshub.shkoth.service.notify.NotifyService;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -9,9 +10,12 @@ import org.bukkit.event.Listener;
 public class PlayerLeavekothDuringRunListener implements Listener {
 
     private final NotifyService notifyService;
+    private final DiscordWebHookSender discordWebHookSender;
 
-    public PlayerLeavekothDuringRunListener(NotifyService notifyService) {
+    public PlayerLeavekothDuringRunListener(NotifyService notifyService,
+                                            DiscordWebHookSender discordWebHookSender) {
         this.notifyService = notifyService;
+        this.discordWebHookSender = discordWebHookSender;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -20,6 +24,7 @@ public class PlayerLeavekothDuringRunListener implements Listener {
         notifyService.sendTitle(event.getPlayer(), "koth.leave.title", "koth.leave.subtitle");
         notifyService.sendActionBar(event.getPlayer(), "koth.leave");
         notifyService.playSound(event.getPlayer(), "koth.leave");
+        discordWebHookSender.send(event);
     }
 
 }
