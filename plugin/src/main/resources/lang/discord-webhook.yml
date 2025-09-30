@@ -14,7 +14,7 @@
 url: ""
 
 # Webhook messages configuration
-end:
+koth-end:
   enabled: true
   username: "SH-Koth"
   author: "SH-Koth"
@@ -24,7 +24,7 @@ end:
   description: "The KOTH %shkoth_koth_context% has ended! Congratulations to the winners!"
   footer: "Powered by SH-Koth"
 
-start:
+koth-start:
   enabled: true
   username: "SH-Koth"
   author: "SH-Koth"
@@ -34,7 +34,7 @@ start:
   description: "The KOTH %shkoth_koth_context% has started! Capture it to win amazing rewards!"
   footer: "Powered by SH-Koth"
 
-state-change:
+koth-state-change:
   enabled: false
   username: "SH-Koth"
   author: "SH-Koth"
@@ -44,7 +44,7 @@ state-change:
   description: "The KOTH %shkoth_koth_context% has changed the state!"
   footer: "Powered by SH-Koth"
 
-player-enter:
+koth-player-enter:
   enabled: false
   username: "SH-Koth"
   author: "SH-Koth"
@@ -54,7 +54,7 @@ player-enter:
   description: "%shkoth_player_context% entered to the Koth %shkoth_koth_context%!"
   footer: "Powered by SH-Koth"
 
-player-leave:
+koth-player-leave:
   enabled: false
   username: "SH-Koth"
   author: "SH-Koth"
@@ -64,7 +64,7 @@ player-leave:
   description: "%shkoth_player_context% leaved the Koth %shkoth_koth_context%!"
   footer: "Powered by SH-Koth"
 
-player-start-capture:
+koth-player-start-capture:
   enabled: true
   username: "SH-Koth"
   author: "SH-Koth"
@@ -74,7 +74,7 @@ player-start-capture:
   description: "%shkoth_player_context% start capture for %shkoth_koth_context%!"
   footer: "Powered by SH-Koth"
 
-player-stop-capture:
+koth-player-stop-capture:
   enabled: true
   username: "SH-Koth"
   author: "SH-Koth"

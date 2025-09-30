@@ -21,7 +21,7 @@ public class DiscordWebHookSender {
     }
 
     public void send(DiscordKey event) {
-        final String key = event.getDiscordKey();
+        final String key = "koth-" + event.getDiscordKey();
 
         final boolean enabled = config.getBoolean(key + ".enabled", false);
         if(!enabled) return;
