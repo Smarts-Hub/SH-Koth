@@ -3,6 +3,7 @@ package dev.smartshub.shkoth.hook.placeholder;
 import dev.smartshub.shkoth.api.stat.StatType;
 import dev.smartshub.shkoth.registry.KothRegistry;
 import dev.smartshub.shkoth.storage.cache.PlayerStatsCache;
+import dev.smartshub.shkoth.storage.cache.PushStackCache;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -49,6 +50,7 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
                 case "next_koth" -> kothRegistry.getNextKothToRun();
                 case "next_koth_in" -> kothRegistry.getTimeUntilNextKoth();
                 case "next_koth_in_formatted" -> placeholderHelper.formatTime(kothRegistry.getTimeUntilNextKoth());
+                case "latest_winner" -> PushStackCache.getArg4();
                 default -> "";
             });
         }
@@ -62,6 +64,8 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
             case "next_schedule_formatted" -> kothRegistry.getTimeUntilNextScheduleFormatted(kothName);
             case "display_name" -> kothRegistry.get(kothName).getDisplayName();
             case "progress" -> kothRegistry.get(kothName).getCaptureProgress();
+            case "inside" -> (player != null) && kothRegistry.get(kothName).getArea().contains(player.getLocation()) ? "true" : "false";
+            case "inside_count" -> kothRegistry.get(kothName).getPlayersInside().size();
             case "id" -> kothName;
             case "world" -> kothRegistry.get(kothName).getArea().worldName();
             case "x" -> kothRegistry.get(kothName).getArea().getCenter().getBlockX();

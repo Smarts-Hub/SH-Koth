@@ -52,6 +52,8 @@ public class KothEndListener implements Listener {
                 playerStatsDAO.increaseTeamWin(player);
             }
         });
+
+        PushStackCache.pushArg4(event.getKoth().getTeamTracker().getTeamDisplayName(event.getWinnerPlayers().getFirst().getUniqueId()));
     }
 
 }

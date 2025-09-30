@@ -6,6 +6,7 @@ public class PushStackCache {
     private static volatile String Arg1;
     private static volatile String Arg2;
     private static volatile String Arg3;
+    private static volatile String Arg4 = "";
 
     public static void pushArg1(String arg1){
         Arg1 = arg1;
@@ -19,6 +20,10 @@ public class PushStackCache {
         Arg3 = arg3;
     }
 
+    public static void pushArg4(String arg4){
+        Arg4 = arg4;
+    }
+
     public static String getArg1(){
         return Arg1;
     }
@@ -29,6 +34,10 @@ public class PushStackCache {
 
     public static String getArg3(){
         return Arg3;
+    }
+
+    public static String getArg4(){
+        return Arg4;
     }
 
 }
