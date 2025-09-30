@@ -10,7 +10,6 @@ import dev.smartshub.shkoth.service.gui.menu.other.WaitingToFill;
 import org.bukkit.Bukkit;
 
 import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -57,30 +56,36 @@ public class KothTempData {
     private List<String> scoreboardWaitingContent = new ArrayList<>();
 
 
-    public void fillChatInput(String input){
-        if(!waitingToChat) return;
+    public void fillChatInput(String input) {
+        if (!waitingToChat) return;
         try {
-            switch (waitingToFill){
+            switch (waitingToFill) {
                 case ID -> setId(input);
                 case DISPLAYNAME -> setDisplayName(input);
                 case WIN_COMMAND -> {
                     winnersCommands.add(input);
                     guiService.openCommandGui(Bukkit.getPlayer(creatorUUID));
+                    return;
                 }
                 case START_COMMAND -> {
                     startCommands.add(input);
                     guiService.openCommandGui(Bukkit.getPlayer(creatorUUID));
+                    return;
                 }
                 case END_COMMAND -> {
                     endCommands.add(input);
                     guiService.openCommandGui(Bukkit.getPlayer(creatorUUID));
+                    return;
                 }
                 case BOARD_CAPTURING_TITLE -> setScoreboardCapturingTitle(input);
                 case BOARD_CAPTURING_LINE -> addCapturingLine(input);
                 case BOARD_WAITING_TITLE -> setScoreboardWaitingTitle(input);
                 case BOARD_WAITING_LINE -> addWaitingLine(input);
-                case NONE -> {}
+                case NONE -> {
+                }
             }
+
+            guiService.openCreateKothGui(Bukkit.getPlayer(creatorUUID));
         } catch (NumberFormatException e) {
 
         }
@@ -98,7 +103,7 @@ public class KothTempData {
     }
 
     public void removeLastCapturingLine() {
-        if(!scoreboardCapturingContent.isEmpty()) {
+        if (!scoreboardCapturingContent.isEmpty()) {
             scoreboardCapturingContent.remove(scoreboardCapturingContent.size() - 1);
         }
     }
@@ -116,7 +121,7 @@ public class KothTempData {
     }
 
     public void removeLastWaitingLine() {
-        if(!scoreboardWaitingContent.isEmpty()) {
+        if (!scoreboardWaitingContent.isEmpty()) {
             scoreboardWaitingContent.remove(scoreboardWaitingContent.size() - 1);
         }
     }
@@ -154,7 +159,7 @@ public class KothTempData {
     }
 
     public void removeLastPhysicalReward() {
-        if(!physicalRewards.isEmpty()) {
+        if (!physicalRewards.isEmpty()) {
             physicalRewards.remove(physicalRewards.size() - 1);
         }
     }
@@ -168,7 +173,7 @@ public class KothTempData {
     }
 
     public void removeLastStartCommand() {
-        if(!startCommands.isEmpty()) {
+        if (!startCommands.isEmpty()) {
             startCommands.remove(startCommands.size() - 1);
         }
     }
@@ -182,7 +187,7 @@ public class KothTempData {
     }
 
     public void removeLastEndCommand() {
-        if(!endCommands.isEmpty()) {
+        if (!endCommands.isEmpty()) {
             endCommands.remove(endCommands.size() - 1);
         }
     }
@@ -196,7 +201,7 @@ public class KothTempData {
     }
 
     public void removeLastWinnerCommand() {
-        if(!winnersCommands.isEmpty()) {
+        if (!winnersCommands.isEmpty()) {
             winnersCommands.remove(winnersCommands.size() - 1);
         }
     }
@@ -365,7 +370,7 @@ public class KothTempData {
 
     public List<Commands> getCommands() {
         List<Commands> commandsList = new ArrayList<>();
-        if(!startCommands.isEmpty() || !endCommands.isEmpty() || !winnersCommands.isEmpty()) {
+        if (!startCommands.isEmpty() || !endCommands.isEmpty() || !winnersCommands.isEmpty()) {
             commandsList.add(buildCommands());
         }
         return commandsList;
