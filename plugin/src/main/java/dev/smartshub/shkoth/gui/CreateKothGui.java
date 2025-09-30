@@ -2,11 +2,11 @@ package dev.smartshub.shkoth.gui;
 
 import dev.smartshub.shkoth.api.gui.BaseUpdatableGui;
 import dev.smartshub.shkoth.api.koth.guideline.KothType;
+import dev.smartshub.shkoth.message.MessageParser;
 import dev.smartshub.shkoth.service.gui.GuiService;
+import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
 import dev.smartshub.shkoth.service.gui.menu.other.KothLoreBoardPreview;
 import dev.smartshub.shkoth.service.gui.menu.other.WaitingToFill;
-import dev.smartshub.shkoth.message.MessageParser;
-import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
 import dev.smartshub.shkoth.service.wand.WandService;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
@@ -43,16 +43,10 @@ public class CreateKothGui extends BaseUpdatableGui {
                 .create();
 
         registerAllUpdaters();
-        updateScoreboardItems(player, gui);
         setupAllItems(gui, player);
         fillEmpty(gui);
 
         gui.open(player);
-    }
-
-    public void updateScoreboardItems(Player player, Gui gui) {
-        updateItem(gui, player, 23);
-        updateItem(gui, player, 25);
     }
 
     @Override
@@ -94,7 +88,7 @@ public class CreateKothGui extends BaseUpdatableGui {
                 .glow()
                 .asGuiItem(event -> {
                     event.setCancelled(true);
-                    if(!kothToRegisterCache.validateKoth(player.getUniqueId()).valid()){
+                    if (!kothToRegisterCache.validateKoth(player.getUniqueId()).valid()) {
                         player.sendMessage(parser.parse("<red>You cannot create the KOTH yet! Make sure to set all required fields."));
                         return;
                     }
@@ -147,10 +141,10 @@ public class CreateKothGui extends BaseUpdatableGui {
                 .asGuiItem(event -> {
                     event.setCancelled(true);
                     int change = getNumericChange(event);
-                    if(change != 0) {
+                    if (change != 0) {
                         var kothData = kothToRegisterCache.getKothToRegister(player.getUniqueId());
                         kothData.setMaxTime(Math.max(1, kothData.getMaxTime() + change));
-                        updateItem(gui, player, 13);
+                        updateItem(gui, player, event.getSlot());
                     }
                 });
     }
@@ -167,10 +161,10 @@ public class CreateKothGui extends BaseUpdatableGui {
                 .asGuiItem(event -> {
                     event.setCancelled(true);
                     int change = getNumericChange(event);
-                    if(change != 0) {
+                    if (change != 0) {
                         var kothData = kothToRegisterCache.getKothToRegister(player.getUniqueId());
                         kothData.setCaptureTime(Math.max(1, kothData.getCaptureTime() + change));
-                        updateItem(gui, player, 14);
+                        updateItem(gui, player, event.getSlot());
                     }
                 });
     }
@@ -178,7 +172,7 @@ public class CreateKothGui extends BaseUpdatableGui {
     private GuiItem createWandItem(Player player, Gui gui) {
         var area = kothToRegisterCache.getKothToRegister(player.getUniqueId()).getArea();
         List<String> lore = new ArrayList<>();
-        if(area == null){
+        if (area == null) {
             lore.add("<gray>Area not set yet! (Use the wand to set it)");
         } else {
             lore.add("<green>Set correctly!");
@@ -208,7 +202,7 @@ public class CreateKothGui extends BaseUpdatableGui {
                     event.setCancelled(true);
                     var kothData = kothToRegisterCache.getKothToRegister(player.getUniqueId());
                     kothData.setType(kothData.isCaptureType() ? KothType.SCORE : KothType.CAPTURE);
-                    updateItem(gui, player, 16);
+                    updateItem(gui, player, event.getSlot());
                 });
     }
 
@@ -250,7 +244,7 @@ public class CreateKothGui extends BaseUpdatableGui {
                 .lore(kothLoreBoardPreview.getCapturingLore(player.getUniqueId()))
                 .asGuiItem(event -> {
                     event.setCancelled(true);
-                    handleBoardLinesClick(event, player, gui, true, 23);
+                    handleBoardLinesClick(event, player, gui, true, event.getSlot());
                 });
     }
 
@@ -272,11 +266,11 @@ public class CreateKothGui extends BaseUpdatableGui {
                 .lore(kothLoreBoardPreview.getWaitingLore(player.getUniqueId()))
                 .asGuiItem(event -> {
                     event.setCancelled(true);
-                    handleBoardLinesClick(event, player, gui, false, 25);
+                    handleBoardLinesClick(event, player, gui, false, event.getSlot());
                 });
     }
 
-    private GuiItem createToggleItem(Player player, Gui gui, int slot, String name,
+    private GuiItem createToggleItem(Player player, Gui gui, String name,
                                      boolean currentValue, String enabledText, String disabledText, Runnable toggleAction) {
         Material mat = currentValue ? Material.LIME_DYE : Material.GRAY_DYE;
         return ItemBuilder.from(mat)
@@ -285,12 +279,12 @@ public class CreateKothGui extends BaseUpdatableGui {
                 .asGuiItem(event -> {
                     event.setCancelled(true);
                     toggleAction.run();
-                    updateItem(gui, player, slot);
+                    updateItem(gui, player, event.getSlot());
                 });
     }
 
     private GuiItem createSoloItem(Player player, Gui gui) {
-        return createToggleItem(player, gui, 29, "Enable/Disable solo mode",
+        return createToggleItem(player, gui, "Enable/Disable solo mode",
                 kothToRegisterCache.getKothToRegister(player.getUniqueId()).isSolo(),
                 "Solo", "Team", () -> {
                     var kothData = kothToRegisterCache.getKothToRegister(player.getUniqueId());
@@ -299,7 +293,7 @@ public class CreateKothGui extends BaseUpdatableGui {
     }
 
     private GuiItem createBossbarItem(Player player, Gui gui) {
-        return createToggleItem(player, gui, 30, "Enable/Disable bossbar",
+        return createToggleItem(player, gui, "Enable/Disable bossbar",
                 kothToRegisterCache.getKothToRegister(player.getUniqueId()).isBossbarEnabled(),
                 "Enabled", "Disabled", () -> {
                     var kothData = kothToRegisterCache.getKothToRegister(player.getUniqueId());
@@ -308,7 +302,7 @@ public class CreateKothGui extends BaseUpdatableGui {
     }
 
     private GuiItem createDenyEnterItem(Player player, Gui gui) {
-        return createToggleItem(player, gui, 31, "Enable/Disable deny enter if not in team",
+        return createToggleItem(player, gui, "Enable/Disable deny enter if not in team",
                 kothToRegisterCache.getKothToRegister(player.getUniqueId()).isDenyEnterWithoutTeam(),
                 "Enabled", "Disabled", () -> {
                     var kothData = kothToRegisterCache.getKothToRegister(player.getUniqueId());
@@ -317,7 +311,7 @@ public class CreateKothGui extends BaseUpdatableGui {
     }
 
     private GuiItem createTeamItem(Player player, Gui gui) {
-        return createToggleItem(player, gui, 32, "Enable/Disable create team if not exists on enter",
+        return createToggleItem(player, gui, "Enable/Disable create team if not exists on enter",
                 kothToRegisterCache.getKothToRegister(player.getUniqueId()).isCreateTeamIfNotExistsOnEnter(),
                 "Enabled", "Disabled", () -> {
                     var kothData = kothToRegisterCache.getKothToRegister(player.getUniqueId());
@@ -326,7 +320,7 @@ public class CreateKothGui extends BaseUpdatableGui {
     }
 
     private GuiItem createScoreboardItem(Player player, Gui gui) {
-        return createToggleItem(player, gui, 33, "Enable/Disable Scoreboard",
+        return createToggleItem(player, gui, "Enable/Disable Scoreboard",
                 kothToRegisterCache.getKothToRegister(player.getUniqueId()).isScoreboardEnabled(),
                 "Enabled", "Disabled", () -> {
                     var kothData = kothToRegisterCache.getKothToRegister(player.getUniqueId());
@@ -334,29 +328,28 @@ public class CreateKothGui extends BaseUpdatableGui {
                 });
     }
 
-
     private int getNumericChange(org.bukkit.event.inventory.InventoryClickEvent event) {
-        if(event.getClick().isRightClick() && event.getClick().isShiftClick()) return 10;
-        if(event.getClick().isLeftClick() && event.getClick().isShiftClick()) return -10;
-        if(event.getClick().isRightClick()) return 1;
-        if(event.getClick().isLeftClick()) return -1;
+        if (event.getClick().isRightClick() && event.getClick().isShiftClick()) return 10;
+        if (event.getClick().isLeftClick() && event.getClick().isShiftClick()) return -10;
+        if (event.getClick().isRightClick()) return 1;
+        if (event.getClick().isLeftClick()) return -1;
         return 0;
     }
 
     private void handleBoardLinesClick(org.bukkit.event.inventory.InventoryClickEvent event, Player player, Gui gui, boolean isCapturing, int slot) {
-        if(event.getClick().isRightClick()){
+        if (event.getClick().isRightClick()) {
             player.closeInventory();
             kothToRegisterCache.setWaitingToFill(player.getUniqueId(),
                     isCapturing ? WaitingToFill.BOARD_CAPTURING_LINE : WaitingToFill.BOARD_WAITING_LINE);
             player.sendMessage(parser.parse("<green>Type the line in chat, or <red>'cancel'<green> to return:"));
-        } else if(event.getClick().isLeftClick()){
+        } else if (event.getClick().isLeftClick()) {
             var kothData = kothToRegisterCache.getKothToRegister(player.getUniqueId());
-            if(isCapturing) kothData.removeLastCapturingLine();
+            if (isCapturing) kothData.removeLastCapturingLine();
             else kothData.removeLastWaitingLine();
             updateItem(gui, player, slot);
-        } else if(event.getClick().isShiftClick()){
+        } else if (event.getClick().isShiftClick()) {
             var kothData = kothToRegisterCache.getKothToRegister(player.getUniqueId());
-            if(isCapturing) kothData.clearCapturingLines();
+            if (isCapturing) kothData.clearCapturingLines();
             else kothData.clearWaitingLines();
             updateItem(gui, player, slot);
         }
