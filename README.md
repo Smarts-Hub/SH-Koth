@@ -46,6 +46,12 @@ Here’s how you can help:
 
 ---
 
+## 🕳️ Technical Debt
+- Guis system (mostly koth creation template for fill gui and yaml builder, not the guis directly).
+- Placeholders strongly linked to the id of a koth (only some of them).
+
+---
+
 ## 📜 License
 This project is licensed under **[CC-BY-NC-SA 4.0](LICENSE.md)**.  
 You are free to share and modify the code **as long as it’s non-commercial** and shared under the same license.  
