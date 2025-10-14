@@ -49,6 +49,7 @@ public class KothBuilder implements Builder<Koth, ConfigContainer> {
 
         final boolean isSolo = config.getBoolean("solo-mode", true);
         final boolean isScoreboardEnabled = config.getBoolean("scoreboard.enabled", true);
+        final boolean isBossbarEnabled = config.getBoolean("boss-bar", false);
 
         // Load schedules and rewards code is "dirty", doing it in a separate class to maintain clean code
         List<PhysicalReward> physicalRewards = physicalRewardsMapper.map(config);
@@ -66,6 +67,6 @@ public class KothBuilder implements Builder<Koth, ConfigContainer> {
 
 
         return new dev.smartshub.shkoth.koth.Koth(teamTracker, id, displayName, maxDuration, captureTime,area, commands,
-                physicalRewards, isSolo, isScoreboardEnabled, denyEnterWithoutTeam, createTeamIfNotExistsOnEnter, kothType);
+                physicalRewards, isBossbarEnabled, isSolo, isScoreboardEnabled, denyEnterWithoutTeam, createTeamIfNotExistsOnEnter, kothType);
     }
 }

@@ -44,6 +44,8 @@ public class AdventureBossbarService {
     public void handleStateChange(Koth koth, KothState newState) {
         if (koth == null) return;
 
+        if(!koth.isBossbarEnabled()) return;
+
         boolean willBeRunning = newState == KothState.RUNNING || newState == KothState.CAPTURING;
 
         if (willBeRunning) {
@@ -57,6 +59,8 @@ public class AdventureBossbarService {
         if (koth == null || !koth.isRunning()) {
             return;
         }
+
+        if(!koth.isBossbarEnabled()) return;
 
         activeKoths.add(koth.getId());
         updateBossbarsForKoth(koth);
@@ -87,6 +91,7 @@ public class AdventureBossbarService {
         for (String kothId : activeKoths) {
             Koth koth = getKothById(kothId);
             if (koth != null && koth.isRunning()) {
+                if(!koth.isBossbarEnabled()) continue;
                 updateBossbarsForKoth(koth);
             } else {
                 activeKoths.remove(kothId);

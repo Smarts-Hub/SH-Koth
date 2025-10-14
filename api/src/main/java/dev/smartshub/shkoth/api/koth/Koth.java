@@ -48,6 +48,7 @@ public interface Koth {
     boolean isSolo();
     boolean isTeam();
     boolean isScoreboardEnabled();
+    boolean isBossbarEnabled();
     void playerEnter(Player player);
     void playerLeave(Player player);
     void removePlayerDirectly(UUID playerUUID);

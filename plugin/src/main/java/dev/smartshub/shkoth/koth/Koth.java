@@ -31,6 +31,7 @@ public class Koth extends AbstractKoth {
     private final KothRewardService rewardService = new KothRewardService(this);
     private final TeamTracker teamTracker;
     private final Tally tally;
+    private final boolean isBossbarEnabled;
     private final boolean isSolo;
     private final boolean isScoreboardEnabled;
     private final boolean denyEnterWithoutTeam;
@@ -40,12 +41,13 @@ public class Koth extends AbstractKoth {
     private long captureStartTime;
 
     public Koth(TeamTracker teamTracker, String id, String displayName, int duration, int captureTime, Area area,
-                Commands commands, List<PhysicalReward> physicalRewards,
-                boolean isSolo, boolean isScoreboardEnabled,boolean denyEnterWithoutTeam, boolean createTeamIfNotExistsOnEnter, KothType type) {
+                Commands commands, List<PhysicalReward> physicalRewards, boolean isBossbarEnabled,
+                boolean isSolo, boolean isScoreboardEnabled, boolean denyEnterWithoutTeam, boolean createTeamIfNotExistsOnEnter, KothType type) {
         super(id, displayName, duration, captureTime, area, commands, physicalRewards);
 
         this.teamTracker = teamTracker;
         this.tally = TallyFactory.create(type, this);
+        this.isBossbarEnabled = isBossbarEnabled;
         this.isSolo = isSolo;
         this.isScoreboardEnabled = isScoreboardEnabled;
         this.denyEnterWithoutTeam = denyEnterWithoutTeam;
@@ -249,4 +251,7 @@ public class Koth extends AbstractKoth {
 
     @Override
     public boolean isScoreboardEnabled() { return isScoreboardEnabled; }
+
+    @Override
+    public boolean isBossbarEnabled() { return isBossbarEnabled; }
 }
