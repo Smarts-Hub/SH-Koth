@@ -7,13 +7,16 @@ import dev.smartshub.shkoth.registry.KothRegistry;
 import dev.smartshub.shkoth.service.config.ConfigService;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class KothScheduler {
 
     private final TimeService timeService = new TimeService();
     private final KothRegistry kothRegistry;
     private final List<Scheduler> schedulers;
+    private final Map<String, Long> lastExecutionTimes = new HashMap<>();
 
     public KothScheduler(KothRegistry kothRegistry, ConfigService configService) {
         this.kothRegistry = kothRegistry;
@@ -104,10 +107,19 @@ public class KothScheduler {
 
         for (Scheduler scheduler : schedulers) {
             for (String cronExpression : scheduler.cronExpressions()) {
+                String executionKey = createExecutionKey(scheduler, cronExpression);
+
                 var predictor = scheduler.createPredictor(cronExpression);
                 long nextTime = predictor.nextMatchingTime();
 
                 if (Math.abs(nextTime - currentTime) > 60000) continue;
+
+                Long lastExecution = lastExecutionTimes.get(executionKey);
+                if (lastExecution != null && currentTime - lastExecution < 120000) {
+                    continue;
+                }
+
+                lastExecutionTimes.put(executionKey, currentTime);
 
                 if (scheduler.random()) {
                     int randomIndex = (int) (Math.random() * scheduler.kothIds().size());
@@ -118,5 +130,18 @@ public class KothScheduler {
                 }
             }
         }
+    }
+
+    private String createExecutionKey(Scheduler scheduler, String cronExpression) {
+        return scheduler.hashCode() + "_" + cronExpression;
+    }
+
+    public void cleanOldExecutions() {
+        long currentTime = System.currentTimeMillis();
+        long threshold = 3600000;
+
+        lastExecutionTimes.entrySet().removeIf(entry ->
+                currentTime - entry.getValue() > threshold
+        );
     }
 }
