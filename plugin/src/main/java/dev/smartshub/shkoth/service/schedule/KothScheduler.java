@@ -124,9 +124,34 @@ public class KothScheduler {
                 if (scheduler.random()) {
                     int randomIndex = (int) (Math.random() * scheduler.kothIds().size());
                     String kothId = scheduler.kothIds().get(randomIndex);
-                    kothRegistry.get(kothId).start();
+
+                    var koth = kothRegistry.get(kothId);
+                    if (koth == null) {
+                        System.err.println("[SH-Koth] ERROR: can't start the koth scheduled. ID '" + kothId + "' does not exists in the registry.");
+                        continue;
+                    }
+
+                    try {
+                        koth.start();
+                    } catch (Exception e) {
+                        System.err.println("[SH-Koth] ERROR starting koth: '" + kothId + "': " + e.getMessage());
+                        e.printStackTrace();
+                    }
                 } else {
-                    scheduler.kothIds().forEach(id -> kothRegistry.get(id).start());
+                    scheduler.kothIds().forEach(id -> {
+                        var koth = kothRegistry.get(id);
+                        if (koth == null) {
+                            System.err.println("[SH-Koth] ERROR: can't start the koth scheduled. ID '" + id + "' does not exists in the registry.");
+                            return;
+                        }
+
+                        try {
+                            koth.start();
+                        } catch (Exception e) {
+                            System.err.println("[SH-Koth] ERROR starting the KOTH: '" + id + "': " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    });
                 }
             }
         }
