@@ -125,6 +125,10 @@ public class ConfigLoader {
                 Configuration config = new Configuration(plugin, file, fileName);
                 config.load(file);
 
+                if (type == ConfigType.SCHEDULERS) {
+                    config.setAllowSave(false);
+                }
+
                 if (cacheEnabled) {
                     configCache.put(fullPath, config);
                     lastModified.put(fullPath, file.lastModified());

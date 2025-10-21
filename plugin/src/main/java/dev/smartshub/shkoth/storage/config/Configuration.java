@@ -11,6 +11,7 @@ public class Configuration extends YamlConfiguration {
 
     private final File file;
     private final SHKoth plugin;
+    private boolean allowSave = true;
 
     public Configuration(SHKoth plugin, File file, String fileName) {
         this.plugin = plugin;
@@ -32,6 +33,9 @@ public class Configuration extends YamlConfiguration {
         loadFile();
     }
 
+    public void setAllowSave(boolean allowSave) {
+        this.allowSave = allowSave;
+    }
 
     private void loadFile() {
         try {
@@ -42,6 +46,11 @@ public class Configuration extends YamlConfiguration {
     }
 
     public void saveFile() {
+        if (!allowSave) {
+            plugin.getLogger().warning("Cannot save " + file.getName() + " - this config should be edited manually to preserve formatting.");
+            return;
+        }
+
         try {
             this.save(file);
         } catch (IOException e) {
@@ -57,4 +66,3 @@ public class Configuration extends YamlConfiguration {
         }
     }
 }
-
