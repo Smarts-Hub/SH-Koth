@@ -27,7 +27,6 @@ public class PlayerStartKothCaptureListener implements Listener {
         PushStackCache.pushArg2(event.getPlayer().getName());
         discordWebHookSender.send(event);
         notifyService.sendChat(event.getPlayer(), "koth.capture.start");
-        notifyService.sendBroadcastListToOnlinePlayers("koth.capture.start");
         Bukkit.getOnlinePlayers().forEach(player -> {
             notifyService.sendTitle(player, "koth.start-capturing.title", "koth.start-capturing.subtitle");
             notifyService.sendActionBar(player, "koth.start-capturing");

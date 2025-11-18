@@ -27,7 +27,6 @@ public class PlayerStopKothCaptureListener implements Listener {
         PushStackCache.pushArg2(event.getPlayer().getName());
         discordWebHookSender.send(event);
         notifyService.sendChat(event.getPlayer(), "koth.capture.stop");
-        notifyService.sendBroadcastListToOnlinePlayers("koth.capture.stop");
         Bukkit.getOnlinePlayers().forEach(player -> {
             notifyService.sendTitle(player, "koth.stop-capturing.title", "koth.stop-capturing.subtitle");
             notifyService.sendActionBar(player, "koth.stop-capturing");
