@@ -9,6 +9,10 @@ import dev.smartshub.shkoth.hook.team.*;
 import dev.smartshub.shkoth.service.team.TeamHookHelpService;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 import java.util.*;
 
@@ -17,11 +21,21 @@ public class ContextualTeamTracker implements TeamTracker {
     private final List<TeamHook> hooks = new ArrayList<>();
     private final TeamHandler internalHandler;
     private final TeamHookHelpService teamHookHelpService;
+    private final Map<UUID, TeamWrapper> tickCache = new ConcurrentHashMap<>();
 
-    public ContextualTeamTracker(TeamHookHelpService teamHookHelpService) {
+    public ContextualTeamTracker(TeamHookHelpService teamHookHelpService, JavaPlugin plugin) {
         this.teamHookHelpService = teamHookHelpService;
         this.internalHandler = new InternalTeamHandler();
         setupHooks();
+
+        // This task clears the cache at the start of every tick, ensuring data is never
+        // stale.
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                tickCache.clear();
+            }
+        }.runTaskTimer(plugin, 0L, 1L);
     }
 
     private void setupHooks() {
@@ -67,27 +81,39 @@ public class ContextualTeamTracker implements TeamTracker {
     }
 
     public TeamWrapper getTeamWrapper(UUID playerId) {
-        TeamHook activeHook = getActiveHook();
+        // 1. Check the tick-cache first for an instant result.
+        TeamWrapper cachedWrapper = tickCache.get(playerId);
+        if (cachedWrapper != null) {
+            return cachedWrapper;
+        }
 
-        // If no external team plugin is active, use the internal handler.
+        TeamHook activeHook = getActiveHook();
+        TeamWrapper freshWrapper;
+
+        // 2. If not cached, fetch the data from the appropriate source (hook or
+        // internal).
         if (activeHook == null) {
             KothTeam internalTeam = internalHandler.getTeam(playerId);
-            // If the player has an internal team, wrap it and return.
-            return internalTeam != null ? new TeamWrapper(internalTeam, false) : null;
+            freshWrapper = internalTeam != null ? new TeamWrapper(internalTeam, false) : null;
+        } else {
+            Set<UUID> members = activeHook.getTeamMembers(playerId);
+            if (members == null || members.isEmpty()) {
+                freshWrapper = null;
+            } else {
+                String displayName = activeHook.getTeamDisplayName(playerId);
+                freshWrapper = new TeamWrapper(playerId, members, displayName, false);
+            }
         }
 
-        // --- Live Data Fetch from the Active Hook ---
-        // Always get the most current list of team members. This is the key fix.
-        Set<UUID> members = activeHook.getTeamMembers(playerId);
-
-        // If the hook returns no members, the player is not in a team.
-        if (members == null || members.isEmpty()) {
-            return null;
+        // 3. Before returning, populate the cache for all members of the team.
+        // This prevents redundant lookups for teammates within the same tick.
+        if (freshWrapper != null) {
+            for (UUID memberId : freshWrapper.getMembers()) {
+                tickCache.put(memberId, freshWrapper);
+            }
         }
 
-        // Get the current display name and create a new wrapper with this fresh data.
-        String displayName = activeHook.getTeamDisplayName(playerId);
-        return new TeamWrapper(playerId, members, displayName, false);
+        return freshWrapper;
     }
 
     public TeamWrapper createInternalTeam(UUID leaderId, int maxMembers) {

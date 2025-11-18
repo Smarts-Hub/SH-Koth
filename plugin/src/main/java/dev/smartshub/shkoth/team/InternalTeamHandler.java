@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InternalTeamHandler implements TeamHandler {
     private final Map<UUID, InternalKothTeam> teams = new ConcurrentHashMap<>();
     private final Map<UUID, UUID> playerToTeam = new ConcurrentHashMap<>();
+    private final Map<UUID, UUID> leaderToTeamId = new ConcurrentHashMap<>();
     private final TeamEventDispatcher eventDispatcher = new TeamEventDispatcher();
 
     @Override
@@ -33,6 +34,7 @@ public class InternalTeamHandler implements TeamHandler {
         InternalKothTeam team = new InternalKothTeam(leader, maxMembers);
         teams.put(team.getTeamId(), team);
         playerToTeam.put(leader, team.getTeamId());
+        leaderToTeamId.put(leader, team.getTeamId());
 
         // Fire the event after the team has been successfully created
         eventDispatcher.fireTeamCreatedEvent(team, TeamCreatedEvent.CreationReason.MANUAL);
@@ -70,22 +72,17 @@ public class InternalTeamHandler implements TeamHandler {
         }
 
         InternalKothTeam team = teams.get(teamId);
-        // This case should ideally not happen if data is consistent, but it's a good
-        // safeguard.
         if (team == null) {
             playerToTeam.remove(member);
             return false;
         }
 
-        // If the leader is removed, the team is disbanded.
         if (team.isLeader(member)) {
             return disbandTeam(member);
         } else {
-            // Store a copy of the team state before modification for the event
             InternalKothTeam oldTeamState = new InternalKothTeam(team);
             if (team.removeMember(member)) {
                 playerToTeam.remove(member);
-                // Fire event after the member has been successfully removed
                 eventDispatcher.fireMemberLeavedTeamEvent(oldTeamState, team, member,
                         MemberLeavedTeamEvent.RemovalReason.LEFT_VOLUNTARILY);
                 return true;
@@ -101,18 +98,15 @@ public class InternalTeamHandler implements TeamHandler {
             return false;
         }
 
-        // Remove all members from the player-to-team lookup map
+        leaderToTeamId.remove(leader);
+
         for (UUID memberId : team.getMembers()) {
             playerToTeam.remove(memberId);
-            // Notify that each member has 'left' due to disbanding
             eventDispatcher.fireMemberLeavedTeamEvent(team, null, memberId,
                     MemberLeavedTeamEvent.RemovalReason.TEAM_DISSOLVED);
         }
 
-        // Remove the team from the main teams map
         teams.remove(team.getTeamId());
-
-        // Fire the event that the team has been dissolved
         eventDispatcher.fireTeamDissolvedEvent(team, leader, TeamDissolvedEvent.DissolutionReason.MANUAL_DISSOLVE);
 
         return true;
@@ -125,9 +119,9 @@ public class InternalTeamHandler implements TeamHandler {
             return false;
         }
 
-        // The transferLeadership method in InternalKothTeam handles the logic
         if (team.transferLeadership(newLeader)) {
-            // Fire event after leadership has been successfully transferred
+            leaderToTeamId.remove(oldLeader);
+            leaderToTeamId.put(newLeader, team.getTeamId());
             eventDispatcher.fireTeamChangeLeaderEvent(team, oldLeader, newLeader);
             return true;
         }
@@ -166,26 +160,22 @@ public class InternalTeamHandler implements TeamHandler {
 
     @Override
     public synchronized void updateTeams() {
-        // First, find and remove teams that are empty
         teams.entrySet().removeIf(entry -> {
             InternalKothTeam team = entry.getValue();
             if (team.getMembers().isEmpty()) {
-                // Fire an event for auto-cleanup of empty teams
+                leaderToTeamId.remove(team.getLeader()); // Also clean up leader map
                 eventDispatcher.fireTeamDissolvedEvent(team, null, TeamDissolvedEvent.DissolutionReason.EMPTY_TEAM);
                 return true;
             }
             return false;
         });
 
-        // Second, clean up any orphaned players in the playerToTeam map
         playerToTeam.entrySet().removeIf(entry -> !teams.containsKey(entry.getValue()));
     }
 
     private InternalKothTeam getTeamByLeader(UUID leader) {
-        return teams.values().stream()
-                .filter(team -> team.isLeader(leader))
-                .findFirst()
-                .orElse(null);
+        UUID teamId = leaderToTeamId.get(leader);
+        return teamId != null ? teams.get(teamId) : null;
     }
 
     public Collection<InternalKothTeam> getAllTeams() {

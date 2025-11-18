@@ -1,5 +1,6 @@
 package dev.smartshub.shkoth.api.team;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -35,7 +36,7 @@ public class TeamWrapper implements KothTeam {
 
     @Override
     public Set<UUID> getMembers() {
-        return new HashSet<>(members);
+        return Collections.unmodifiableSet(members);
     }
 
     @Override

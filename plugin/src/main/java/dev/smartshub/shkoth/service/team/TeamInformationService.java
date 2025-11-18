@@ -15,7 +15,7 @@ public class TeamInformationService {
     }
 
     public void sendTeamMessage(Player player, String message) {
-        if(!teamHandlingService.hasTeam(player.getUniqueId())){
+        if (!teamHandlingService.hasTeam(player.getUniqueId())) {
             notifyService.sendChat(player, "team.not-in-a-team");
             return;
         }
@@ -25,8 +25,8 @@ public class TeamInformationService {
         });
     }
 
-    public void sendTeamInfo(Player player){
-        if(!teamHandlingService.hasTeam(player.getUniqueId())){
+    public void sendTeamInfo(Player player) {
+        if (!teamHandlingService.hasTeam(player.getUniqueId())) {
             notifyService.sendChat(player, "team.not-in-a-team");
             return;
         }
@@ -37,7 +37,7 @@ public class TeamInformationService {
         notifyService.sendRawMessage(player, "Members:");
         team.getMembers().forEach(member -> {
             String memberName = Bukkit.getOfflinePlayer(member).getName();
-            if(member.equals(team.getLeader())){
+            if (member.equals(team.getLeader())) {
                 memberName += " (Leader)";
             }
             notifyService.sendRawMessage(player, "- " + memberName);
