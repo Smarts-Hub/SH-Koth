@@ -195,7 +195,7 @@ public class SHKoth extends JavaPlugin {
     private void initTracker() {
         // My flow is broken, allow me to do this here for now
         teamHookHelpService = new TeamHookHelpService(configService.provide(ConfigType.HOOKS));
-        teamTracker = new ContextualTeamTracker(teamHookHelpService);
+        teamTracker = new ContextualTeamTracker(teamHookHelpService, this);
     }
 
     private void initTicking() {
