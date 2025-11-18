@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractKoth implements Koth {
         // Immutable data (configuration)
@@ -45,8 +46,8 @@ public abstract class AbstractKoth implements Koth {
                 this.physicalRewards = new ArrayList<>(physicalRewards);
                 this.remainingTime = duration;
 
-                this.inside = new HashSet<>();
-                this.winners = new HashSet<>();
+                this.inside = ConcurrentHashMap.newKeySet();
+                this.winners = ConcurrentHashMap.newKeySet();
                 this.currentCapturer = null;
                 this.captureStartTime = 0;
 

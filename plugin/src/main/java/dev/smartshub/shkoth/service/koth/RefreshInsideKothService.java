@@ -7,6 +7,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -25,7 +26,8 @@ public class RefreshInsideKothService {
 
     private void refreshKothPlayers(Koth koth) {
         World world = getKothWorld(koth);
-        if (world == null) return;
+        if (world == null)
+            return;
 
         Collection<? extends Player> worldPlayers = world.getPlayers();
         Set<UUID> currentPlayersInside = koth.getPlayersInside();
@@ -52,7 +54,8 @@ public class RefreshInsideKothService {
             return;
         }
 
-        if (!canCapture) return;
+        if (!canCapture)
+            return;
 
         if (isInsideArea && !wasInsideArea) {
             koth.playerEnter(player);
@@ -70,21 +73,25 @@ public class RefreshInsideKothService {
         }
     }
 
-    private void removeOfflinePlayers(Koth koth, Collection<? extends Player> worldPlayers, Set<UUID> currentPlayersInside) {
+    private void removeOfflinePlayers(Koth koth, Collection<? extends Player> worldPlayers,
+            Set<UUID> currentPlayersInside) {
         Set<UUID> worldPlayerIds = worldPlayers.stream()
                 .map(Player::getUniqueId)
                 .collect(Collectors.toSet());
 
-        currentPlayersInside.stream()
-                .filter(playerId -> !worldPlayerIds.contains(playerId))
-                .forEach(playerId -> {
-                    Player player = Bukkit.getPlayer(playerId);
-                    if (player != null) {
-                        koth.playerLeave(player);
-                    } else {
-                        koth.removePlayerDirectly(playerId);
-                    }
-                });
+        Iterator<UUID> iterator = currentPlayersInside.iterator();
+        while (iterator.hasNext()) {
+            UUID playerId = iterator.next();
+            if (!worldPlayerIds.contains(playerId)) {
+                Player player = Bukkit.getPlayer(playerId);
+                if (player != null) {
+                    koth.playerLeave(player);
+                } else {
+                    koth.removePlayerDirectly(playerId);
+                }
+                iterator.remove();
+            }
+        }
     }
 
     private void removeAllPlayers(Koth koth, Set<UUID> currentPlayersInside) {
