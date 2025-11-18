@@ -11,14 +11,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ContextualTeamTracker implements TeamTracker {
 
     private final List<TeamHook> hooks = new ArrayList<>();
-    private final Map<UUID, TeamWrapper> teamCache = new ConcurrentHashMap<>();
-    private long lastCacheUpdate = 0;
-    private final long CACHE_DURATION = 2000;
     private final TeamHandler internalHandler;
     private final TeamHookHelpService teamHookHelpService;
 
@@ -64,43 +60,34 @@ public class ContextualTeamTracker implements TeamTracker {
         String displayName = player != null ? player.getName() : "Unknown";
 
         return new TeamWrapper(
-            playerId,
-            Set.of(playerId),
-            displayName,
-            true
-        );
+                playerId,
+                Set.of(playerId),
+                displayName,
+                true);
     }
 
     public TeamWrapper getTeamWrapper(UUID playerId) {
         TeamHook activeHook = getActiveHook();
 
+        // If no external team plugin is active, use the internal handler.
         if (activeHook == null) {
             KothTeam internalTeam = internalHandler.getTeam(playerId);
+            // If the player has an internal team, wrap it and return.
             return internalTeam != null ? new TeamWrapper(internalTeam, false) : null;
         }
 
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastCacheUpdate > CACHE_DURATION) {
-            teamCache.clear();
-            lastCacheUpdate = currentTime;
-        }
-
-        TeamWrapper cached = teamCache.get(playerId);
-        if (cached != null) {
-            return cached;
-        }
-
+        // --- Live Data Fetch from the Active Hook ---
+        // Always get the most current list of team members. This is the key fix.
         Set<UUID> members = activeHook.getTeamMembers(playerId);
-        if (members.isEmpty()) return null;
 
-        String displayName = activeHook.getTeamDisplayName(playerId);
-        TeamWrapper wrapper = new TeamWrapper(playerId, members, displayName, false);
-
-        for (UUID member : members) {
-            teamCache.put(member, wrapper);
+        // If the hook returns no members, the player is not in a team.
+        if (members == null || members.isEmpty()) {
+            return null;
         }
 
-        return wrapper;
+        // Get the current display name and create a new wrapper with this fresh data.
+        String displayName = activeHook.getTeamDisplayName(playerId);
+        return new TeamWrapper(playerId, members, displayName, false);
     }
 
     public TeamWrapper createInternalTeam(UUID leaderId, int maxMembers) {
@@ -167,22 +154,8 @@ public class ContextualTeamTracker implements TeamTracker {
         return internalHandler;
     }
 
-    public void refreshPlayer(UUID playerId) {
-        teamCache.remove(playerId);
-    }
-
-    public void refreshTeam(UUID anyTeamMember) {
-        TeamWrapper team = teamCache.get(anyTeamMember);
-        if (team != null) {
-            for (UUID member : team.getMembers()) {
-                teamCache.remove(member);
-            }
-        }
-    }
-
     public void updateTeams() {
+        // The only responsibility is to update the internal teams, if any are used.
         internalHandler.updateTeams();
-        teamCache.clear();
-        lastCacheUpdate = System.currentTimeMillis();
     }
 }

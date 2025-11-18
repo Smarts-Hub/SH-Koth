@@ -1,7 +1,6 @@
 package dev.smartshub.shkoth.api.team;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -22,6 +21,19 @@ public class InternalKothTeam implements KothTeam {
         this.members.add(leader);
         this.maxMembers = maxMembers;
         this.displayName = generateDisplayName();
+    }
+
+    /**
+     * Copy constructor to create a snapshot of a team's state.
+     * 
+     * @param other The team to copy.
+     */
+    public InternalKothTeam(InternalKothTeam other) {
+        this.teamId = other.teamId;
+        this.leader = other.leader;
+        this.members = new HashSet<>(other.members);
+        this.maxMembers = other.maxMembers;
+        this.displayName = other.displayName;
     }
 
     @Override
@@ -85,8 +97,11 @@ public class InternalKothTeam implements KothTeam {
     }
 
     private String generateDisplayName() {
-        Player leaderPlayer = Bukkit.getPlayer(leader);
-        String leaderName = leaderPlayer != null ? leaderPlayer.getName() : "Unknown";
+        // Use getOfflinePlayer to safely get the name even if the leader is offline.
+        String leaderName = Bukkit.getOfflinePlayer(leader).getName();
+        if (leaderName == null) {
+            leaderName = "Unknown"; // Fallback for very rare cases
+        }
         return maxMembers == 1 ? leaderName : leaderName + "'s Team";
     }
 
@@ -96,8 +111,10 @@ public class InternalKothTeam implements KothTeam {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof InternalKothTeam)) return false;
+        if (this == obj)
+            return true;
+        if (!(obj instanceof InternalKothTeam))
+            return false;
         InternalKothTeam other = (InternalKothTeam) obj;
         return Objects.equals(this.teamId, other.teamId);
     }
