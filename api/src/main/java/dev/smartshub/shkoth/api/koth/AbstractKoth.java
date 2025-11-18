@@ -115,4 +115,37 @@ public abstract class AbstractKoth implements Koth {
                 this.captureStartTime = System.currentTimeMillis();
         }
 
+        @Override
+        public @NotNull Set<UUID> getPlayersInside() {
+                return inside;
+        }
+
+        @Override
+        public boolean isPlayerEligibleToStay(@NotNull Player player) {
+                // Default logic: A player is eligible to stay if they are eligible to capture.
+                // Specific KOTH types can override this for more complex rules.
+                return canPlayerCapture(player);
+        }
+
+        @Override
+        public void removePlayerDirectly(UUID playerId) {
+                if (inside.remove(playerId)) {
+                        // Crucial check: if the removed player was the capturer, reset the capture state
+                        // to prevent a "ghost" capture from a logged-out player.
+                        if (Objects.equals(playerId, currentCapturer)) {
+                                resetCaptureState();
+                        }
+                }
+        }
+
+        /**
+         * Helper method to cleanly reset the KOTH's capturing state.
+         */
+        protected void resetCaptureState() {
+                this.currentCapturer = null;
+                this.captureStartTime = 0;
+                if (this.state == KothState.CAPTURING) {
+                        setState(KothState.RUNNING);
+                }
+        }
 }

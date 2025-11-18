@@ -61,4 +61,13 @@ public interface Koth {
     @NotNull TeamTracker getTeamTracker();
 
     KothTeam getCurrentCapturingTeam();
+
+    /**
+     * Checks if a player who is already inside the KOTH area remains eligible to stay.
+     * This can be used for custom rules (e.g., must have a certain item, no flying).
+     *
+     * @param player The player to check.
+     * @return true if the player is still eligible, false otherwise.
+     */
+    boolean isPlayerEligibleToStay(@NotNull Player player);
 }
