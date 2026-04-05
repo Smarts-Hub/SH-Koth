@@ -12,7 +12,6 @@ public class KothRewardService {
     public KothRewardService(Koth koth) {
         this.grantRewardsService = new GrantRewardsService(koth);
         this.performRewardCommandsService = new PerformRewardCommandsService(koth);
-
     }
 
     public void grantRewards() {

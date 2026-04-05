@@ -22,15 +22,10 @@ public class PerformRewardCommandsService {
     public void performCommands() {
         Set<UUID> winners = koth.getWinners();
         List<String> commands = koth.getCommands().winnersCommands();
-        if (commands.isEmpty() || winners.isEmpty()) {
-            return;
-        }
+        if (commands.isEmpty() || winners.isEmpty()) return;
 
         List<Player> onlinePlayers = getOnlineWinners();
-
-        if (onlinePlayers.isEmpty()) {
-            return;
-        }
+        if (onlinePlayers.isEmpty()) return;
 
         for (String command : commands) {
             for (Player player : onlinePlayers) {

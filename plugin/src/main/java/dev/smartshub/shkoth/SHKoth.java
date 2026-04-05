@@ -4,6 +4,7 @@ import dev.smartshub.shkoth.api.KothAPIProvider;
 import dev.smartshub.shkoth.api.config.ConfigType;
 import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.koth.guideline.KothType;
+import dev.smartshub.shkoth.api.koth.tally.TallyFactory;
 import dev.smartshub.shkoth.command.handler.exception.ExceptionHandler;
 import dev.smartshub.shkoth.command.handler.parameter.KothParameterType;
 import dev.smartshub.shkoth.command.handler.parameter.NumberParameterType;
@@ -11,10 +12,13 @@ import dev.smartshub.shkoth.command.koth.KothCommand;
 import dev.smartshub.shkoth.command.team.TeamCommand;
 import dev.smartshub.shkoth.gui.AddPhysicalRewardGui;
 import dev.smartshub.shkoth.gui.CommandGui;
+import dev.smartshub.shkoth.gui.CreateKothGui;
 import dev.smartshub.shkoth.gui.CreateSchedulerGui;
 import dev.smartshub.shkoth.hook.bstats.Metrics;
 import dev.smartshub.shkoth.hook.discord.DiscordWebHookSender;
 import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
+import dev.smartshub.shkoth.koth.tally.capture.CaptureTally;
+import dev.smartshub.shkoth.koth.tally.score.ScoreTally;
 import dev.smartshub.shkoth.koth.ticking.KothTicker;
 import dev.smartshub.shkoth.listener.koth.*;
 import dev.smartshub.shkoth.listener.player.AsyncChatListener;
@@ -25,15 +29,11 @@ import dev.smartshub.shkoth.listener.team.*;
 import dev.smartshub.shkoth.message.MessageParser;
 import dev.smartshub.shkoth.message.MessageRepository;
 import dev.smartshub.shkoth.registry.KothRegistry;
-import dev.smartshub.shkoth.api.koth.tally.TallyFactory;
-import dev.smartshub.shkoth.koth.tally.capture.CaptureTally;
-import dev.smartshub.shkoth.koth.tally.score.ScoreTally;
 import dev.smartshub.shkoth.service.bossbar.AdventureBossbarService;
 import dev.smartshub.shkoth.service.config.ConfigService;
 import dev.smartshub.shkoth.service.gui.GuiService;
-import dev.smartshub.shkoth.gui.CreateKothGui;
-import dev.smartshub.shkoth.service.koth.KothRegistrationFromTempDataService;
 import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
+import dev.smartshub.shkoth.service.koth.KothRegistrationFromTempDataService;
 import dev.smartshub.shkoth.service.koth.RefreshInsideKothService;
 import dev.smartshub.shkoth.service.notify.NotifyService;
 import dev.smartshub.shkoth.service.schedule.KothScheduler;
@@ -166,7 +166,7 @@ public class SHKoth extends JavaPlugin {
     }
 
     // What a mess
-    public void guis(){
+    public void guis() {
         kothToRegisterCache = new KothToRegisterCache();
 
         addPhysicalRewardGui = new AddPhysicalRewardGui(kothToRegisterCache, messageParser);
@@ -210,9 +210,9 @@ public class SHKoth extends JavaPlugin {
         asyncJobTask.runTaskTimerAsynchronously(this, 20L, 20L);
     }
 
-    private void registerHooks(){
+    private void registerHooks() {
         //PlaceholderAPI
-        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null){
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new PlaceholderAPIHook(kothRegistry, playerStatsCache).register();
         }
 
@@ -224,7 +224,6 @@ public class SHKoth extends JavaPlugin {
     }
 
     private void registerCommands() {
-
         final var exceptionHandler = new ExceptionHandler(notifyService);
 
         var lamp = BukkitLamp.builder(this)
@@ -246,8 +245,8 @@ public class SHKoth extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new KothStateChangeListener(scoreboardHandleService, adventureBossbarService, discordWebHookSender), this);
         getServer().getPluginManager().registerEvents(new PlayerEnterKothDuringRunListener(notifyService, discordWebHookSender), this);
         getServer().getPluginManager().registerEvents(new PlayerLeavekothDuringRunListener(notifyService, discordWebHookSender), this);
-        getServer().getPluginManager().registerEvents(new PlayerStartKothCaptureListener(notifyService, discordWebHookSender) , this);
-        getServer().getPluginManager().registerEvents(new PlayerStopKothCaptureListener(notifyService, discordWebHookSender) , this);
+        getServer().getPluginManager().registerEvents(new PlayerStartKothCaptureListener(notifyService, discordWebHookSender), this);
+        getServer().getPluginManager().registerEvents(new PlayerStopKothCaptureListener(notifyService, discordWebHookSender), this);
 
         getServer().getPluginManager().registerEvents(new TeamChangeLeaderListener(notifyService), this);
         getServer().getPluginManager().registerEvents(new TeamCreatedListener(notifyService), this);
