@@ -9,6 +9,7 @@ import dev.smartshub.shkoth.service.team.TeamInviteService;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
+import revxrsal.commands.help.Help;
 
 @Command("team")
 public class TeamCommand {
@@ -23,63 +24,74 @@ public class TeamCommand {
         this.teamInformationService = teamInformationService;
     }
 
+    @Command("team")
+    public void sendHelpMenu(
+            BukkitCommandActor actor,
+            Help.ChildrenCommands<BukkitCommandActor> commands
+    ) {
+        var list = commands.iterator();
+        while (list.hasNext()) {
+            actor.reply("- " + list.next().usage());
+        }
+    }
+
     @Subcommand("create")
     public void create(BukkitCommandActor actor) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         teamHandlingService.createTeam(actor.asPlayer(), Integer.MAX_VALUE, TeamCreatedEvent.CreationReason.MANUAL);
     }
 
     @Subcommand("leave")
     public void leave(BukkitCommandActor actor) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         teamHandlingService.leaveTeam(actor.asPlayer(), MemberLeavedTeamEvent.RemovalReason.LEFT_VOLUNTARILY);
     }
 
     @Subcommand("disband")
     public void disband(BukkitCommandActor actor) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         teamHandlingService.disbandTeam(actor.asPlayer(), TeamDissolvedEvent.DissolutionReason.MANUAL_DISSOLVE);
     }
 
     @Subcommand("invite <player>")
     public void invite(BukkitCommandActor actor, String player) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         teamInviteService.sendInvitation(actor.asPlayer(), player);
     }
 
     @Subcommand("kick <player>")
     public void kick(BukkitCommandActor actor, String player) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         teamHandlingService.kickMember(actor.asPlayer(), player);
     }
 
     @Subcommand("set-leader <player>")
     public void setLeader(BukkitCommandActor actor, String player) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         teamHandlingService.transferLeadership(actor.asPlayer(), player);
     }
 
     @Subcommand("invitation accept")
     public void acceptInvite(BukkitCommandActor actor) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         teamInviteService.acceptInvitation(actor.asPlayer());
     }
 
     @Subcommand("invitation decline")
     public void declineInvite(BukkitCommandActor actor) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         teamInviteService.declineInvitation(actor.asPlayer());
     }
 
     @Subcommand("chat <message>")
     public void chat(BukkitCommandActor actor, String message) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         teamInformationService.sendTeamMessage(actor.asPlayer(), message);
     }
 
     @Subcommand("info")
     public void info(BukkitCommandActor actor) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         teamInformationService.sendTeamInfo(actor.asPlayer());
     }
 

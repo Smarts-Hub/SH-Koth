@@ -13,6 +13,7 @@ import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Subcommand;
 import revxrsal.commands.bukkit.actor.BukkitCommandActor;
 import revxrsal.commands.bukkit.annotation.CommandPermission;
+import revxrsal.commands.help.Help;
 
 @Command("koth")
 @CommandPermission("shkoth.admin")
@@ -32,14 +33,25 @@ public class KothCommand {
         this.guiService = guiService;
     }
 
+    @Command("koth")
+    public void sendHelpMenu(
+            BukkitCommandActor actor,
+            Help.ChildrenCommands<BukkitCommandActor> commands
+    ) {
+        var list = commands.iterator();
+        while (list.hasNext()) {
+            actor.reply("- " + list.next().usage());
+        }
+    }
+
     @Subcommand("create")
     public void createKoth(BukkitCommandActor actor) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         guiService.openCreateKothGui(actor.asPlayer());
     }
 
     @Subcommand("force-start")
-    public void forceStart(BukkitCommandActor actor, Koth koth){
+    public void forceStart(BukkitCommandActor actor, Koth koth) {
         kothRegistry.startKoth(koth.getId());
         PushStackCache.pushArg1(koth.getDisplayName());
         notifyService.sendChat(actor.sender(), "koth.force-start");
@@ -47,8 +59,8 @@ public class KothCommand {
     }
 
     @Subcommand("force-stop")
-    public void forceStop(BukkitCommandActor actor,Koth koth){
-       kothRegistry.stopKoth(koth.getId());
+    public void forceStop(BukkitCommandActor actor, Koth koth) {
+        kothRegistry.stopKoth(koth.getId());
         PushStackCache.pushArg1(koth.getDisplayName());
         notifyService.sendChat(actor.sender(), "koth.force-stop");
         notifyService.sendBroadcastListToOnlinePlayers("koth.force-stop");
@@ -63,7 +75,7 @@ public class KothCommand {
 
     @Subcommand("add-physical-reward")
     public void addPhysicalReward(BukkitCommandActor actor, Koth koth, int amount) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         // Not so clean but works for now (will be refactored later)
         physicalRewardAdder.addRewards(koth, actor.asPlayer().getItemInHand(), amount);
         notifyService.sendChat(actor.asPlayer(), "koth.add-physical-reward");
@@ -71,7 +83,7 @@ public class KothCommand {
 
     @Subcommand("tp")
     public void teleportToKoth(BukkitCommandActor actor, Koth koth) {
-        if(!actor.isPlayer()) return;
+        if (!actor.isPlayer()) return;
         // Not so clean but works for now (will be refactored later) x2
         actor.asPlayer().teleport(koth.getArea().getCenter());
         PushStackCache.pushArg1(koth.getDisplayName());
