@@ -51,8 +51,9 @@ public class PerformRewardCommandsService {
 
     private static boolean isPlaceholderAPIRegistered() {
         try {
+            Class.forName("me.clip.placeholderapi.PlaceholderAPI");
             return PlaceholderAPI.isRegistered("shkoth");
-        } catch (Exception e) {
+        } catch (ClassNotFoundException e) {
             return false;
         }
     }
