@@ -28,11 +28,10 @@ public class PlayerInteractListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         if(!event.getPlayer().hasPermission("shkoth.admin")) return;
 
-        var kothData = kothToRegisterCache.getKothToRegister(event.getPlayer().getUniqueId());
-
         if(!wandService.isWand(event.getItem())) return;
         event.setCancelled(true);
 
+        var kothData = kothToRegisterCache.getKothToRegister(event.getPlayer().getUniqueId());
         if(event.getPlayer().isSneaking()){
             event.setCancelled(true);
             var coner1 = kothData.getCorner1();
