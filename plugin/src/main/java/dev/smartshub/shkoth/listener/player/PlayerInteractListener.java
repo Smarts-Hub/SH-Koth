@@ -48,16 +48,15 @@ public class PlayerInteractListener implements Listener {
             return;
         }
 
+        var loc = event.getClickedBlock().getLocation();
         if(event.getAction().isRightClick()){
-            var loc = event.getClickedBlock().getLocation();
-            kothData.setCorner1(new Corner(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
             kothData.setWorldName(loc.getWorld().getName());
+            kothData.setCorner1(new Corner(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
             event.getPlayer().sendMessage(parser.parse("<gold>Position 1 set to <yellow>" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ()));
             return;
         }
 
         if(event.getAction().isLeftClick()){
-            var loc = event.getClickedBlock().getLocation();
             kothData.setCorner2(new Corner(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()));
             event.getPlayer().sendMessage(parser.parse("<gold>Position 2 set to <yellow>" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ()));
         }
