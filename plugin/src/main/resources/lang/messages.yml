@@ -122,6 +122,13 @@ gui:
     notify-name: "<yellow>Notify Mode: <white>{0}"
     notify-toggle-lore: "<gray>Click to cycle"
 
+    solo-name: "<yellow>Play Mode: <white>{0}"
+    solo-mode-solo: "Solo"
+    solo-mode-team: "Team"
+    solo-toggle-lore: "<gray>Click to switch between Solo and Team mode"
+    deny-enter-toggle: "Deny Entry Without a Team"
+    create-team-toggle: "Auto-create Team on Enter"
+
     max-time-name: "<yellow>Max Duration: <white>{0} sec"
     capture-time-name: "<yellow>Capture Time: <white>{0} sec"
     numeric-hint-1: "<dark_gray>Right click <gray>+1 / <dark_gray>Left click <gray>-1"

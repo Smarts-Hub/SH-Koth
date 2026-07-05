@@ -122,6 +122,13 @@ gui:
     notify-name: "<yellow>通知方式: <white>{0}"
     notify-toggle-lore: "<gray>點擊切換顯示方式"
 
+    solo-name: "<yellow>遊玩模式: <white>{0}"
+    solo-mode-solo: "個人 (Solo)"
+    solo-mode-team: "組隊 (Team)"
+    solo-toggle-lore: "<gray>點擊切換個人/組隊模式"
+    deny-enter-toggle: "未組隊禁止進入"
+    create-team-toggle: "進入時自動建立隊伍"
+
     max-time-name: "<yellow>最長活動時間: <white>{0} 秒"
     capture-time-name: "<yellow>佔領所需時間: <white>{0} 秒"
     numeric-hint-1: "<dark_gray>右鍵 <gray>+1 / <dark_gray>左鍵 <gray>-1"

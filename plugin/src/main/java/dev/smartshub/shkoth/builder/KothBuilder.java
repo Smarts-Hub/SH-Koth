@@ -47,8 +47,7 @@ public class KothBuilder implements Builder<Koth, ConfigContainer> {
 
         KothType kothType = KothType.fromString(config.getString("type", "capture"));
 
-        // 組隊機制已停用，KOTH 一律 solo
-        final boolean isSolo = true;
+        final boolean isSolo = config.getBoolean("solo-koth", true);
         final boolean isScoreboardEnabled = config.getBoolean("scoreboard.enabled", true);
         final boolean isBossbarEnabled = config.getBoolean("boss-bar", false);
 
@@ -63,9 +62,8 @@ public class KothBuilder implements Builder<Koth, ConfigContainer> {
         );
 
 
-        // 組隊機制已停用，這兩個欄位固定為 false/false，留設定僅為避免破壞舊 YAML 結構
-        boolean denyEnterWithoutTeam = false;
-        boolean createTeamIfNotExistsOnEnter = false;
+        boolean denyEnterWithoutTeam = config.getBoolean("deny-entry-if-not-in-team", false);
+        boolean createTeamIfNotExistsOnEnter = config.getBoolean("create-team-if-not-exists", true);
 
 
         dev.smartshub.shkoth.koth.Koth koth = new dev.smartshub.shkoth.koth.Koth(teamTracker, id, displayName, maxDuration, captureTime,area, commands,

@@ -52,6 +52,10 @@ public class CreateKothGui extends BaseUpdatableGui {
     private static final int SLOT_B_WAND = 24;
     private static final int SLOT_B_TYPE = 30;
     private static final int SLOT_B_NOTIFY = 32;
+    // Team settings (row 4); only shown when the internal team command is enabled.
+    private static final int SLOT_B_SOLO = 37;
+    private static final int SLOT_B_DENY = 39;
+    private static final int SLOT_B_CREATE = 41;
 
     private static final int SLOT_T_MAX = 19;
     private static final int SLOT_T_CAP = 21;
@@ -88,6 +92,9 @@ public class CreateKothGui extends BaseUpdatableGui {
     private final KothRegistry kothRegistry;
 
     private GuiService guiService;
+    // Mirrors internal-team.disable-command: when the built-in team command is
+    // disabled, the team-mode editor toggles are hidden too. Defaults to visible.
+    private boolean teamTogglesVisible = true;
     private final Map<UUID, Integer> currentTab = new HashMap<>();
     private final Map<UUID, Gui> openGuis = new HashMap<>();
 
@@ -107,6 +114,10 @@ public class CreateKothGui extends BaseUpdatableGui {
 
     public void setGuiService(GuiService guiService) {
         this.guiService = guiService;
+    }
+
+    public void setTeamTogglesVisible(boolean visible) {
+        this.teamTogglesVisible = visible;
     }
 
     @Override
@@ -320,6 +331,11 @@ public class CreateKothGui extends BaseUpdatableGui {
         registerItemUpdater(SLOT_B_WAND, this::itemWand);
         registerItemUpdater(SLOT_B_TYPE, this::itemType);
         registerItemUpdater(SLOT_B_NOTIFY, this::itemNotify);
+        if (teamTogglesVisible) {
+            registerItemUpdater(SLOT_B_SOLO, this::itemSolo);
+            registerItemUpdater(SLOT_B_DENY, this::itemDenyEnter);
+            registerItemUpdater(SLOT_B_CREATE, this::itemCreateTeam);
+        }
     }
 
     private void registerTimeTab() {
@@ -483,6 +499,32 @@ public class CreateKothGui extends BaseUpdatableGui {
                 });
     }
 
+    private GuiItem itemSolo(Player player, Gui gui) {
+        var data = cache.getKothToRegister(player.getUniqueId());
+        boolean solo = data.isSolo();
+        String label = msg.getMessage(solo ? "gui.create-koth.solo-mode-solo" : "gui.create-koth.solo-mode-team");
+        return ItemBuilder.from(solo ? Material.PLAYER_HEAD : Material.PAINTING)
+                .name(parser.parse(msg.fmt("gui.create-koth.solo-name", label)))
+                .lore(parser.parse(msg.getMessage("gui.create-koth.solo-toggle-lore")))
+                .asGuiItem(event -> {
+                    event.setCancelled(true);
+                    data.setSolo(!data.isSolo());
+                    refreshActive(player);
+                });
+    }
+
+    private GuiItem itemDenyEnter(Player player, Gui gui) {
+        var data = cache.getKothToRegister(player.getUniqueId());
+        return toggleItem(player, "gui.create-koth.deny-enter-toggle", data.isDenyEnterWithoutTeam(),
+                () -> data.setDenyEnterWithoutTeam(!data.isDenyEnterWithoutTeam()));
+    }
+
+    private GuiItem itemCreateTeam(Player player, Gui gui) {
+        var data = cache.getKothToRegister(player.getUniqueId());
+        return toggleItem(player, "gui.create-koth.create-team-toggle", data.isCreateTeamIfNotExistsOnEnter(),
+                () -> data.setCreateTeamIfNotExistsOnEnter(!data.isCreateTeamIfNotExistsOnEnter()));
+    }
+
     // ===== Tab 2: Time & Scoreboard =====
     private GuiItem itemMaxTime(Player player, Gui gui) {
         var data = cache.getKothToRegister(player.getUniqueId());
@@ -612,7 +654,11 @@ public class CreateKothGui extends BaseUpdatableGui {
         registerTabBar();
         registerFooter(isEditingExisting(player));
         registerCurrentTabContent(player);
-        gui.getInventory().clear();
+        // Clear triumph-gui's logical item map, not just the backing Bukkit
+        // inventory. update() repopulates from getGuiItems(); if we only cleared
+        // the inventory, items from the previous tab (whose slots the new tab
+        // does not overwrite) would be re-rendered and overlap. See PR #4 review.
+        gui.clearItems();
         setupAllItems(gui, player);
         fillContentBackground(gui);
         fillFooterBackground(gui);

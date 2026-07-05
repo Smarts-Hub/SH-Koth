@@ -53,5 +53,14 @@ simple-clans:
   priority: 1
 
 
+# SH-Koth ships its own internal team system as a fallback when no team plugin is
+# hooked. The internal system (services, listeners and API) always stays active so
+# other team plugins can still integrate with it. This option only controls whether
+# the built-in /koth-team command is registered, so servers that manage teams through
+# another plugin can hide the command without disabling the underlying system.
+internal-team:
+  disable-command: false
+
+
 # DO NOT TOUCH THIS!
 config-version: 2

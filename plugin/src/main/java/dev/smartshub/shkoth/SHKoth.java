@@ -199,6 +199,11 @@ public class SHKoth extends JavaPlugin {
         createKothGui.setGuiService(guiService);
         editKothListGui.setGuiService(guiService);
 
+        // Hide the team-mode editor toggles when the internal team command is disabled,
+        // mirroring the same option used to gate command registration.
+        createKothGui.setTeamTogglesVisible(!configService.provide(ConfigType.HOOKS)
+                .getBoolean("internal-team.disable-command", false));
+
         KothRegistrationFromTempDataService registrationService = new KothRegistrationFromTempDataService(
                 kothToRegisterCache,
                 configService,
@@ -254,9 +259,15 @@ public class SHKoth extends JavaPlugin {
 
         lamp.register(
                 new KothCommand(kothRegistry, notifyService, configService, guiService));
-        // 組隊機制已於此版本停用：TeamCommand 不再註冊，相關 GUI toggle 已下架。
-        // 底層 service/listener 仍保留以維持 API 相容；若未來要重新啟用，恢復下行即可。
-        // lamp.register(new TeamCommand(teamHandlingService, teamInviteService, teamInformationService));
+
+        // The internal team system (services, listeners, API) always stays active so
+        // other team plugins can integrate with it. This config option only controls
+        // whether the built-in team command is exposed to players.
+        boolean disableTeamCommand = configService.provide(ConfigType.HOOKS)
+                .getBoolean("internal-team.disable-command", false);
+        if (!disableTeamCommand) {
+            lamp.register(new TeamCommand(teamHandlingService, teamInviteService, teamInformationService));
+        }
     }
 
     private void registerListeners() {
