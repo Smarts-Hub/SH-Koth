@@ -21,7 +21,7 @@ public class KothTicker {
             } catch (Throwable t) {
                 JavaPlugin.getProvidingPlugin(KothTicker.class).getLogger().log(
                         Level.SEVERE,
-                        "KOTH '" + koth.getId() + "' 在 tick 時拋出例外，已隔離以避免影響其他 KOTH",
+                        "KOTH '" + koth.getId() + "' threw during tick; isolated to avoid affecting other KOTHs",
                         t);
             }
         }

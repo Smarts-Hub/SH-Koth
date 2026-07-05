@@ -27,8 +27,8 @@ public class RefreshInsideKothService {
     }
 
     /**
-     * 對每個運作中的 KOTH，使用 world.getNearbyEntities 直接以區域中心為原點抓玩家，
-     * 避免 O(玩家數 × KOTH 數) 的雙層迴圈。
+     * For each running KOTH, query players via world.getNearbyEntities centred on the
+     * area, avoiding an O(players × KOTHs) nested loop.
      */
     public void refreshInsideKoth() {
         for (Koth koth : kothRegistry.getRunning()) {
@@ -37,7 +37,7 @@ public class RefreshInsideKothService {
             } catch (Throwable t) {
                 JavaPlugin.getProvidingPlugin(RefreshInsideKothService.class).getLogger().log(
                         Level.SEVERE,
-                        "刷新 KOTH '" + koth.getId() + "' 區域內玩家時拋出例外",
+                        "Exception while refreshing players inside KOTH '" + koth.getId() + "'",
                         t);
             }
         }
@@ -56,7 +56,7 @@ public class RefreshInsideKothService {
         Set<UUID> previousInside = new HashSet<>(koth.getPlayersInside());
         Set<UUID> currentlyEligible = collectEligiblePlayers(koth, world, area);
 
-        // 進入：之前不在、現在符合
+        // Entering: was not inside before, now eligible.
         for (UUID id : currentlyEligible) {
             if (!previousInside.contains(id)) {
                 Player player = Bukkit.getPlayer(id);
@@ -66,7 +66,8 @@ public class RefreshInsideKothService {
             }
         }
 
-        // 離開：之前在、現在不符合（包括離線、跨世界、走出範圍、不可佔領、不可繼續停留）
+        // Leaving: was inside before, now ineligible (offline, changed world, walked
+        // out of range, cannot capture, or can no longer remain).
         for (UUID id : previousInside) {
             if (!currentlyEligible.contains(id)) {
                 Player player = Bukkit.getPlayer(id);

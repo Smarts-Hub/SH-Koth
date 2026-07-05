@@ -4,8 +4,9 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * KOTH 通知可用的個別頻道。未來 NotifyService 可依此 EnumSet 過濾。
- * 與舊有 {@link NotifyType} 的對應關係見 {@link NotifyType#channels()}。
+ * Individual channels available for KOTH notifications. NotifyService can filter
+ * on this EnumSet. For the mapping to the legacy {@link NotifyType}, see
+ * {@link NotifyType#channels()}.
  */
 public enum NotifyChannel {
     TITLE,

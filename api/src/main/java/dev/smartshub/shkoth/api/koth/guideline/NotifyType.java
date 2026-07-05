@@ -4,14 +4,15 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * 通知顯示模式預設值。實際內部以 {@link NotifyChannel} 的集合處理，
- * 此 enum 僅為設定檔（notify-type）的便利別名。
+ * Preset notify display modes. Internally these are handled as sets of
+ * {@link NotifyChannel}; this enum is just a convenient alias for the
+ * {@code notify-type} config option.
  */
 public enum NotifyType {
-    TITLE("Title (標題)", EnumSet.of(NotifyChannel.TITLE, NotifyChannel.ACTIONBAR)),
-    CHAT("Chat (聊天訊息)", EnumSet.of(NotifyChannel.CHAT)),
-    BOSSBAR("Bossbar (頂部血條)", EnumSet.of(NotifyChannel.BOSSBAR)),
-    ALL("All (全部顯示)", EnumSet.allOf(NotifyChannel.class));
+    TITLE("Title", EnumSet.of(NotifyChannel.TITLE, NotifyChannel.ACTIONBAR)),
+    CHAT("Chat", EnumSet.of(NotifyChannel.CHAT)),
+    BOSSBAR("Bossbar", EnumSet.of(NotifyChannel.BOSSBAR)),
+    ALL("All", EnumSet.allOf(NotifyChannel.class));
 
     private final String displayName;
     private final Set<NotifyChannel> channels;
@@ -26,7 +27,8 @@ public enum NotifyType {
     }
 
     /**
-     * 回傳此 NotifyType 對應的頻道集合。NotifyService 可依此判斷是否要送出某個頻道。
+     * Returns the set of channels this NotifyType maps to. NotifyService uses it
+     * to decide whether a given channel should be sent.
      */
     public Set<NotifyChannel> channels() {
         return EnumSet.copyOf(channels);

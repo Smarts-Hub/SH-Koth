@@ -22,7 +22,7 @@ public class PlayerJoinListener implements Listener {
 
         OfflineRewardStorage storage = OfflineRewardStorage.get();
         if (storage != null && storage.hasPending(event.getPlayer().getUniqueId())) {
-            // 延遲 20 tick 等玩家進入世界後再發放，避免背包還沒準備好
+            // Delay 20 ticks until the player is fully in the world, so the inventory is ready.
             Bukkit.getScheduler().runTaskLater(
                     JavaPlugin.getProvidingPlugin(PlayerJoinListener.class),
                     () -> storage.giveTo(event.getPlayer()),

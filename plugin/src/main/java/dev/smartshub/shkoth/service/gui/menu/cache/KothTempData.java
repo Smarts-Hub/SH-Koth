@@ -136,7 +136,7 @@ public class KothTempData {
         scoreboardWaitingContent = new ArrayList<>(scoreboardWaitingContent);
     }
 
-    // ===== Index-based 計分板行操作（給 ScoreboardLineEditorGui 用）=====
+    // ===== Index-based scoreboard line operations (used by ScoreboardLineEditorGui) =====
     public List<String> getLines(boolean capturing) {
         return capturing ? scoreboardCapturingContent : scoreboardWaitingContent;
     }

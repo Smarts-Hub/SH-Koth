@@ -42,7 +42,7 @@ public class GrantRewardsService {
             } else if (offlineStorage != null) {
                 offlineStorage.add(winnerId, item);
             } else {
-                logger().warning("離線獎勵儲存未初始化，獎勵遺失 (winner=" + winnerId + ")");
+                logger().warning("Offline reward storage is not initialized; reward lost (winner=" + winnerId + ")");
             }
         }
     }
@@ -60,7 +60,7 @@ public class GrantRewardsService {
                 dropProtected(player, leftover);
             }
         } catch (Exception e) {
-            logger().log(Level.SEVERE, "發放獎勵給 " + player.getName() + " 失敗", e);
+            logger().log(Level.SEVERE, "Failed to grant reward to " + player.getName(), e);
         }
     }
 
@@ -71,11 +71,11 @@ public class GrantRewardsService {
                 try {
                     dropped.setOwner(player.getUniqueId());
                 } catch (Throwable ignored) {
-                    // 老版本沒有 setOwner，至少還是會掉在腳邊
+                    // Older APIs lack setOwner; the item still drops at the player's feet.
                 }
             }
         } catch (Exception e) {
-            logger().log(Level.SEVERE, "掉落獎勵物品給 " + player.getName() + " 失敗", e);
+            logger().log(Level.SEVERE, "Failed to drop reward items for " + player.getName(), e);
         }
     }
 

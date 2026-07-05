@@ -21,8 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 /**
- * 為離線贏家暫存獎勵，玩家上線時補發。
- * 寫檔走 async；讀取在 onEnable 時 sync 載入一次以確保第一個 join 事件能取到。
+ * Buffers rewards for offline winners and grants them when the player next joins.
+ * Writes happen asynchronously; the store is loaded synchronously once on enable so
+ * the very first join event can already read from it.
  */
 public class OfflineRewardStorage {
 
@@ -52,7 +53,8 @@ public class OfflineRewardStorage {
     }
 
     /**
-     * 玩家上線時呼叫。回傳要發給玩家的 ItemStack 清單，並從暫存清除。
+     * Called when a player joins. Returns the ItemStacks owed to the player and
+     * removes them from the buffer.
      */
     public List<ItemStack> drain(Player player) {
         List<ItemStack> items = pending.remove(player.getUniqueId());
@@ -89,7 +91,7 @@ public class OfflineRewardStorage {
                     pending.put(id, Collections.synchronizedList(items));
                 }
             } catch (Exception e) {
-                plugin.getLogger().log(Level.WARNING, "讀取離線獎勵失敗 (key=" + key + ")", e);
+                plugin.getLogger().log(Level.WARNING, "Failed to read offline rewards (key=" + key + ")", e);
             }
         }
     }
@@ -121,17 +123,18 @@ public class OfflineRewardStorage {
         try {
             yaml.save(file);
         } catch (IOException ex) {
-            plugin.getLogger().log(Level.SEVERE, "儲存離線獎勵失敗", ex);
+            plugin.getLogger().log(Level.SEVERE, "Failed to save offline rewards", ex);
         }
     }
 
     public void flush() {
-        // 主執行緒同步存（用於 onDisable）
+        // Synchronous save on the main thread (used during onDisable).
         saveNow();
     }
 
     /**
-     * 玩家上線時呼叫：發放暫存獎勵，背包滿了就在腳邊掉落並設為該玩家可拾取。
+     * Called when a player joins: grants the buffered rewards, dropping any that do
+     * not fit at the player's feet, marked so only that player can pick them up.
      */
     public void giveTo(Player player) {
         List<ItemStack> items = drain(player);
@@ -143,7 +146,7 @@ public class OfflineRewardStorage {
                 try {
                     dropped.setOwner(player.getUniqueId());
                 } catch (Throwable ignored) {
-                    // 老版本 API 沒有 setOwner，忽略
+                    // Older APIs lack setOwner; ignore.
                 }
             }
         }

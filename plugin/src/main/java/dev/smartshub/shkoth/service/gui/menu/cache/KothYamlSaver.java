@@ -29,8 +29,8 @@ public class KothYamlSaver {
     }
 
     /**
-     * 編輯流程使用：在 main thread 先在記憶體組好 YAML，再 async 寫檔。
-     * 不關心 I/O 結果，只 log 失敗。
+     * Used by the editor flow: build the YAML in memory on the main thread, then
+     * write it asynchronously. The I/O result is not awaited; failures are only logged.
      */
     public CompletableFuture<Boolean> saveToYamlAsync(KothTempData tempData) {
         try {
@@ -42,13 +42,13 @@ public class KothYamlSaver {
                     return true;
                 } catch (IOException e) {
                     JavaPlugin.getProvidingPlugin(KothYamlSaver.class).getLogger()
-                            .log(Level.SEVERE, "Async 儲存 KOTH 配置失敗 (" + tempData.getId() + ")", e);
+                            .log(Level.SEVERE, "Async save of KOTH config failed (" + tempData.getId() + ")", e);
                     return false;
                 }
             });
         } catch (Exception e) {
             JavaPlugin.getProvidingPlugin(KothYamlSaver.class).getLogger()
-                    .log(Level.SEVERE, "組裝 KOTH YAML 失敗 (" + tempData.getId() + ")", e);
+                    .log(Level.SEVERE, "Failed to assemble KOTH YAML (" + tempData.getId() + ")", e);
             return CompletableFuture.completedFuture(false);
         }
     }
@@ -61,11 +61,11 @@ public class KothYamlSaver {
             return true;
         } catch (IOException e) {
             JavaPlugin.getProvidingPlugin(KothYamlSaver.class).getLogger()
-                    .log(Level.SEVERE, "儲存 KOTH 配置失敗 (" + tempData.getId() + ")", e);
+                    .log(Level.SEVERE, "Failed to save KOTH config (" + tempData.getId() + ")", e);
             return false;
         } catch (Exception e) {
             JavaPlugin.getProvidingPlugin(KothYamlSaver.class).getLogger()
-                    .log(Level.SEVERE, "組裝 KOTH YAML 失敗 (" + tempData.getId() + ")", e);
+                    .log(Level.SEVERE, "Failed to assemble KOTH YAML (" + tempData.getId() + ")", e);
             return false;
         }
     }
