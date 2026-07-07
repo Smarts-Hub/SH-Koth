@@ -8,6 +8,7 @@ import dev.smartshub.shkoth.registry.KothRegistry;
 import dev.smartshub.shkoth.service.config.ConfigService;
 import dev.smartshub.shkoth.service.gui.GuiService;
 import dev.smartshub.shkoth.service.notify.NotifyService;
+import dev.smartshub.shkoth.service.schedule.KothScheduler;
 import dev.smartshub.shkoth.storage.cache.PushStackCache;
 import revxrsal.commands.annotation.Command;
 import revxrsal.commands.annotation.Subcommand;
@@ -22,15 +23,17 @@ public class KothCommand {
     private final KothRegistry kothRegistry;
     private final NotifyService notifyService;
     private final ConfigService configService;
+    private final KothScheduler kothScheduler;
     private final GuiService guiService;
     private final PhysicalRewardAdder physicalRewardAdder;
 
-    public KothCommand(KothRegistry kothRegistry, NotifyService notifyService, ConfigService configService, GuiService guiService) {
+    public KothCommand(KothRegistry kothRegistry, NotifyService notifyService, ConfigService configService, KothScheduler scheduler, GuiService guiService) {
         this.kothRegistry = kothRegistry;
         this.notifyService = notifyService;
         this.configService = configService;
-        this.physicalRewardAdder = PhysicalRewardAdderFactory.create(configService);
+        this.kothScheduler = scheduler;
         this.guiService = guiService;
+        this.physicalRewardAdder = PhysicalRewardAdderFactory.create(configService);
     }
 
     @Command("koth")
@@ -94,7 +97,10 @@ public class KothCommand {
     public void list(BukkitCommandActor actor) {
         // Not so clean but works for now (will be refactored later) (too) x3
         kothRegistry.getAll().forEach(koth -> {
-            String message = String.format("Koth ID: %s, Status: %s", koth.getId(), koth.isRunning() ? "Running" : "Not Running");
+            String status = kothScheduler.isKothScheduled(koth.getId())
+                    ? "Scheduled"
+                    : (koth.isRunning() ? "Running" : "Not Running");
+            String message = String.format("Koth ID: %s, Status: %s", koth.getId(), status);
             notifyService.sendRawMessage(actor.sender(), message);
         });
     }
@@ -104,6 +110,7 @@ public class KothCommand {
         notifyService.sendChat(actor.sender(), "koth.reload");
         configService.reloadAll();
         kothRegistry.reloadKoths();
+        kothScheduler.reload();
     }
 
 }
