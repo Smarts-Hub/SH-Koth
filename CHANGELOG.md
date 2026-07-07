@@ -5,6 +5,50 @@ All notable changes to SH-KoTH are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0-zh_tw.1] — 2026-07-07
+
+This release addresses all P0 items from the upstream PR #4 review and fixes a
+team-mode capture bug found during in-game verification. All changes below were
+verified end-to-end on a clean Paper 1.21.1 server.
+
+### Changed
+
+- **`AnvilTextInput` rewritten on top of [AnvilGUI](https://github.com/WesJD/AnvilGUI) 1.10.10**
+  (shaded and relocated to `dev.smartshub.shkoth.libs.anvilgui`). The previous
+  hand-rolled `Bukkit.createInventory(ANVIL)` approach produced an anvil with no menu
+  backend: rename text did not apply, the input item could be dragged out, and closing
+  did not return to the caller. AnvilGUI opens a genuine anvil menu, cancels all item
+  movement, and confirm/cancel both reliably re-open the calling editor on the next tick.
+
+- **Language policy applied project-wide**: developer-facing text (comments, Javadoc,
+  log and exception messages) is now English only; player-facing text goes through
+  `MessageRepository` with per-language overrides (`en` defaults, `zh_tw` provided).
+  Java sources now contain zero non-Latin characters.
+
+- **Internal team command is now config-gated instead of hard-removed.**
+  New `internal-team.disable-command` option in `hooks.yml` (default `false`) controls
+  whether the built-in `/team` command is registered and whether the editor shows the
+  Solo/Deny team toggles. The internal team system itself (services, listeners, events,
+  hooks, API) always stays active so other team plugins keep integrating.
+
+### Fixed
+
+- **Editor tabs no longer overlap.** `refreshAll()` only cleared the backing Bukkit
+  inventory but not triumph-gui's logical item map, so switching tabs let items from
+  the previous tab bleed through. Now `gui.clearItems()` is called before re-registering
+  the active tab's content.
+
+- **`solo-koth` config key is honored again.** `KothBuilder` was reading `solo-mode` /
+  `create-team-if-not-exists-on-enter`, while the bundled template and the editor's YAML
+  writer both produce `solo-koth` / `create-team-if-not-exists`, so the configured value
+  was silently ignored. The builder now reads the same keys the template and editor write.
+
+- **Teamless players can capture team KOTHs again.** The teamless-entry branch was gated
+  on `deny-entry-if-not-in-team`, so with deny disabled a teamless player could stand in
+  a team KOTH without capture ever starting (the tally could not resolve them to a team).
+  A team-mode KOTH now auto-assigns an internal team first (when
+  `create-team-if-not-exists` allows it) and only then applies the deny rule.
+
 ## [1.4.0-zh_tw.1] — 2026-07-01
 
 This release is a large optimization and editor-UX pass. It is split into three logical groups:
