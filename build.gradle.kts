@@ -2,7 +2,7 @@ plugins { java }
 
 subprojects {
     group = "dev.smartshub"
-    version = "1.3.3-SNAPSHOT"
+    version = "1.3.4-SNAPSHOT"
 
     apply(plugin = "java-library")
 
