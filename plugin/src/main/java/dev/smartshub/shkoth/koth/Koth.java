@@ -200,12 +200,16 @@ public class Koth extends AbstractKoth {
 
         TeamWrapper playerTeam = getPlayerTeam(player.getUniqueId());
 
-        if (!isSolo && denyEnterWithoutTeam && playerTeam == null) {
+        // Team mode: a player with no team needs one assigned, otherwise they can enter
+        // the zone but the tally can never resolve them to a team and capture never starts.
+        if (!isSolo && playerTeam == null) {
             if (createTeamIfNotExistsOnEnter) {
                 ContextualTeamTracker tracker = (ContextualTeamTracker) teamTracker;
                 playerTeam = tracker.createInternalTeam(player.getUniqueId(), Integer.MAX_VALUE);
-                if (playerTeam == null) return false;
-            } else {
+            }
+            // Still teamless (creation disabled, or an external team plugin owns teams):
+            // deny entry only when the KOTH forbids teamless players.
+            if (playerTeam == null && denyEnterWithoutTeam) {
                 return false;
             }
         }
