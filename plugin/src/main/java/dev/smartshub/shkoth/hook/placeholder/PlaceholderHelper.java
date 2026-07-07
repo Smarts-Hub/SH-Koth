@@ -1,7 +1,6 @@
 package dev.smartshub.shkoth.hook.placeholder;
 
 import dev.smartshub.shkoth.api.koth.Koth;
-import dev.smartshub.shkoth.api.stat.StatType;
 import dev.smartshub.shkoth.registry.KothRegistry;
 
 import java.util.List;
@@ -26,8 +25,7 @@ public class PlaceholderHelper {
             "next_koth_in_formatted");
 
     public String extractKothName(String identifier) {
-
-        if(ignoredToExtract.contains(identifier)) return null;
+        if (ignoredToExtract.contains(identifier)) return null;
 
         if (identifier == null || identifier.isEmpty()) {
             return null;
@@ -47,10 +45,8 @@ public class PlaceholderHelper {
                 .orElse(null);
     }
 
-
-
     public String extractPlaceholderType(String identifier) {
-        if(ignoredToExtract.contains(identifier)) return identifier;
+        if (ignoredToExtract.contains(identifier)) return identifier;
 
         if (identifier == null || identifier.isEmpty()) {
             return null;
@@ -66,6 +62,8 @@ public class PlaceholderHelper {
     }
 
     public String formatTime(long totalSeconds) {
+        if (totalSeconds <= 0) return "N/A";
+
         long hours = totalSeconds / 3600;
         long minutes = (totalSeconds % 3600) / 60;
         long seconds = totalSeconds % 60;
