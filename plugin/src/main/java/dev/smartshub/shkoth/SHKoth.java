@@ -20,12 +20,23 @@ import dev.smartshub.shkoth.hook.placeholder.PlaceholderAPIHook;
 import dev.smartshub.shkoth.koth.tally.capture.CaptureTally;
 import dev.smartshub.shkoth.koth.tally.score.ScoreTally;
 import dev.smartshub.shkoth.koth.ticking.KothTicker;
-import dev.smartshub.shkoth.listener.koth.*;
+import dev.smartshub.shkoth.listener.koth.KothEndListener;
+import dev.smartshub.shkoth.listener.koth.KothStartListener;
+import dev.smartshub.shkoth.listener.koth.KothStateChangeListener;
+import dev.smartshub.shkoth.listener.koth.PlayerEnterKothDuringRunListener;
+import dev.smartshub.shkoth.listener.koth.PlayerLeavekothDuringRunListener;
+import dev.smartshub.shkoth.listener.koth.PlayerStartKothCaptureListener;
+import dev.smartshub.shkoth.listener.koth.PlayerStopKothCaptureListener;
 import dev.smartshub.shkoth.listener.player.AsyncChatListener;
 import dev.smartshub.shkoth.listener.player.PlayerInteractListener;
 import dev.smartshub.shkoth.listener.player.PlayerJoinListener;
 import dev.smartshub.shkoth.listener.player.PlayerQuitListener;
-import dev.smartshub.shkoth.listener.team.*;
+import dev.smartshub.shkoth.listener.team.MemberJoinedTeamListener;
+import dev.smartshub.shkoth.listener.team.MemberKickedFromTeamListener;
+import dev.smartshub.shkoth.listener.team.MemberLeavedTeamListener;
+import dev.smartshub.shkoth.listener.team.TeamChangeLeaderListener;
+import dev.smartshub.shkoth.listener.team.TeamCreatedListener;
+import dev.smartshub.shkoth.listener.team.TeamDissolvedListener;
 import dev.smartshub.shkoth.message.MessageParser;
 import dev.smartshub.shkoth.message.MessageRepository;
 import dev.smartshub.shkoth.registry.KothRegistry;
@@ -213,7 +224,7 @@ public class SHKoth extends JavaPlugin {
     private void registerHooks() {
         //PlaceholderAPI
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            new PlaceholderAPIHook(kothRegistry, playerStatsCache).register();
+            new PlaceholderAPIHook(kothSchedulerService, kothRegistry, playerStatsCache).register();
         }
 
         // BStats
@@ -235,7 +246,7 @@ public class SHKoth extends JavaPlugin {
                 .build();
 
         lamp.register(
-                new KothCommand(kothRegistry, notifyService, configService, guiService),
+                new KothCommand(kothRegistry, notifyService, configService, kothSchedulerService, guiService),
                 new TeamCommand(teamHandlingService, teamInviteService, teamInformationService));
     }
 
