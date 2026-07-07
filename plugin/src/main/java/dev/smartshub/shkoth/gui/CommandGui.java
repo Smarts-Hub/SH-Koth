@@ -2,10 +2,11 @@ package dev.smartshub.shkoth.gui;
 
 import dev.smartshub.shkoth.api.gui.BaseUpdatableGui;
 import dev.smartshub.shkoth.api.koth.command.Commands;
-import dev.smartshub.shkoth.service.gui.GuiService;
-import dev.smartshub.shkoth.service.gui.menu.other.WaitingToFill;
-import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
 import dev.smartshub.shkoth.message.MessageParser;
+import dev.smartshub.shkoth.message.MessageRepository;
+import dev.smartshub.shkoth.service.gui.GuiService;
+import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
+import dev.smartshub.shkoth.service.gui.menu.other.WaitingToFill;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -21,11 +22,13 @@ public class CommandGui extends BaseUpdatableGui {
 
     private final KothToRegisterCache kothToRegisterCache;
     private final MessageParser parser;
+    private final MessageRepository msg;
     private GuiService guiService;
 
-    public CommandGui(KothToRegisterCache kothToRegisterCache, MessageParser parser) {
+    public CommandGui(KothToRegisterCache kothToRegisterCache, MessageParser parser, MessageRepository msg) {
         this.kothToRegisterCache = kothToRegisterCache;
         this.parser = parser;
+        this.msg = msg;
     }
 
     @Override
@@ -40,7 +43,7 @@ public class CommandGui extends BaseUpdatableGui {
     @Override
     public void open(Player player) {
         Gui gui = Gui.gui()
-                .title(parser.parse("<gold>Configure Commands"))
+                .title(parser.parse(msg.getMessage("gui.command-editor.title")))
                 .rows(2)
                 .create();
 
@@ -52,12 +55,12 @@ public class CommandGui extends BaseUpdatableGui {
     }
 
     private GuiItem createWinnerCommandsItem(Player player, Gui gui) {
-        List<Component> winCommands = createCommandLore("winner",
+        List<Component> lore = createCommandLore("winner",
                 kothToRegisterCache.getKothToRegister(player.getUniqueId()).getWinnersCommands());
 
         return ItemBuilder.from(Material.DIAMOND)
-                .name(parser.parse("<green>Winner Commands"))
-                .lore(winCommands)
+                .name(parser.parse(msg.getMessage("gui.command-editor.winner-name")))
+                .lore(lore)
                 .asGuiItem(event -> {
                     event.setCancelled(true);
                     handleCommandAction(player, gui, event, WaitingToFill.WIN_COMMAND,
@@ -66,12 +69,12 @@ public class CommandGui extends BaseUpdatableGui {
     }
 
     private GuiItem createStartCommandsItem(Player player, Gui gui) {
-        List<Component> startCommands = createCommandLore("start",
+        List<Component> lore = createCommandLore("start",
                 kothToRegisterCache.getKothToRegister(player.getUniqueId()).getStartCommands());
 
         return ItemBuilder.from(Material.EMERALD)
-                .name(parser.parse("<yellow>Start Commands"))
-                .lore(startCommands)
+                .name(parser.parse(msg.getMessage("gui.command-editor.start-name")))
+                .lore(lore)
                 .asGuiItem(event -> {
                     event.setCancelled(true);
                     handleCommandAction(player, gui, event, WaitingToFill.START_COMMAND,
@@ -80,12 +83,12 @@ public class CommandGui extends BaseUpdatableGui {
     }
 
     private GuiItem createEndCommandsItem(Player player, Gui gui) {
-        List<Component> endCommands = createCommandLore("end",
+        List<Component> lore = createCommandLore("end",
                 kothToRegisterCache.getKothToRegister(player.getUniqueId()).getEndCommands());
 
         return ItemBuilder.from(Material.REDSTONE)
-                .name(parser.parse("<red>End Commands"))
-                .lore(endCommands)
+                .name(parser.parse(msg.getMessage("gui.command-editor.end-name")))
+                .lore(lore)
                 .asGuiItem(event -> {
                     event.setCancelled(true);
                     handleCommandAction(player, gui, event, WaitingToFill.END_COMMAND,
@@ -95,7 +98,7 @@ public class CommandGui extends BaseUpdatableGui {
 
     private GuiItem createSaveItem(Player player, Gui gui) {
         return ItemBuilder.from(Material.EMERALD_BLOCK)
-                .name(parser.parse("<green>Save commands"))
+                .name(parser.parse(msg.getMessage("gui.command-editor.save-name")))
                 .asGuiItem(event -> {
                     event.setCancelled(true);
                     kothToRegisterCache.getKothToRegister(player.getUniqueId()).buildCommands();
@@ -105,37 +108,34 @@ public class CommandGui extends BaseUpdatableGui {
 
     private GuiItem createBackItem(Player player, Gui gui) {
         return ItemBuilder.from(Material.ARROW)
-                .name(parser.parse("<red>Back to Creating Menu"))
+                .name(parser.parse(msg.getMessage("gui.command-editor.back-name")))
                 .asGuiItem(event -> {
                     event.setCancelled(true);
                     UUID uuid = player.getUniqueId();
                     var kothData = kothToRegisterCache.getKothToRegister(uuid);
 
-                    kothData.setCommands(
-                            new Commands(
-                                    kothData.getStartCommands(),
-                                    kothData.getEndCommands(),
-                                    kothData.getWinnersCommands()
-                            )
-                    );
+                    kothData.setCommands(new Commands(
+                            kothData.getStartCommands(),
+                            kothData.getEndCommands(),
+                            kothData.getWinnersCommands()
+                    ));
                     guiService.openCreateKothGui(player);
                 });
     }
 
     private List<Component> createCommandLore(String type, List<String> commands) {
         List<Component> lore = new ArrayList<>();
-        lore.add(parser.parse("<gray>Right Click: <white>Add command"));
-        lore.add(parser.parse("<gray>Left Click: <white>Clear all"));
-        lore.add(parser.parse("<gray>Current " + type + " commands:"));
+        lore.add(parser.parse(msg.getMessage("gui.command-editor.hint-add")));
+        lore.add(parser.parse(msg.getMessage("gui.command-editor.hint-clear")));
+        String typeName = msg.getMessage("gui.command-editor.type-" + type);
+        lore.add(parser.parse(msg.fmt("gui.command-editor.current-prefix", typeName)));
 
-        commands.forEach(command -> {
-            lore.add(parser.parse("<gray>- " + command));
-        });
-
-        if (commands.isEmpty()) {
-            lore.add(parser.parse("<dark_gray>No commands set"));
+        for (String command : commands) {
+            lore.add(parser.parse(msg.fmt("gui.command-editor.command-line", command)));
         }
-
+        if (commands.isEmpty()) {
+            lore.add(parser.parse(msg.getMessage("gui.command-editor.no-commands")));
+        }
         return lore;
     }
 
@@ -145,7 +145,7 @@ public class CommandGui extends BaseUpdatableGui {
         if (event.isRightClick()) {
             player.closeInventory();
             kothToRegisterCache.getKothToRegister(player.getUniqueId()).setWaitingToFill(waitingType);
-            player.sendMessage(parser.parse("<green>Type the command in chat, or <red>'cancel'<green> to return:"));
+            player.sendMessage(parser.parse(msg.getMessage("gui.command-editor.chat-prompt")));
         } else if (event.isLeftClick()) {
             clearAction.run();
             updateItem(gui, player, slot);

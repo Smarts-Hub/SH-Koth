@@ -1,0 +1,37 @@
+#  _____                       _
+# / ____|                     | |
+#| (___   ___  _   _ _ __   __| |
+# \___ \ / _ \| | | | '_ \ / _` |
+# ____) | (_) | |_| | | | | (_| |
+#|_____/ \___/ \__,_|_| |_|\__,_|
+#
+# 音效設定檔 (繁體中文範本)
+# * 每個訊息均支援 PlaceholderAPI 佔位符
+# * 如果想停用音效，只需設為空字串: ""
+# * 音效清單: https://minecraftsounds.com/
+# 支援服務: https://discord.smartshub.dev/
+# 文件: https://docs.smartshub.dev/sh-koth/intro/introduction/
+
+koth:
+  start: "minecraft:entity.experience_orb.pickup"
+  end: "minecraft:block.note_block.bass"
+  end-by-timeout: "minecraft:block.note_block.bass"
+  start-capturing: "minecraft:entity.player.levelup"
+  stop-capturing: "minecraft:block.note_block.bass"
+  enter: "minecraft:entity.villager.yes"
+  leave: "minecraft:block.note_block.bass"
+
+team:
+  created: "minecraft:entity.experience_orb.pickup"
+  disband: "minecraft:block.note_block.bass"
+  kicked: "minecraft:block.note_block.bass"
+  member-kicked: "minecraft:entity.player.levelup"
+  removed: "minecraft:block.note_block.bass"
+  member-removed: "minecraft:block.note_block.bass"
+  new-leader: "minecraft:entity.experience_orb.pickup"
+  added-to-team: "minecraft:entity.player.levelup"
+  new-member-joined: "minecraft:entity.villager.yes"
+
+
+# 請勿更動此項！
+config-version: 1

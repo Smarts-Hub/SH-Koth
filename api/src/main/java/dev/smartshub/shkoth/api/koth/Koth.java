@@ -4,6 +4,8 @@ import dev.smartshub.shkoth.api.event.koth.KothEndEvent;
 import dev.smartshub.shkoth.api.event.koth.PlayerStopKothCaptureEvent;
 import dev.smartshub.shkoth.api.koth.command.Commands;
 import dev.smartshub.shkoth.api.koth.guideline.KothState;
+import dev.smartshub.shkoth.api.koth.guideline.KothType;
+import dev.smartshub.shkoth.api.koth.guideline.NotifyType;
 import dev.smartshub.shkoth.api.location.Area;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.team.KothTeam;
@@ -20,6 +22,7 @@ public interface Koth {
     
     @NotNull String getId();
     @NotNull String getDisplayName();
+    @NotNull KothType getType();
 
     int getDuration();
     int getCaptureTime();
@@ -70,4 +73,7 @@ public interface Koth {
      * @return true if the player is still eligible, false otherwise.
      */
     boolean isPlayerEligibleToStay(@NotNull Player player);
+
+    @NotNull NotifyType getNotifyType();
+    void setNotifyType(@NotNull NotifyType notifyType);
 }

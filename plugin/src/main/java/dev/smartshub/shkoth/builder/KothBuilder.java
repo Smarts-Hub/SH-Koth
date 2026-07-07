@@ -47,7 +47,7 @@ public class KothBuilder implements Builder<Koth, ConfigContainer> {
 
         KothType kothType = KothType.fromString(config.getString("type", "capture"));
 
-        final boolean isSolo = config.getBoolean("solo-mode", true);
+        final boolean isSolo = config.getBoolean("solo-koth", true);
         final boolean isScoreboardEnabled = config.getBoolean("scoreboard.enabled", true);
         final boolean isBossbarEnabled = config.getBoolean("boss-bar", false);
 
@@ -63,10 +63,17 @@ public class KothBuilder implements Builder<Koth, ConfigContainer> {
 
 
         boolean denyEnterWithoutTeam = config.getBoolean("deny-entry-if-not-in-team", false);
-        boolean createTeamIfNotExistsOnEnter = config.getBoolean("create-team-if-not-exists-on-enter", true);
+        boolean createTeamIfNotExistsOnEnter = config.getBoolean("create-team-if-not-exists", true);
 
 
-        return new dev.smartshub.shkoth.koth.Koth(teamTracker, id, displayName, maxDuration, captureTime,area, commands,
+        dev.smartshub.shkoth.koth.Koth koth = new dev.smartshub.shkoth.koth.Koth(teamTracker, id, displayName, maxDuration, captureTime,area, commands,
                 physicalRewards, isBossbarEnabled, isSolo, isScoreboardEnabled, denyEnterWithoutTeam, createTeamIfNotExistsOnEnter, kothType);
+        String notifyTypeStr = config.getString("notify-type", "all");
+        try {
+            koth.setNotifyType(dev.smartshub.shkoth.api.koth.guideline.NotifyType.valueOf(notifyTypeStr.toUpperCase()));
+        } catch (Exception e) {
+            koth.setNotifyType(dev.smartshub.shkoth.api.koth.guideline.NotifyType.ALL);
+        }
+        return koth;
     }
 }

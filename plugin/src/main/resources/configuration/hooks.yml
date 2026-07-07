@@ -9,6 +9,9 @@
 # Support: https://discord.smartshub.dev/
 # Documentation: https://docs.smartshub.dev/sh-koth/intro/introduction/
 
+# The language to use (e.g. en, zh_tw)
+language: en
+
 # You can enable/disable support for each plugin and set their priority.
 # The priority is used when more than one plugin is detected, the one with the highest priority will be used.
 # If two or more plugins have the same priority, the one that appears first
@@ -48,6 +51,15 @@ better-teams:
 simple-clans:
   enabled: true
   priority: 1
+
+
+# SH-Koth ships its own internal team system as a fallback when no team plugin is
+# hooked. The internal system (services, listeners and API) always stays active so
+# other team plugins can still integrate with it. This option only controls whether
+# the built-in /koth-team command is registered, so servers that manage teams through
+# another plugin can hide the command without disabling the underlying system.
+internal-team:
+  disable-command: false
 
 
 # DO NOT TOUCH THIS!

@@ -1,0 +1,69 @@
+# _______ _ _   _
+#|__   __(_) | | |
+#   | |   _| |_| | ___
+#   | |  | | __| |/ _ \
+#   | |  | | |_| |  __/
+#   |_|  |_|\__|_|\___|
+#
+# Title 和 Subtitle 設定檔 (繁體中文)
+# * 格式: MiniMessage (https://docs.advntr.dev/minimessage/format)
+# * 每個訊息均支援 PlaceholderAPI 佔位符
+# * 如果想停用 Title，只需將標題設為空字串: ""
+# 支援服務: https://discord.smartshub.dev/
+# 文件: https://docs.smartshub.dev/sh-koth/intro/introduction/
+
+koth:
+  start:
+    title: "<green>KOTH %shkoth_koth_context% 開始！"
+    subtitle: "<yellow>佔領以獲取豐富獎勵！"
+  end:
+    title: "<red>KOTH %shkoth_koth_context% 結束！"
+    subtitle: "<light_purple>恭喜獲勝者！"
+  end-by-timeout:
+    title: "<red>KOTH %shkoth_koth_context% 結束！"
+    subtitle: "<light_purple>沒有人在限時內成功佔領！"
+  start-capturing:
+    title: "<green>KOTH %shkoth_koth_context% 正在被佔領！"
+    subtitle: "<green>%shkoth_player_context% 正在佔領，快去阻止他！"
+  stop-capturing:
+    title: "<red>佔領中斷！"
+    subtitle: "<blue>KOTH %shkoth_koth_context% 的戰鬥仍在繼續！"
+  enter:
+    title: "<green>進入區域"
+    subtitle: "<gray>您進入了 KOTH %shkoth_koth_context%"
+  leave:
+    title: "<red>離開區域"
+    subtitle: "<gray>您離開了 KOTH %shkoth_koth_context%"
+
+team:
+  created:
+    title: "<green>隊伍創建成功"
+    subtitle: ""
+  disband:
+    title: "<red>隊伍已解散"
+    subtitle: "<gray>由 %shkoth_player_context% 解散"
+  kicked:
+    title: "<red>您已被踢出隊伍"
+    subtitle: ""
+  member-kicked:
+    title: "<green>踢出成員"
+    subtitle: "<gray>%shkoth_player_context% 已被踢出您的隊伍"
+  removed:
+    title: "<red>您已被移出隊伍"
+    subtitle: ""
+  member-removed:
+    title: "<green>移出成員"
+    subtitle: "<gray>%shkoth_player_context% 已被移出您的隊伍"
+  new-leader:
+    title: "<light_purple>更換隊長"
+    subtitle: "<gray>新隊長為 %shkoth_player_context%"
+  added-to-team:
+    title: "<green>加入隊伍"
+    subtitle: ""
+  new-member-joined:
+    title: "<green>新成員加入"
+    subtitle: "<gray>%shkoth_player_context% 已加入您的隊伍"
+
+
+# 請勿更動此項！
+config-version: 1

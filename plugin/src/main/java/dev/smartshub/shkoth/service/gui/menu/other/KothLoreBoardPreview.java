@@ -1,94 +1,94 @@
 package dev.smartshub.shkoth.service.gui.menu.other;
 
-import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
 import dev.smartshub.shkoth.message.MessageParser;
+import dev.smartshub.shkoth.message.MessageRepository;
+import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
 import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Scoreboard preview lore generator. Caches the rendered lore per player
+ * UUID; call {@link #invalidate(UUID)} after any change to the underlying data.
+ * All user-facing strings go through {@link MessageRepository}.
+ */
 public class KothLoreBoardPreview {
 
-    private final KothToRegisterCache kothToRegisterCache;
+    private final KothToRegisterCache cache;
     private final MessageParser parser;
+    private final MessageRepository msg;
 
-    public KothLoreBoardPreview(KothToRegisterCache kothToRegisterCache, MessageParser parser) {
-        this.kothToRegisterCache = kothToRegisterCache;
+    private final ConcurrentHashMap<UUID, List<Component>> capturingCache = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<UUID, List<Component>> waitingCache = new ConcurrentHashMap<>();
+
+    public KothLoreBoardPreview(KothToRegisterCache cache, MessageParser parser, MessageRepository msg) {
+        this.cache = cache;
         this.parser = parser;
+        this.msg = msg;
+    }
+
+    public void invalidate(UUID uuid) {
+        capturingCache.remove(uuid);
+        waitingCache.remove(uuid);
     }
 
     public List<Component> getCapturingLore(UUID uuid) {
-        var data = kothToRegisterCache.getKothToRegister(uuid);
-
-        List<Component> lore = new ArrayList<>();
-
-        lore.add(parser.parse("<dark_gray>Right click: <gray>add line"));
-        lore.add(parser.parse("<dark_gray>Left click: <gray>remove last line"));
-        lore.add(parser.parse("<dark_gray>Shift click: <gray>remove all lines"));
-        lore.add(Component.empty());
-        lore.add(parser.parse("<yellow><bold>Preview:"));
-        lore.add(Component.empty());
-
-        String title = data.getScoreboardCapturingTitle();
-        lore.add(parseForLore("Title: " + (title != null ? title : "Not set"), "<gold>"));
-
-        lore.add(Component.empty());
-
-        List<String> content = data.getScoreboardCapturingContent();
-        if (content == null || content.isEmpty()) {
-            lore.add(parser.parse("<dark_gray>No lines set"));
-        } else {
-            lore.add(parser.parse("<aqua>Lines (" + content.size() + "):"));
-            for (int i = 0; i < content.size(); i++) {
-                String line = content.get(i);
-                lore.add(parseForLore((i + 1) + ". " + line, "<white>"));
-            }
-        }
-
-        return lore;
+        return capturingCache.computeIfAbsent(uuid, this::buildCapturingLore);
     }
 
     public List<Component> getWaitingLore(UUID uuid) {
-        var data = kothToRegisterCache.getKothToRegister(uuid);
+        return waitingCache.computeIfAbsent(uuid, this::buildWaitingLore);
+    }
 
+    private List<Component> buildCapturingLore(UUID uuid) {
+        var data = cache.getKothToRegister(uuid);
         List<Component> lore = new ArrayList<>();
-
-        lore.add(parser.parse("<dark_gray>Right click: <gray>add line"));
-        lore.add(parser.parse("<dark_gray>Left click: <gray>remove last line"));
-        lore.add(parser.parse("<dark_gray>Shift click: <gray>remove all lines"));
+        appendHelpLines(lore);
+        if (data == null) return lore;
+        lore.add(titleLine(data.getScoreboardCapturingTitle()));
         lore.add(Component.empty());
-        lore.add(parser.parse("<yellow><bold>Preview:"));
-        lore.add(Component.empty());
-
-        String title = data.getScoreboardWaitingTitle();
-        lore.add(parseForLore("Title: " + (title != null ? title : "Not set"), "<gold>"));
-
-        lore.add(Component.empty());
-
-        List<String> content = data.getScoreboardWaitingContent();
-        if (content == null || content.isEmpty()) {
-            lore.add(parser.parse("<dark_gray>No lines set"));
-        } else {
-            lore.add(parser.parse("<aqua>Lines (" + content.size() + "):"));
-            for (int i = 0; i < content.size(); i++) {
-                String line = content.get(i);
-                lore.add(parseForLore((i + 1) + ". " + line, "<white>"));
-            }
-        }
-
+        appendContentLines(lore, data.getScoreboardCapturingContent());
         return lore;
     }
 
-    private Component parseForLore(String text, String defaultColor) {
-        if (text == null || text.trim().isEmpty()) {
-            return parser.parse("<gray>Not set");
-        }
+    private List<Component> buildWaitingLore(UUID uuid) {
+        var data = cache.getKothToRegister(uuid);
+        List<Component> lore = new ArrayList<>();
+        appendHelpLines(lore);
+        if (data == null) return lore;
+        lore.add(titleLine(data.getScoreboardWaitingTitle()));
+        lore.add(Component.empty());
+        appendContentLines(lore, data.getScoreboardWaitingContent());
+        return lore;
+    }
 
-        try {
-            return parser.parse(defaultColor + text);
-        } catch (Exception e) {
-            return parser.parse("<gray>" + text);
+    private Component titleLine(String title) {
+        String shown = (title == null || title.isEmpty())
+                ? msg.getMessage("gui.common.not-set")
+                : title;
+        return parser.parse("<gold>" + msg.fmt("gui.board-preview.title-line", shown));
+    }
+
+    private void appendHelpLines(List<Component> lore) {
+        lore.add(parser.parse(msg.getMessage("gui.board-preview.help-1")));
+        lore.add(parser.parse(msg.getMessage("gui.board-preview.help-2")));
+        lore.add(parser.parse(msg.getMessage("gui.board-preview.help-3")));
+        lore.add(Component.empty());
+        lore.add(parser.parse(msg.getMessage("gui.board-preview.preview-header")));
+        lore.add(Component.empty());
+    }
+
+    private void appendContentLines(List<Component> lore, List<String> content) {
+        if (content == null || content.isEmpty()) {
+            lore.add(parser.parse(msg.getMessage("gui.board-preview.no-content")));
+            return;
+        }
+        lore.add(parser.parse(msg.fmt("gui.board-preview.content-header", content.size())));
+        for (int i = 0; i < content.size(); i++) {
+            lore.add(parser.parse("<white>" + msg.fmt("gui.board-preview.content-line", i + 1, content.get(i))));
         }
     }
 }

@@ -4,9 +4,9 @@ import com.saicone.rtag.item.ItemTagStream;
 import dev.smartshub.shkoth.api.builder.mapper.Mapper;
 import dev.smartshub.shkoth.api.config.ConfigContainer;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class PhysicalRewardsMapper implements Mapper<List<PhysicalReward>, Confi
         ConfigurationSection rewardsSection = config.getConfigurationSection("physical-rewards");
 
         if (rewardsSection == null) {
-            Bukkit.getLogger().warning("No physical rewards section found in " + config.getName());
+            JavaPlugin.getProvidingPlugin(PhysicalRewardsMapper.class).getLogger().warning("No physical rewards section found in " + config.getName());
             return physicalRewards;
         }
 
@@ -38,7 +38,7 @@ public class PhysicalRewardsMapper implements Mapper<List<PhysicalReward>, Confi
             if (rawItems[0] instanceof ItemStack itemStack) {
                 physicalRewards.add(new PhysicalReward(itemStack, amount));
             } else {
-                Bukkit.getLogger().warning("Reward at key " + key + " is not an ItemStack in " + config.getName());
+                JavaPlugin.getProvidingPlugin(PhysicalRewardsMapper.class).getLogger().warning("Reward at key " + key + " is not an ItemStack in " + config.getName());
             }
         }
 

@@ -2,7 +2,7 @@ package dev.smartshub.shkoth.storage.database.table;
 
 
 import dev.smartshub.shkoth.storage.database.connection.DatabaseConnection;
-import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -31,11 +31,11 @@ public class SchemaCreator {
                 stmt.executeUpdate("CREATE INDEX IF NOT EXISTS idx_total_wins ON player_stats((solo_wins + team_wins))");
             }
 
-            Bukkit.getLogger().info("Database schema created successfully!");
+            JavaPlugin.getProvidingPlugin(SchemaCreator.class).getLogger().info("Database schema created successfully!");
 
         } catch (SQLException e) {
-            System.err.println("Error creating database schema:");
-            e.printStackTrace();
+            JavaPlugin.getProvidingPlugin(SchemaCreator.class).getLogger()
+                    .log(java.util.logging.Level.SEVERE, "Error creating database schema", e);
         }
     }
 }

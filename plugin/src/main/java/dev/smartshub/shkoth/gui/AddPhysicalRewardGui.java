@@ -1,9 +1,10 @@
 package dev.smartshub.shkoth.gui;
 
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
+import dev.smartshub.shkoth.message.MessageParser;
+import dev.smartshub.shkoth.message.MessageRepository;
 import dev.smartshub.shkoth.service.gui.GuiService;
 import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
-import dev.smartshub.shkoth.message.MessageParser;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.Gui;
 import dev.triumphteam.gui.guis.GuiItem;
@@ -20,6 +21,7 @@ public class AddPhysicalRewardGui {
 
     private final KothToRegisterCache kothToRegisterCache;
     private final MessageParser parser;
+    private final MessageRepository msg;
     private GuiService guiService;
 
     private static final int SAVE_BUTTON_SLOT = 35;
@@ -27,14 +29,16 @@ public class AddPhysicalRewardGui {
     private static final int FILLER_START_SLOT = 28;
     private static final int FILLER_END_SLOT = 34;
 
-    public AddPhysicalRewardGui(KothToRegisterCache kothToRegisterCache, MessageParser parser) {
+    public AddPhysicalRewardGui(KothToRegisterCache kothToRegisterCache,
+                                MessageParser parser, MessageRepository msg) {
         this.kothToRegisterCache = kothToRegisterCache;
         this.parser = parser;
+        this.msg = msg;
     }
 
     public void open(Player player) {
         StorageGui gui = Gui.storage()
-                .title(parser.parse("<gold>Physical Rewards Configuration"))
+                .title(parser.parse(msg.getMessage("gui.add-reward.title")))
                 .rows(4)
                 .create();
 
@@ -62,22 +66,19 @@ public class AddPhysicalRewardGui {
     }
 
     private void setupControlButtons(StorageGui gui, Player player) {
-        GuiItem saveButton = createSaveButton(gui, player);
-        gui.setItem(SAVE_BUTTON_SLOT, saveButton);
-
-        GuiItem discardButton = createDiscardButton(gui, player);
-        gui.setItem(DISCARD_BUTTON_SLOT, discardButton);
+        gui.setItem(SAVE_BUTTON_SLOT, createSaveButton(gui, player));
+        gui.setItem(DISCARD_BUTTON_SLOT, createDiscardButton(gui, player));
     }
 
     private GuiItem createSaveButton(StorageGui gui, Player player) {
         return ItemBuilder.from(Material.EMERALD_BLOCK)
-                .name(parser.parse("<green><bold>Save Rewards"))
+                .name(parser.parse(msg.getMessage("gui.add-reward.save-name")))
                 .lore(
-                        parser.parse("<gray>Click to save all items"),
-                        parser.parse("<gray>as physical rewards!"),
+                        parser.parse(msg.getMessage("gui.add-reward.save-lore-1")),
+                        parser.parse(msg.getMessage("gui.add-reward.save-lore-2")),
                         Component.empty(),
-                        parser.parse("<yellow>Items in your inventory will"),
-                        parser.parse("<yellow>be converted to rewards.")
+                        parser.parse(msg.getMessage("gui.add-reward.save-lore-3")),
+                        parser.parse(msg.getMessage("gui.add-reward.save-lore-4"))
                 )
                 .glow()
                 .asGuiItem(event -> {
@@ -88,12 +89,12 @@ public class AddPhysicalRewardGui {
 
     private GuiItem createDiscardButton(StorageGui gui, Player player) {
         return ItemBuilder.from(Material.REDSTONE_BLOCK)
-                .name(parser.parse("<red><bold>Discard Changes"))
+                .name(parser.parse(msg.getMessage("gui.add-reward.discard-name")))
                 .lore(
-                        parser.parse("<gray>Click to return to main GUI"),
-                        parser.parse("<gray>without saving changes."),
+                        parser.parse(msg.getMessage("gui.add-reward.discard-lore-1")),
+                        parser.parse(msg.getMessage("gui.add-reward.discard-lore-2")),
                         Component.empty(),
-                        parser.parse("<red>All items will be lost!")
+                        parser.parse(msg.getMessage("gui.add-reward.discard-lore-3"))
                 )
                 .asGuiItem(event -> {
                     event.setCancelled(true);
@@ -103,7 +104,6 @@ public class AddPhysicalRewardGui {
 
     private void fillControlArea(StorageGui gui) {
         GuiItem filler = createFillerItem();
-
         for (int i = FILLER_START_SLOT; i <= FILLER_END_SLOT; i++) {
             if (i != SAVE_BUTTON_SLOT && i != DISCARD_BUTTON_SLOT) {
                 gui.setItem(i, filler);
@@ -119,10 +119,8 @@ public class AddPhysicalRewardGui {
 
     private void saveRewards(StorageGui gui, Player player) {
         List<PhysicalReward> rewards = new ArrayList<>();
-
         for (int i = 0; i < gui.getInventory().getSize(); i++) {
             if (isControlSlot(i)) continue;
-
             ItemStack item = gui.getInventory().getItem(i);
             if (isValidRewardItem(item)) {
                 ItemStack cleanItem = item.clone();
@@ -134,8 +132,7 @@ public class AddPhysicalRewardGui {
         kothData.clearPhysicalRewards();
         kothData.setPhysicalRewards(rewards);
 
-        player.sendMessage(parser.parse("<green>Successfully saved " + rewards.size() + " physical rewards!"));
-
+        player.sendMessage(parser.parse(msg.fmt("gui.add-reward.saved-chat", rewards.size())));
         guiService.openCreateKothGui(player);
     }
 
@@ -145,8 +142,7 @@ public class AddPhysicalRewardGui {
                 gui.getInventory().setItem(i, null);
             }
         }
-
-        player.sendMessage(parser.parse("<yellow>Changes discarded. Returning to main menu..."));
+        player.sendMessage(parser.parse(msg.getMessage("gui.add-reward.discarded-chat")));
         guiService.openCreateKothGui(player);
     }
 

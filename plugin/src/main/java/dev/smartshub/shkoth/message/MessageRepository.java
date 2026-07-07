@@ -30,6 +30,33 @@ public class MessageRepository {
         return messages.getStringList(path, List.of("<gray>Empty message list: " + path));
     }
 
+    /**
+     * Fetch a message and substitute positional placeholders ({0}, {1}, ...).
+     * <pre>
+     *   messages.yml:  hello: "Hi {0}, you have {1} mail"
+     *   repo.fmt("hello", "Alice", 3) → "Hi Alice, you have 3 mail"
+     * </pre>
+     */
+    public String fmt(String path, Object... args) {
+        return applyPlaceholders(getMessage(path), args);
+    }
+
+    public List<String> fmtList(String path, Object... args) {
+        List<String> raw = getMessageList(path);
+        List<String> out = new java.util.ArrayList<>(raw.size());
+        for (String line : raw) out.add(applyPlaceholders(line, args));
+        return out;
+    }
+
+    private static String applyPlaceholders(String template, Object... args) {
+        if (args == null || args.length == 0) return template;
+        String result = template;
+        for (int i = 0; i < args.length; i++) {
+            result = result.replace("{" + i + "}", String.valueOf(args[i]));
+        }
+        return result;
+    }
+
     public String getBroadcastMessage(String path) {
         return broadcast.getString(path, "<red>Broadcast message not found: " + path);
     }

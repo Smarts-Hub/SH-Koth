@@ -20,6 +20,8 @@ dependencies {
 
     implementation("io.github.4drian3d:jdwebhooks:1.1.0")
 
+    implementation("net.wesjd:anvilgui:1.10.10-SNAPSHOT")
+
     compileOnly("net.kyori:adventure-api:4.17.0")
     compileOnly("net.kyori:adventure-platform-bukkit:4.4.1")
     compileOnly("net.kyori:adventure-text-minimessage:4.17.0")
@@ -53,6 +55,7 @@ tasks {
         relocate("com.saicone.rtag", "dev.smartshub.shkoth.libs.rtag")
         relocate("it.sauronsoftware", "dev.smartshub.shkoth.libs.cron4j")
         relocate("dev.dejvokep.boostedyaml", "dev.smartshub.shkoth.libs.boostedyaml")
+        relocate("net.wesjd.anvilgui", "dev.smartshub.shkoth.libs.anvilgui")
 
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 

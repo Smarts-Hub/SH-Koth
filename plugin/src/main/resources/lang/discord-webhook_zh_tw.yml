@@ -1,0 +1,89 @@
+#  _____  _                       _
+# |  __ \(_)                     | |
+# | |  | |_ ___  ___ ___  _ __ __| |
+# | |  | | / __|/ __/ _ \| '__/ _` |
+# | |__| | \__ \ (_| (_) | | | (_| |
+# |_____/|_|___/\___\___/|_|  \__,_|
+#
+# Discord Webhook 設定檔 (繁體中文)
+# * 每個訊息均支援 PlaceholderAPI 佔位符！
+# 支援服務: https://discord.smartshub.dev/
+# 文件: https://docs.smartshub.dev/sh-koth/intro/introduction/
+
+# 您的 Discord webhook 網址
+url: ""
+
+# Webhook 訊息設定
+koth-end:
+  enabled: true
+  username: "SH-Koth"
+  author: "SH-Koth"
+  timestamp: true
+  color: 0xFF0000
+  title: "KOTH 結束"
+  description: "KOTH %shkoth_koth_context% 已經結束！恭喜獲勝者！"
+  footer: "Powered by SH-Koth"
+
+koth-start:
+  enabled: true
+  username: "SH-Koth"
+  author: "SH-Koth"
+  timestamp: true
+  color: 0xFF0000
+  title: "KOTH 開始"
+  description: "KOTH %shkoth_koth_context% 已經開始！佔領以獲得豐富獎勵！"
+  footer: "Powered by SH-Koth"
+
+koth-state-change:
+  enabled: false
+  username: "SH-Koth"
+  author: "SH-Koth"
+  timestamp: true
+  color: 0xFF0000
+  title: "KOTH 狀態變更"
+  description: "KOTH %shkoth_koth_context% 的狀態已變更！"
+  footer: "Powered by SH-Koth"
+
+koth-player-enter:
+  enabled: false
+  username: "SH-Koth"
+  author: "SH-Koth"
+  timestamp: true
+  color: 0xFF0000
+  title: "玩家進入 Koth 區域"
+  description: "%shkoth_player_context% 進入了 Koth %shkoth_koth_context% 區域！"
+  footer: "Powered by SH-Koth"
+
+koth-player-leave:
+  enabled: false
+  username: "SH-Koth"
+  author: "SH-Koth"
+  timestamp: true
+  color: 0xFF0000
+  title: "玩家離開 Koth 區域"
+  description: "%shkoth_player_context% 離開了 Koth %shkoth_koth_context% 區域！"
+  footer: "Powered by SH-Koth"
+
+koth-player-start-capture:
+  enabled: true
+  username: "SH-Koth"
+  author: "SH-Koth"
+  timestamp: true
+  color: 0xFF0000
+  title: "玩家開始佔領"
+  description: "%shkoth_player_context% 開始佔領 Koth %shkoth_koth_context%！"
+  footer: "Powered by SH-Koth"
+
+koth-player-stop-capture:
+  enabled: true
+  username: "SH-Koth"
+  author: "SH-Koth"
+  timestamp: true
+  color: 0xFF0000
+  title: "玩家停止佔領"
+  description: "%shkoth_player_context% 已停止佔領 Koth %shkoth_koth_context%！"
+  footer: "Powered by SH-Koth"
+
+
+# 請勿更動此項！
+config-version: 1

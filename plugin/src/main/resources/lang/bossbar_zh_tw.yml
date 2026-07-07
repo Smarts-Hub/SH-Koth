@@ -1,0 +1,44 @@
+# ____                _
+#|  _ \              | |
+#| |_) | ___  ___ ___| |__   __ _ _ __
+#|  _ < / _ \/ __/ __| '_ \ / _` | '__|
+#| |_) | (_) \__ \__ \ |_) | (_| | |
+#|____/ \___/|___/___/_.__/ \__,_|_|
+#
+# Bossbar 設定檔 (繁體中文)
+# * 格式: MiniMessage (https://docs.advntr.dev/minimessage/format)
+# * 每個訊息均支援 PlaceholderAPI 佔位符
+# * 如果想停用 Boss 條，只需將標題設為空字串: ""
+# 支援服務: https://discord.smartshub.dev/
+# 文件: https://docs.smartshub.dev/sh-koth/intro/introduction/
+
+
+# 當有玩家正在佔領 KOTH 時顯示的標題
+capturing-title: "<red>正在佔領 KOTH！"
+
+# 當沒有任何人佔領 KOTH 時顯示的標題
+waiting-title: "<green>目前無人佔領！"
+
+# Boss 條的顯示範圍
+# 可選選項:
+# * "all" (伺服器上的所有玩家)
+# * "world" (KOTH 所在世界的玩家)
+# * "area" (僅限在 KOTH 區域內的玩家)
+player-scope: "world"
+
+# Boss 條顏色
+# 選項:
+# * "auto" (根據進度自動變更: 0-30% 紅色, 30-70% 黃色, 70-100% 紅色)
+# * "red"
+# * "green"
+# * "blue"
+# * "yellow"
+# * "pink"
+# * "purple"
+# * "white"
+color-by-progress: "auto"
+
+
+
+# 請勿更動此項！
+config-version: 1

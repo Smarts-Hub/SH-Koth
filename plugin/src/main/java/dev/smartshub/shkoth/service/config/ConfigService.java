@@ -48,15 +48,33 @@ public class ConfigService {
     private void updateConfigsIfNeeded() {
         plugin.getDataFolder().mkdirs();
 
+        String language = getLanguageSetting();
+        File langFolder = new File(plugin.getDataFolder(), "lang");
+        if (!langFolder.exists()) langFolder.mkdirs();
+        File langCacheFile = new File(langFolder, ".lang_cache");
+        String cachedLanguage = "";
+        if (langCacheFile.exists()) {
+            try {
+                cachedLanguage = java.nio.file.Files.readString(langCacheFile.toPath()).trim();
+            } catch (IOException ignored) {}
+        }
+
+        boolean languageChanged = !language.equalsIgnoreCase(cachedLanguage);
+        if (languageChanged) {
+            try {
+                java.nio.file.Files.writeString(langCacheFile.toPath(), language);
+            } catch (IOException ignored) {}
+        }
+
         for (ConfigType configType : ConfigType.values()) {
             if (!configType.isFolder()) {
-                updateConfigFileFromType(configType);
+                updateConfigFileFromType(configType, languageChanged);
             }
         }
 
     }
 
-    private void updateConfigFileFromType(ConfigType configType) {
+    private void updateConfigFileFromType(ConfigType configType, boolean forceOverwriteLang) {
         if (configType.isFolder()) return;
 
         try {
@@ -67,6 +85,34 @@ public class ConfigService {
             if (!folder.exists()) folder.mkdirs();
 
             File configFile = new File(folder, fileName);
+
+            if (configType.getParentFolder().equals("lang")) {
+                String language = getLanguageSetting();
+                if (language != null && !language.equalsIgnoreCase("en")) {
+                    String extension = resourcePath.substring(resourcePath.lastIndexOf("."));
+                    String baseName = resourcePath.substring(0, resourcePath.lastIndexOf("."));
+                    String langResourcePath = baseName + "_" + language.toLowerCase() + extension;
+                    if (plugin.getResource(langResourcePath) != null) {
+                        resourcePath = langResourcePath;
+                    }
+                }
+
+                if (forceOverwriteLang) {
+                    try (InputStream in = plugin.getResource(resourcePath);
+                         java.io.OutputStream out = new java.io.FileOutputStream(configFile)) {
+                        if (in != null) {
+                            byte[] buffer = new byte[1024];
+                            int bytesRead;
+                            while ((bytesRead = in.read(buffer)) != -1) {
+                                out.write(buffer, 0, bytesRead);
+                            }
+                        }
+                    } catch (IOException e) {
+                        plugin.getLogger().warning("Failed to force overwrite lang file: " + fileName);
+                    }
+                }
+            }
+
             InputStream defaultResource = plugin.getResource(resourcePath);
 
             if (defaultResource == null) {
@@ -190,5 +236,14 @@ public class ConfigService {
         reload(ConfigType.SOUND);
         reload(ConfigType.BOSSBAR);
         provide(ConfigType.DISCORD);
+    }
+
+    private String getLanguageSetting() {
+        File hooksFile = new File(new File(plugin.getDataFolder(), "configuration"), "hooks.yml");
+        if (hooksFile.exists()) {
+            org.bukkit.configuration.file.YamlConfiguration config = org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(hooksFile);
+            return config.getString("language", "en");
+        }
+        return "en";
     }
 }

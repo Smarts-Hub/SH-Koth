@@ -35,7 +35,9 @@ import dev.smartshub.shkoth.service.gui.GuiService;
 import dev.smartshub.shkoth.service.gui.menu.cache.KothToRegisterCache;
 import dev.smartshub.shkoth.service.koth.KothRegistrationFromTempDataService;
 import dev.smartshub.shkoth.service.koth.RefreshInsideKothService;
+import dev.smartshub.shkoth.service.gui.input.AnvilTextInput;
 import dev.smartshub.shkoth.service.notify.NotifyService;
+import dev.smartshub.shkoth.service.reward.OfflineRewardStorage;
 import dev.smartshub.shkoth.service.schedule.KothScheduler;
 import dev.smartshub.shkoth.service.scoreboard.ScoreboardHandleService;
 import dev.smartshub.shkoth.service.scoreboard.SendScoreboardService;
@@ -70,6 +72,7 @@ public class SHKoth extends JavaPlugin {
     private ConfigService configService;
 
     private NotifyService notifyService;
+    private OfflineRewardStorage offlineRewardStorage;
 
     private SendScoreboardService sendScoreboardService;
     private ScoreboardHandleService scoreboardHandleService;
@@ -89,6 +92,7 @@ public class SHKoth extends JavaPlugin {
     private AddPhysicalRewardGui addPhysicalRewardGui;
     private CreateSchedulerGui createSchedulerGui;
     private CommandGui commandGui;
+    private dev.smartshub.shkoth.gui.EditKothListGui editKothListGui;
 
     private KothTicker kothTicker;
     private RefreshInsideKothService refreshInsideKothService;
@@ -121,6 +125,9 @@ public class SHKoth extends JavaPlugin {
     @Override
     public void onDisable() {
         getLogger().info("SHKoth has been disabled!");
+        if (offlineRewardStorage != null) {
+            offlineRewardStorage.flush();
+        }
         KothAPIProvider.unload();
     }
 
@@ -150,6 +157,8 @@ public class SHKoth extends JavaPlugin {
 
     private void initServices() {
         notifyService = new NotifyService(messageParser, messageRepository);
+        offlineRewardStorage = new OfflineRewardStorage(this);
+        new AnvilTextInput(this);
 
         sendScoreboardService = new SendScoreboardService(configService, messageParser);
         scoreboardHandleService = new ScoreboardHandleService(sendScoreboardService, kothRegistry);
@@ -169,17 +178,31 @@ public class SHKoth extends JavaPlugin {
     public void guis() {
         kothToRegisterCache = new KothToRegisterCache();
 
-        addPhysicalRewardGui = new AddPhysicalRewardGui(kothToRegisterCache, messageParser);
-        createSchedulerGui = new CreateSchedulerGui(kothToRegisterCache, messageParser);
-        commandGui = new CommandGui(kothToRegisterCache, messageParser);
-        createKothGui = new CreateKothGui(messageParser, kothToRegisterCache, wandService);
-        guiService = new GuiService(createKothGui, createSchedulerGui, addPhysicalRewardGui, commandGui);
+        addPhysicalRewardGui = new AddPhysicalRewardGui(kothToRegisterCache, messageParser, messageRepository);
+        createSchedulerGui = new CreateSchedulerGui(kothToRegisterCache, messageParser, messageRepository);
+        commandGui = new CommandGui(kothToRegisterCache, messageParser, messageRepository);
+        editKothListGui = new dev.smartshub.shkoth.gui.EditKothListGui(kothRegistry, kothToRegisterCache, messageParser, messageRepository);
+
+        var sharedBoardPreview = new dev.smartshub.shkoth.service.gui.menu.other.KothLoreBoardPreview(
+                kothToRegisterCache, messageParser, messageRepository);
+        var scoreboardLineEditorGui = new dev.smartshub.shkoth.gui.ScoreboardLineEditorGui(
+                messageParser, messageRepository, kothToRegisterCache, sharedBoardPreview);
+        createKothGui = new CreateKothGui(messageParser, messageRepository, kothToRegisterCache,
+                wandService, kothRegistry, sharedBoardPreview);
+        guiService = new GuiService(createKothGui, createSchedulerGui, addPhysicalRewardGui, commandGui, editKothListGui, scoreboardLineEditorGui);
+        scoreboardLineEditorGui.setGuiService(guiService);
 
         kothToRegisterCache.setGuiService(guiService);
         createSchedulerGui.setGuiService(guiService);
         commandGui.setGuiService(guiService);
         addPhysicalRewardGui.setGuiService(guiService);
         createKothGui.setGuiService(guiService);
+        editKothListGui.setGuiService(guiService);
+
+        // Hide the team-mode editor toggles when the internal team command is disabled,
+        // mirroring the same option used to gate command registration.
+        createKothGui.setTeamTogglesVisible(!configService.provide(ConfigType.HOOKS)
+                .getBoolean("internal-team.disable-command", false));
 
         KothRegistrationFromTempDataService registrationService = new KothRegistrationFromTempDataService(
                 kothToRegisterCache,
@@ -235,8 +258,16 @@ public class SHKoth extends JavaPlugin {
                 .build();
 
         lamp.register(
-                new KothCommand(kothRegistry, notifyService, configService, guiService),
-                new TeamCommand(teamHandlingService, teamInviteService, teamInformationService));
+                new KothCommand(kothRegistry, notifyService, configService, guiService));
+
+        // The internal team system (services, listeners, API) always stays active so
+        // other team plugins can integrate with it. This config option only controls
+        // whether the built-in team command is exposed to players.
+        boolean disableTeamCommand = configService.provide(ConfigType.HOOKS)
+                .getBoolean("internal-team.disable-command", false);
+        if (!disableTeamCommand) {
+            lamp.register(new TeamCommand(teamHandlingService, teamInviteService, teamInformationService));
+        }
     }
 
     private void registerListeners() {

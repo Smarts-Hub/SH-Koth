@@ -1,0 +1,37 @@
+#             _   _             _
+#   /\       | | (_)           | |
+#  /  \   ___| |_ _  ___  _ __ | |__   __ _ _ __
+# / /\ \ / __| __| |/ _ \| '_ \| '_ \ / _` | '__|
+# / ____ \ (__| |_| | (_) | | | | |_) | (_| | |
+#/_/    \_\___|\__|_|\___/|_| |_|_.__/ \__,_|_|
+#
+# Actionbar 與副標題設定檔 (繁體中文)
+# * 格式: MiniMessage (https://docs.advntr.dev/minimessage/format)
+# * 每個訊息均支援 PlaceholderAPI 佔位符
+# * 如果想停用 Actionbar，只需將標題設為空字串: ""
+# 支援服務: https://discord.smartshub.dev/
+# 文件: https://docs.smartshub.dev/sh-koth/intro/introduction/
+
+koth:
+  start: "<green>KOTH 事件 %shkoth_koth_context% 已經開始！"
+  end: "<red>KOTH 事件 %shkoth_koth_context% 已經結束！"
+  end-by-timeout: "<red>KOTH 事件 %shkoth_koth_context% 因時間結束而關閉！"
+  start-capturing: "<red>KOTH 事件 %shkoth_koth_context% 正被佔領中！"
+  stop-capturing: "<red>KOTH 事件 %shkoth_koth_context% 的佔領已被停止！"
+  enter: "<green>您已進入 KOTH %shkoth_koth_context% 區域。"
+  leave: "<red>您已離開 KOTH %shkoth_koth_context% 區域。"
+
+team:
+  created: "<green>隊伍創建成功。"
+  disband: "<red>隊伍已被 %shkoth_player_context% 解散。"
+  kicked: "<red>您已被踢出隊伍。"
+  member-kicked: "<green>%shkoth_player_context% 已被踢出您的隊伍。"
+  removed: "<red>您已被移出隊伍。"
+  member-removed: "<green>%shkoth_player_context% 已被移出您的隊伍。"
+  new-leader: "<light_purple>您更改了隊長，新隊長為 %shkoth_player_context%。"
+  added-to-team: "<green>您已被加入隊伍。"
+  new-member-joined: "<green>%shkoth_player_context% 已加入您的隊伍。"
+
+
+# 請勿更動此項！
+config-version: 1

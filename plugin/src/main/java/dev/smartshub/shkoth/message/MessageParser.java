@@ -23,7 +23,8 @@ public class MessageParser {
         this.placeholderAPIAvailable = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI");
 
         if (!placeholderAPIAvailable) {
-            Bukkit.getLogger().info("[SH-KoTH] PlaceholderAPI not available - placeholders will not be processed");
+            org.bukkit.plugin.java.JavaPlugin.getProvidingPlugin(MessageParser.class).getLogger()
+                    .info("PlaceholderAPI not available - placeholders will not be processed");
         }
     }
 

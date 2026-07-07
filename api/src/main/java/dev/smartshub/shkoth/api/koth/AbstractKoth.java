@@ -6,6 +6,7 @@ import dev.smartshub.shkoth.api.event.koth.KothStateChangeEvent;
 import dev.smartshub.shkoth.api.event.koth.PlayerStartKothCaptureEvent;
 import dev.smartshub.shkoth.api.koth.command.Commands;
 import dev.smartshub.shkoth.api.koth.guideline.KothState;
+import dev.smartshub.shkoth.api.koth.guideline.NotifyType;
 import dev.smartshub.shkoth.api.location.Area;
 import dev.smartshub.shkoth.api.reward.PhysicalReward;
 import dev.smartshub.shkoth.api.team.KothTeam;
@@ -24,6 +25,7 @@ public abstract class AbstractKoth implements Koth {
         protected final Area area;
         protected final Commands commands;
         protected final List<PhysicalReward> physicalRewards;
+        protected NotifyType notifyType = NotifyType.ALL;
 
         private final KothEventDispatcher eventDispatcher;
 
@@ -147,5 +149,15 @@ public abstract class AbstractKoth implements Koth {
                 if (this.state == KothState.CAPTURING) {
                         setState(KothState.RUNNING);
                 }
+        }
+
+        @Override
+        public @NotNull NotifyType getNotifyType() {
+                return notifyType != null ? notifyType : NotifyType.ALL;
+        }
+
+        @Override
+        public void setNotifyType(@NotNull NotifyType notifyType) {
+                this.notifyType = notifyType;
         }
 }

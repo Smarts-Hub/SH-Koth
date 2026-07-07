@@ -36,6 +36,7 @@ public class Koth extends AbstractKoth {
     private final boolean isScoreboardEnabled;
     private final boolean denyEnterWithoutTeam;
     private final boolean createTeamIfNotExistsOnEnter;
+    private final KothType type;
 
     private KothTeam currentCapturingTeam;
     private long captureStartTime;
@@ -46,6 +47,7 @@ public class Koth extends AbstractKoth {
         super(id, displayName, duration, captureTime, area, commands, physicalRewards);
 
         this.teamTracker = teamTracker;
+        this.type = type;
         this.tally = TallyFactory.create(type, this);
         this.isBossbarEnabled = isBossbarEnabled;
         this.isSolo = isSolo;
@@ -53,6 +55,8 @@ public class Koth extends AbstractKoth {
         this.denyEnterWithoutTeam = denyEnterWithoutTeam;
         this.createTeamIfNotExistsOnEnter = createTeamIfNotExistsOnEnter;
     }
+
+    public KothType getType() { return type; }
 
     @Override
     public void start() {
@@ -196,12 +200,16 @@ public class Koth extends AbstractKoth {
 
         TeamWrapper playerTeam = getPlayerTeam(player.getUniqueId());
 
-        if (!isSolo && denyEnterWithoutTeam && playerTeam == null) {
+        // Team mode: a player with no team needs one assigned, otherwise they can enter
+        // the zone but the tally can never resolve them to a team and capture never starts.
+        if (!isSolo && playerTeam == null) {
             if (createTeamIfNotExistsOnEnter) {
                 ContextualTeamTracker tracker = (ContextualTeamTracker) teamTracker;
                 playerTeam = tracker.createInternalTeam(player.getUniqueId(), Integer.MAX_VALUE);
-                if (playerTeam == null) return false;
-            } else {
+            }
+            // Still teamless (creation disabled, or an external team plugin owns teams):
+            // deny entry only when the KOTH forbids teamless players.
+            if (playerTeam == null && denyEnterWithoutTeam) {
                 return false;
             }
         }
@@ -253,5 +261,8 @@ public class Koth extends AbstractKoth {
     public boolean isScoreboardEnabled() { return isScoreboardEnabled; }
 
     @Override
-    public boolean isBossbarEnabled() { return isBossbarEnabled; }
+    public boolean isBossbarEnabled() {
+        return isBossbarEnabled
+                || getNotifyType().includes(dev.smartshub.shkoth.api.koth.guideline.NotifyChannel.BOSSBAR);
+    }
 }

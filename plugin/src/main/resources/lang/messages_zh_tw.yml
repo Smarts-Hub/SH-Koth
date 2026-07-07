@@ -1,0 +1,302 @@
+#  __  __
+# |  \/  |
+# | \  / | ___  ___ ___  __ _  __ _  ___  ___
+# | |\/| |/ _ \/ __/ __|/ _` |/ _` |/ _ \/ __|
+# | |  | |  __/\__ \__ \ (_| | (_| |  __/\__ \
+# |_|  |_|\___||___/___/\__,_|\__, |\___||___/
+#                              __/ |
+#                             |___/
+# 訊息設定檔 (繁體中文)
+# * 格式: MiniMessage (https://docs.advntr.dev/minimessage/format)
+# * 每個訊息均支援 PlaceholderAPI 佔位符
+# * 如果想停用某個廣播訊息，只需將其設為空字串: ""
+# 支援服務: https://discord.smartshub.dev/
+# 文件: https://docs.smartshub.dev/sh-koth/intro/introduction/
+
+exception:
+  no-permission: "<red>您沒有權限執行此操作。"
+
+# * %shkoth_koth_context% - KOTH 的顯示名稱 (僅在發送訊息的當下有效)
+# 如需「永久有效」的佔位符，請參考文件說明的內容：
+koth:
+  force-start: "<green>KOTH 事件 %shkoth_koth_context% 已被強制啟動。"
+  force-stop: "<red>KOTH 事件 %shkoth_koth_context% 已被強制停止。"
+  force-stop-all: "<red>所有 KOTH 事件已被強制停止。"
+  add-physical-reward: "<light_purple>實體獎勵已成功加入此 KOTH 中。"
+  teleport: "<green>您已傳送到 KOTH %shkoth_koth_context%。"
+  leave: "<red>您已離開 KOTH %shkoth_koth_context%。"
+  capture:
+    start: "<green>您開始佔領 KOTH %shkoth_koth_context%！"
+    stop: "<red>您停止了佔領 KOTH %shkoth_koth_context%。"
+  reload: "<light_purple>KOTH 設定檔已成功重載。"
+  enter: "<green>您已進入 KOTH %shkoth_koth_context% 區域。"
+
+# * %shkoth_player_context% - 玩家名稱 (僅在發送訊息的當下有效)
+# * %shkoth_aux_context% - 輔助玩家名稱 (僅在發送訊息的當下有效)
+# 如需「永久有效」的佔位符，請參考文件說明的內容：
+team:
+  chat-prefix: "<aqua>[隊伍聊天] "
+  player-not-found: "<red>找不到指定的玩家。"
+  not-team-leader: "<red>您不是隊伍隊長。"
+  target-already-in-a-team: "<red>目標玩家已經在隊伍中。"
+  target-already-invited: "<red>目標玩家已被邀請過。"
+  invitation-received: "<green>您收到了來自 %shkoth_player_context% 的隊伍邀請。"
+  invitation-sent: "<green>已成功向 %shkoth_aux_context% 發送隊伍邀請。"
+  no-pending-invitations: "<red>您沒有任何待處理的隊伍邀請。"
+  invitation-accepted: "<green>已接受隊伍邀請。"
+  invitation-declined: "<red>%shkoth_player_context% 拒絕了隊伍邀請。"
+  invitation-declined-success: "<green>您已成功拒絕隊伍邀請。"
+  kicked-from-team: "<red>您已被踢出隊伍。"
+  member-kicked: "<green>%shkoth_player_context% 已被踢出您的隊伍。"
+  kick-member-success: "<green>您已成功將 %shkoth_player_context% 踢出您的隊伍。"
+  removed-from-team: "<red>您已被移出隊伍。"
+  member-removed: "<green>%shkoth_player_context% 已被移出您的隊伍。"
+  not-in-a-team: "<red>您不在任何隊伍中。"
+  team-info-header: "<light_purple>--- 隊伍資訊 ---"
+  team-info-footer: "<light_purple>----------------"
+  change-leader: "<light_purple>您更改了隊伍隊長，新隊長為 %shkoth_player_context%。"
+  transferred-leadership-success: "<green>您已成功將隊長權限轉移給 %shkoth_player_context%。"
+  you-are-leader-now: "<green>您現在是隊伍隊長了！"
+  team-created-success: "<green>隊伍創建成功。"
+  added-to-team: "<green>您已被加入隊伍。"
+  new-member-joined: "<green>%shkoth_player_context% 已加入您的隊伍。"
+  disbanded-team-success: "<green>您已成功解散隊伍。"
+  dissolved: "<red>隊伍已被 %shkoth_player_context% 解散。"
+  already-in-a-team: "<red>您已經在隊伍中。"
+  cant-create-team: "<red>您現在無法創建隊伍。"
+  cant-join-team: "<red>您現在無法加入此隊伍。"
+  leader-cant-leave: "<red>隊伍隊長無法直接離開隊伍。"
+  cant-leave-team: "<red>您無法離開隊伍。"
+  only-leader-can-disband: "<red>只有隊伍隊長可以解散隊伍。"
+  cant-disband-team: "<red>您無法解散隊伍。"
+  only-leader-can-kick: "<red>只有隊伍隊長可以踢出成員。"
+  cant-kick-yourself: "<red>您不能把自己踢出隊伍。"
+  player-not-in-your-team: "<red>指定的玩家不在您的隊伍中。"
+  cant-kick-member: "<red>您無法踢出 %shkoth_player_context%。"
+  only-leader-can-transfer: "<red>只有隊伍隊長可以轉移隊長職位。"
+  cant-transfer-leadership: "<red>您無法轉移隊長職位。"
+
+# === 編輯器 / GUI 文字 (i18n) ===
+# 佔位符使用 {0}, {1} ... 由 MessageRepository#fmt 帶入
+gui:
+  common:
+    not-set: "尚未設定"
+    required-yes: "<green>✓ 必填"
+    required-no: "<red>✗ 必填"
+    current-prefix: "<dark_gray>目前: <gray>{0}"
+    click-to-edit-anvil: "<yellow>點擊以輸入 (Anvil)"
+
+  create-koth:
+    title-new: "<gold>建立 KOTH"
+    title-edit: "<gold>編輯 KOTH"
+    close-name: "<red>關閉視窗"
+    close-lore: "<gray>會保留目前未儲存的編輯狀態"
+    tab-active-marker: "<green>▶ "
+    tab-inactive-marker: "<yellow>"
+    tab-current-lore: "<dark_gray>目前分頁"
+    tab-switch-lore: "<gray>點擊切換"
+    tab-basic: "基本資料"
+    tab-time: "時間與計分"
+    tab-reward: "獎勵與指令"
+
+    id-name: "<yellow>KOTH ID"
+    id-error-empty: "ID 不可為空"
+    id-error-charset: "ID 只能含英數字、_、-"
+    id-error-clash: "ID 已存在"
+    display-name-name: "<yellow>顯示名稱"
+    display-name-error-empty: "顯示名稱不可為空"
+
+    area-name: "<yellow>KOTH 區域"
+    area-not-set: "<red>✗ 必填：尚未設定區域"
+    area-click-wand: "<gray>點擊取得設定棒"
+    area-set-ok: "<green>✓ 已設定"
+    area-world: "<light_purple>世界: <yellow>{0}"
+    area-corner1: "<gray>角點 1: <yellow>{0}"
+    area-corner2: "<gray>角點 2: <yellow>{0}"
+
+    type-name: "<yellow>佔領類型: <white>{0}"
+    type-capture: "佔領 (Capture)"
+    type-score: "計分 (Score)"
+    type-toggle-lore: "<gray>點擊切換"
+
+    notify-name: "<yellow>通知方式: <white>{0}"
+    notify-toggle-lore: "<gray>點擊切換顯示方式"
+
+    solo-name: "<yellow>遊玩模式: <white>{0}"
+    solo-mode-solo: "個人 (Solo)"
+    solo-mode-team: "組隊 (Team)"
+    solo-toggle-lore: "<gray>點擊切換個人/組隊模式"
+    deny-enter-toggle: "未組隊禁止進入"
+    create-team-toggle: "進入時自動建立隊伍"
+
+    max-time-name: "<yellow>最長活動時間: <white>{0} 秒"
+    capture-time-name: "<yellow>佔領所需時間: <white>{0} 秒"
+    numeric-hint-1: "<dark_gray>右鍵 <gray>+1 / <dark_gray>左鍵 <gray>-1"
+    numeric-hint-2: "<dark_gray>Shift+右鍵 <gray>+10 / <dark_gray>Shift+左鍵 <gray>-10"
+    numeric-hint-3: "<dark_gray>中鍵 <gray>+60"
+
+    bossbar-toggle: "顯示頂部血條 (Bossbar)"
+    scoreboard-toggle: "啟用計分板"
+    toggle-on: "啟用"
+    toggle-off: "停用"
+    toggle-current: "<gray>目前: {0}"
+    toggle-on-coloured: "<green>{0}"
+    toggle-off-coloured: "<red>{0}"
+
+    board-waiting-title-name: "<yellow>等待時計分板標題"
+    board-waiting-lines-name: "<yellow>等待時計分板內容"
+    board-capturing-title-name: "<yellow>佔領時計分板標題"
+    board-capturing-lines-name: "<yellow>佔領時計分板內容"
+
+    rewards-name: "<yellow>實體獎勵清單 <white>({0} 項)"
+    rewards-lore: "<gray>點擊管理獎勵物品"
+    pool-info-name: "<aqua>獎勵發放規則"
+    pool-info-lore-1: "<gray>每位贏家會從獎勵清單中"
+    pool-info-lore-2: "<gray>隨機抽 <yellow>1 項<gray>發放"
+    pool-info-lore-3: "<dark_gray>離線玩家會在下次上線時補發"
+    commands-name: "<yellow>指令清單"
+    commands-lore: "<gray>管理開始/結束/獲勝指令"
+
+    test-on-name: "<aqua>測試此 KOTH"
+    test-on-lore: "<gray>立刻啟動一回合驗證設定"
+    test-off-name: "<dark_gray>測試此 KOTH"
+    test-off-lore: "<red>必填欄位齊全後才能測試"
+    copy-on-name: "<yellow>複製其他 KOTH 設定"
+    copy-on-lore-1: "<gray>從現有 KOTH 載入欄位"
+    copy-on-lore-2: "<dark_gray>點擊開啟列表"
+    copy-off-name: "<dark_gray>複製其他 KOTH 設定"
+    copy-off-lore-1: "<gray>從現有 KOTH 載入欄位"
+    copy-off-lore-2: "<red>目前沒有其他 KOTH 可複製"
+    validation-ok-name: "<green>驗證通過"
+    validation-ok-line: "<green>✓ 所有必填欄位齊全"
+    validation-fail-name: "<red>尚未通過驗證"
+    validation-fail-line: "<red>缺少 {0} 項："
+    validation-fail-item: "<red> - {0}"
+    validation-capture-exceeds: "<red>✗ 佔領時間 {0} 秒 > 最長時間 {1} 秒"
+    save-create-name: "<green>建立 KOTH"
+    save-create-lore: "<gray>點擊以建立"
+    save-edit-name: "<green>儲存變更"
+    save-edit-lore: "<gray>點擊以儲存"
+    save-disabled-lore: "<red>條件未達成，無法儲存"
+    save-disabled-id-clash: "<red>✗ ID 已存在"
+    save-disabled-capture-exceeds: "<red>✗ 佔領時間超過最長活動時間"
+    chat-save-created: "<green>您已成功建立 KOTH！"
+    chat-save-edited: "<green>已儲存 KOTH 變更！"
+    chat-save-fail: "<red>請先解決驗證提示中的問題！"
+    chat-test-need-save: "<red>請先儲存 KOTH 再測試！"
+    chat-test-started: "<green>已啟動 {0}"
+    chat-test-failed: "<red>啟動失敗：{0}"
+    chat-anvil-uninit: "<red>Anvil 輸入系統未初始化"
+
+    err-name-id: "ID"
+    err-name-display-name: "顯示名稱"
+    err-name-max-time: "最長活動時間 > 0"
+    err-name-capture-time: "佔領時間 > 0"
+    err-name-area: "區域"
+    err-name-type: "佔領類型"
+
+  scoreboard-editor:
+    title-capturing: "<gold>佔領時計分板內容"
+    title-waiting: "<gold>等待時計分板內容"
+    back-name: "<yellow>返回"
+    back-lore: "<gray>回到 KOTH 編輯介面"
+    info-name-capturing: "<aqua>佔領時計分板"
+    info-name-waiting: "<aqua>等待時計分板"
+    info-lore-1: "<gray>共 <yellow>{0} <gray>行"
+    info-lore-2: "<dark_gray>左鍵編輯 / 右鍵刪除"
+    info-lore-3: "<dark_gray>Shift+左鍵 上移 / Shift+右鍵 下移"
+    add-name: "<green>新增一行"
+    add-lore: "<gray>用 Anvil 輸入文字"
+    clear-name: "<red>清空所有行"
+    clear-lore: "<dark_red>不可復原"
+    line-number: "<gold>#{0}"
+    line-text: "<white>{0}"
+    line-empty: "(空)"
+    line-action-1: "<dark_gray>左鍵 <gray>編輯"
+    line-action-2: "<dark_gray>右鍵 <gray>刪除此行"
+    move-up: "<yellow>↑ 上移"
+    move-down: "<yellow>↓ 下移"
+    delete: "<red>刪除"
+    prev-page-on: "<yellow>上一頁"
+    prev-page-off: "<dark_gray>上一頁"
+    next-page-on: "<yellow>下一頁"
+    next-page-off: "<dark_gray>下一頁"
+    page-info: "<aqua>第 {0} / {1} 頁"
+
+  board-preview:
+    help-1: "<dark_gray>右鍵: <gray>新增內容行"
+    help-2: "<dark_gray>左鍵: <gray>移除最後一行"
+    help-3: "<dark_gray>Shift 點擊: <gray>清除全部"
+    preview-header: "<yellow><bold>預覽效果:"
+    title-line: "標題: {0}"
+    no-content: "<dark_gray>未設定內容"
+    content-header: "<aqua>內容行數 ({0}):"
+    content-line: "{0}. {1}"
+
+  reward:
+    offline-received: "<green>你領取了 {0} 件 KOTH 離線獎勵！"
+
+  edit-list:
+    title: "<gold>選擇要編輯的 KOTH"
+    item-name: "<gold>{0}"
+    item-lore-display: "<gray>名稱: <white>{0}"
+    item-lore-type: "<gray>類型: <yellow>{0}"
+    item-lore-state: "<gray>狀態: <green>{0}"
+    item-lore-action: "<yellow>點擊以編輯此 KOTH 設定"
+    prev-page: "<yellow>上一頁"
+    next-page: "<yellow>下一頁"
+
+  add-reward:
+    title: "<gold>實體獎勵設定"
+    save-name: "<green><bold>儲存獎勵"
+    save-lore-1: "<gray>點擊以儲存所有物品"
+    save-lore-2: "<gray>作為實體獎勵！"
+    save-lore-3: "<yellow>你放入的物品將會"
+    save-lore-4: "<yellow>轉換為活動獎勵。"
+    discard-name: "<red><bold>放棄變更"
+    discard-lore-1: "<gray>點擊以返回主選單"
+    discard-lore-2: "<gray>而不儲存任何變更。"
+    discard-lore-3: "<red>所有放入的物品將會遺失！"
+    saved-chat: "<green>成功儲存了 {0} 個實體獎勵！"
+    discarded-chat: "<yellow>已放棄變更。正在返回主選單..."
+
+  command-editor:
+    title: "<gold>設定指令"
+    winner-name: "<green>獲勝指令"
+    start-name: "<yellow>啟動指令"
+    end-name: "<red>結束指令"
+    save-name: "<green>儲存指令"
+    back-name: "<red>返回建立選單"
+    hint-add: "<gray>右鍵點擊: <white>新增指令"
+    hint-clear: "<gray>左鍵點擊: <white>清除所有"
+    current-prefix: "<gray>目前 {0} 指令:"
+    type-winner: "獲勝"
+    type-start: "啟動"
+    type-end: "結束"
+    command-line: "<gray>- {0}"
+    no-commands: "<dark_gray>未設定任何指令"
+    chat-prompt: "<green>請在聊天欄輸入指令，或輸入 <red>'cancel'<green> 取消返回:"
+
+  scheduler:
+    title: "<gold>建立 KOTH 排程"
+    day-name: "<green>星期: <gray>{0}"
+    day-lore: "<dark_gray>點擊: <gray>下一天"
+    day-monday: "星期一"
+    day-tuesday: "星期二"
+    day-wednesday: "星期三"
+    day-thursday: "星期四"
+    day-friday: "星期五"
+    day-saturday: "星期六"
+    day-sunday: "星期日"
+    hour-name: "<yellow>小時: {0}"
+    hour-hint-add: "<dark_gray>右鍵點擊: <gray>增加 1 小時"
+    hour-hint-sub: "<dark_gray>左鍵點擊: <gray>減少 1 小時"
+    minute-name: "<aqua>分鐘: {0}"
+    minute-hint-add: "<dark_gray>右鍵點擊: <gray>增加 1 分鐘"
+    minute-hint-sub: "<dark_gray>左鍵點擊: <gray>減少 1 分鐘"
+    minute-hint-add-10: "<dark_gray>Shift + 右鍵: <gray>增加 10 分鐘"
+    minute-hint-sub-10: "<dark_gray>Shift + 左鍵: <gray>減少 10 分鐘"
+    back-name: "<red>返回建立選單"
+
+# 請勿更動此項！
+config-version: 1

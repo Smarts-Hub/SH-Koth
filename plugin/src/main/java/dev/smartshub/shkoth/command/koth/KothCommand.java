@@ -50,6 +50,12 @@ public class KothCommand {
         guiService.openCreateKothGui(actor.asPlayer());
     }
 
+    @Subcommand({"editor", "edit", "gui"})
+    public void openEditor(BukkitCommandActor actor) {
+        if (!actor.isPlayer()) return;
+        guiService.openEditKothListGui(actor.asPlayer());
+    }
+
     @Subcommand("force-start")
     public void forceStart(BukkitCommandActor actor, Koth koth) {
         kothRegistry.startKoth(koth.getId());
