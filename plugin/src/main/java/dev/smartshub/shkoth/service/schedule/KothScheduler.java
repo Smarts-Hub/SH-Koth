@@ -1,172 +1,164 @@
 package dev.smartshub.shkoth.service.schedule;
 
 import dev.smartshub.shkoth.api.config.ConfigType;
+import dev.smartshub.shkoth.api.koth.Koth;
 import dev.smartshub.shkoth.api.schedule.Scheduler;
 import dev.smartshub.shkoth.builder.mapper.SchedulerConfigMapper;
 import dev.smartshub.shkoth.registry.KothRegistry;
 import dev.smartshub.shkoth.service.config.ConfigService;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class KothScheduler {
 
-    private final TimeService timeService = new TimeService();
     private final KothRegistry kothRegistry;
-    private final List<Scheduler> schedulers;
+    private final ConfigService configService;
+    private final List<Scheduler> schedulers = new ArrayList<>();
     private final Map<String, Long> lastExecutionTimes = new HashMap<>();
 
     public KothScheduler(KothRegistry kothRegistry, ConfigService configService) {
         this.kothRegistry = kothRegistry;
+        this.configService = configService;
+        reload();
+    }
+
+    public void reload() {
         SchedulerConfigMapper mapper = new SchedulerConfigMapper();
-        this.schedulers = mapper.map(configService.provide(ConfigType.SCHEDULERS));
+        schedulers.clear();
+        schedulers.addAll(mapper.map(configService.provide(ConfigType.SCHEDULERS)));
+        lastExecutionTimes.clear();
     }
 
-    public Duration getTimeUntilNextSchedule(String kothId) {
-        Duration shortest = null;
-        long currentTime = System.currentTimeMillis();
-
-        for (Scheduler scheduler : schedulers) {
-            if (scheduler.kothIds().contains(kothId)) {
-                for (String cronExpression : scheduler.cronExpressions()) {
-                    var predictor = scheduler.createPredictor(cronExpression);
-                    long nextTime = predictor.nextMatchingTime();
-                    Duration duration = Duration.ofMillis(nextTime - currentTime);
-
-                    if (duration.isNegative()) continue;
-
-                    if (shortest == null || duration.compareTo(shortest) < 0) {
-                        shortest = duration;
-                    }
-                }
-            }
-        }
-
-        return shortest;
+    public boolean isKothScheduled(String kothId) {
+        return getScheduledKothIds().contains(kothId);
     }
 
-    public String getNextKothToRun() {
-        String nextKoth = null;
-        long shortestTime = Long.MAX_VALUE;
+    public Set<Koth> getScheduled() {
+        return kothRegistry.getAll().stream()
+                .filter(koth -> isKothScheduled(koth.getId()))
+                .collect(Collectors.toSet());
+    }
+
+    public Set<String> getScheduledKothIds() {
+        return schedulers.stream()
+                .flatMap(scheduler -> scheduler.kothIds().stream())
+                .collect(Collectors.toSet());
+    }
+
+    // Timestamp helpoer
+    private long getNextExecutionTimestamp(Predicate<Scheduler> schedulerFilter) {
         long currentTime = System.currentTimeMillis();
 
-        for (Scheduler scheduler : schedulers) {
-            for (String cronExpression : scheduler.cronExpressions()) {
-                var predictor = scheduler.createPredictor(cronExpression);
-                long nextTime = predictor.nextMatchingTime();
+        return schedulers.stream()
+                .filter(schedulerFilter) // Filtra el scheduler antes de evaluar crons
+                .flatMap(scheduler -> scheduler.cronExpressions().stream()
+                        .map(cron -> scheduler.createPredictor(cron).nextMatchingTime()))
+                .filter(nextTime -> nextTime > currentTime)
+                .min(Long::compare)
+                .orElse(-1L);
+    }
 
-                if (nextTime <= currentTime) continue;
+    public long getTimeUntilNextSchedule(String kothId) {
+        if (!isKothScheduled(kothId)) return -1L;
 
-                if (nextTime < shortestTime) {
-                    shortestTime = nextTime;
-                    if (scheduler.random()) {
-                        int randomIndex = (int) (Math.random() * scheduler.kothIds().size());
-                        nextKoth = scheduler.kothIds().get(randomIndex);
-                    } else {
-                        nextKoth = scheduler.kothIds().getFirst();
-                    }
-                }
-            }
-        }
-
-        return nextKoth;
+        long nextTime = getNextExecutionTimestamp(scheduler -> scheduler.kothIds().contains(kothId));
+        return Duration.ofMillis(nextTime - System.currentTimeMillis()).getSeconds();
     }
 
     public long getSecondsUntilNextKothRuns() {
-        long shortestTime = Long.MAX_VALUE;
+        long nextTime = getNextExecutionTimestamp(scheduler -> true); // true = no filtra ningún scheduler
+        return Duration.ofMillis(nextTime - System.currentTimeMillis()).getSeconds();
+    }
+
+    public String getNextKothToRun() {
         long currentTime = System.currentTimeMillis();
 
-        for (Scheduler scheduler : schedulers) {
-            for (String cronExpression : scheduler.cronExpressions()) {
-                var predictor = scheduler.createPredictor(cronExpression);
-                long nextTime = predictor.nextMatchingTime();
-
-                if (nextTime <= currentTime) continue;
-
-                if (nextTime < shortestTime) {
-                    shortestTime = nextTime;
-                }
-            }
+        // Estructura interna temporal ligera para no perder la referencia del Scheduler mapeado al buscar el mínimo
+        record TemporaryPrediction(Scheduler scheduler, long nextTime) {
         }
 
-        if (shortestTime == Long.MAX_VALUE) return -1;
-
-        return (shortestTime - currentTime) / 1000;
+        return schedulers.stream()
+                .flatMap(scheduler -> scheduler.cronExpressions().stream()
+                        .map(cron -> new TemporaryPrediction(scheduler, scheduler.createPredictor(cron).nextMatchingTime())))
+                .filter(pred -> pred.nextTime() > currentTime)
+                .min(Comparator.comparingLong(TemporaryPrediction::nextTime))
+                .map(pred -> resolveKothIdForSchedule(pred.scheduler(), pred.nextTime()))
+                .orElse(null);
     }
 
-    public String getFormattedTimeUntilNext(String kothId) {
-        Duration duration = getTimeUntilNextSchedule(kothId);
-        if (duration == null) return "N/A";
-        return timeService.formatDuration(duration);
-    }
-
+    // TODO: Might take a look into this later.
     public void processAllSchedulersAndExecute() {
         long currentTime = System.currentTimeMillis();
+        long minuteStart = currentTime - (currentTime % 60_000L);
 
         for (Scheduler scheduler : schedulers) {
             for (String cronExpression : scheduler.cronExpressions()) {
+                if (!scheduler.matches(cronExpression, minuteStart)) continue;
+
                 String executionKey = createExecutionKey(scheduler, cronExpression);
 
-                var predictor = scheduler.createPredictor(cronExpression);
-                long nextTime = predictor.nextMatchingTime();
-
-                if (Math.abs(nextTime - currentTime) > 60000) continue;
-
                 Long lastExecution = lastExecutionTimes.get(executionKey);
-                if (lastExecution != null && currentTime - lastExecution < 120000) {
-                    continue;
-                }
-
-                lastExecutionTimes.put(executionKey, currentTime);
+                if (lastExecution != null && lastExecution >= minuteStart) continue;
 
                 if (scheduler.random()) {
-                    int randomIndex = (int) (Math.random() * scheduler.kothIds().size());
-                    String kothId = scheduler.kothIds().get(randomIndex);
+                    String kothId = resolveKothIdForSchedule(scheduler, minuteStart);
+                    if (kothId == null) continue;
 
-                    var koth = kothRegistry.get(kothId);
-                    if (koth == null) {
-                        System.err.println("[SH-Koth] ERROR: can't start the koth scheduled. ID '" + kothId + "' does not exists in the registry.");
-                        continue;
-                    }
-
-                    try {
-                        koth.start();
-                    } catch (Exception e) {
-                        System.err.println("[SH-Koth] ERROR starting koth: '" + kothId + "': " + e.getMessage());
-                        e.printStackTrace();
+                    if (handleScheduledKoth(kothId)) {
+                        lastExecutionTimes.put(executionKey, minuteStart);
                     }
                 } else {
-                    scheduler.kothIds().forEach(id -> {
-                        var koth = kothRegistry.get(id);
-                        if (koth == null) {
-                            System.err.println("[SH-Koth] ERROR: can't start the koth scheduled. ID '" + id + "' does not exists in the registry.");
-                            return;
+                    boolean anyHandled = false;
+                    for (String id : scheduler.kothIds()) {
+                        if (handleScheduledKoth(id)) {
+                            anyHandled = true;
                         }
-
-                        try {
-                            koth.start();
-                        } catch (Exception e) {
-                            System.err.println("[SH-Koth] ERROR starting the KOTH: '" + id + "': " + e.getMessage());
-                            e.printStackTrace();
-                        }
-                    });
+                    }
+                    if (anyHandled) {
+                        lastExecutionTimes.put(executionKey, minuteStart);
+                    }
                 }
             }
         }
+
+        cleanOldExecutions();
+    }
+
+    private boolean handleScheduledKoth(String kothId) {
+        var koth = kothRegistry.get(kothId);
+        if (koth == null) {
+            JavaPlugin.getProvidingPlugin(this.getClass()).getLogger().severe(
+                    "Can't start the koth scheduled. ID '" + kothId + "' does not exists in the registry.");
+            return true;
+        }
+        return koth.isRunning() || kothRegistry.startKoth(kothId);
+    }
+
+    private String resolveKothIdForSchedule(Scheduler scheduler, long scheduleTime) {
+        List<String> kothIds = scheduler.kothIds();
+        if (kothIds.isEmpty()) return null;
+
+        return scheduler.random()
+                ? kothIds.get(Math.floorMod(scheduleTime / 60_000L, kothIds.size()))
+                : kothIds.getFirst();
     }
 
     private String createExecutionKey(Scheduler scheduler, String cronExpression) {
-        return scheduler.hashCode() + "_" + cronExpression;
+        return scheduler.id() + "_" + cronExpression;
     }
 
     public void cleanOldExecutions() {
         long currentTime = System.currentTimeMillis();
-        long threshold = 3600000;
-
-        lastExecutionTimes.entrySet().removeIf(entry ->
-                currentTime - entry.getValue() > threshold
-        );
+        long threshold = 3_600_000L;
+        lastExecutionTimes.entrySet().removeIf(entry -> currentTime - entry.getValue() > threshold);
     }
 }

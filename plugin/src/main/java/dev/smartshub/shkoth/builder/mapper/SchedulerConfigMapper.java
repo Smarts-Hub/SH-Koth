@@ -41,7 +41,7 @@ public class SchedulerConfigMapper implements Mapper<List<Scheduler>, ConfigCont
 
             boolean random = config.getBoolean(base + ".random", false);
 
-            result.add(new Scheduler(validTimes, timeZone, random, koths));
+            result.add(new Scheduler(schedulerId, validTimes, timeZone, random, koths));
         }
 
         return result;
