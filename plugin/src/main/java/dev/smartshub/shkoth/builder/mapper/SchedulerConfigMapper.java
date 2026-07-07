@@ -3,15 +3,24 @@ package dev.smartshub.shkoth.builder.mapper;
 import dev.smartshub.shkoth.api.builder.mapper.Mapper;
 import dev.smartshub.shkoth.api.config.ConfigContainer;
 import dev.smartshub.shkoth.api.schedule.Scheduler;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TimeZone;
 
 public class SchedulerConfigMapper implements Mapper<List<Scheduler>, ConfigContainer> {
 
     @Override
     public List<Scheduler> map(ConfigContainer config) {
         String tz = config.getString("time-zone", "server");
-        TimeZone timeZone = TimeZone.getTimeZone(tz);
+        TimeZone timeZone = tz.equalsIgnoreCase("server") ? TimeZone.getDefault() : TimeZone.getTimeZone(tz);
+
+        JavaPlugin.getProvidingPlugin(this.getClass()).getLogger().info("Set timezone to " + timeZone.getID());
+
         Set<String> schedulerIds = config.getKeys("schedulers");
         List<Scheduler> result = new ArrayList<>();
 
