@@ -134,13 +134,21 @@
 | Reviewer 意見 | 對應計畫 | 狀態 |
 |---|---|---|
 | NotifyChannel 註解要英文 | P0-3 | ✅ 已英文化（NotifyChannel/NotifyType Javadoc + displayName）|
-| 編輯器分頁重疊 (KothCommand/CreateKothGui) | P0-1 | ✅ 已修（`gui.clearItems()`），待 in-game 驗證 |
+| 編輯器分頁重疊 (KothCommand/CreateKothGui) | P0-1 | ✅ 已修（`gui.clearItems()`），in-game 驗證通過 |
 | GrantRewardsService log 要英文 | P0-3 | ✅ 已英文化（全 repo 掃描：Java source 0 中文，僅 zh_tw 語言檔保留）|
 | team 停用改 config 選項 (SHKoth:250) | P0-4 | ✅ 內部系統保留；`internal-team.disable-command` 控制指令註冊＋編輯器 toggle；`KothBuilder` 恢復由 config 決定 |
 | AddPhysicalRewardGui 語言要可設定 | P0-5 | ✅ 前次 i18n commit 已抽 message keys（en 預設 + zh_tw 覆蓋）|
-| AnvilTextInput 多個 bug | P0-2 | ✅ 已改用 AnvilGUI（1.10.10），待 in-game 驗證 |
+| AnvilTextInput 多個 bug | P0-2 | ✅ 已改用 AnvilGUI（1.10.10），in-game 驗證通過 |
 | CreateKothGui 分頁沒正確替換 | P0-1 | ✅ 同上 |
 
 > **本輪進度（2026-07-05）**：P0 五項全數落地並通過 `:plugin:shadowJar` 編譯（AnvilGUI 正確 relocate 進 `dev.smartshub.shkoth.libs.anvilgui`）。
 > - P0-4 補充：`KothBuilder` 改讀 `solo-koth` / `deny-entry-if-not-in-team` / `create-team-if-not-exists`（template 與編輯器實際寫入的 key，順帶修正上游 builder 讀 `solo-mode` 的既有 key 錯配）。
 > - 待辦：全部 P0 需 **in-game 實測**（分頁殘留、anvil 輸入、team 指令開關、solo/team 編輯器 toggle）後再回 PR #4 請求重審。P1（測試、`printStackTrace`×7、離線獎勵 debounce）為後續。
+
+> **本輪進度（2026-07-07）**：全部 P0 已於本地 Paper 1.21.1-133 測試伺服器以 headless bot（mineflayer）完成 in-game 實測，全數通過：
+> - P0-1：BASIC → TIME → REWARD → BASIC 全程 slot dump 比對，無舊分頁物品殘留。
+> - P0-2：AnvilGUI 開啟真實鐵砧選單；逐鍵 rename 正確寫入、點輸出槽確認後回到編輯器且 lore 顯示新值；pickup/shift-click 皆偷不走輸入紙張；ESC 關閉走取消路徑並返回編輯器。
+> - P0-4：`disable-command: false` 時 `/team` 註冊、編輯器 37/39 顯示 Solo/Deny toggle（點擊可切換 Solo↔Team）；`true` 時 `/team` 未註冊、toggle 隱藏、`/koth` 不受影響。
+> - Koth.java teamless entry 修正（已 commit）：無隊伍玩家進入 team KOTH → 自動建隊 → 開始佔領 → 勝利結算，端到端通過。
+> - 實測時發現的**上游既有問題**（非本 PR 範圍，可另提 issue）：`commands-perform.start/end` 在程式中無任何呼叫點，從未被執行（僅 `to-winners` 會跑）；`to-winners` 的 `%player%` 僅靠 PlaceholderAPI 解析，未裝 PAPI 時原樣輸出，但 template 範例卻使用 `%player%`。
+> - 已推進至：回覆 PR #4 review。
